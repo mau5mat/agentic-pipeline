@@ -154,6 +154,8 @@ COMMITS=$(git log --format="%s" ${BASE}..HEAD)
 - First run: `test: <title from WorkItem>`
 - Retry: `fix: address test issues — <one-line summary from Issues section>`
 
+**No scope brackets of any kind.** Do not add service names, directory names, or ticket prefixes in brackets — e.g. `fix: [delivery-service] handle errors` is wrong; `fix: handle errors at one layer to avoid duplicate error logs` is right. The branch name already contextualises the commit.
+
 Stage commits give a clean breadcrumb trail — one commit per passing stage, with retry fixes as separate commits. Each represents a verified state the pipeline has confirmed good.
 
 ### Gate handling
