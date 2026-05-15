@@ -28,7 +28,18 @@ if [ -z "$SC" ] || [ "$STATUS" = "done" ]; then
   exit 0
 fi
 
+# Uppercase ticket and map stage to friendly name
+SC_UPPER=$(echo "$SC" | tr '[:lower:]' '[:upper:]')
+case "$STAGE" in
+  implement) STAGE_LABEL="Implement" ;;
+  test)      STAGE_LABEL="Test" ;;
+  review)    STAGE_LABEL="Review" ;;
+  ship)      STAGE_LABEL="Ship" ;;
+  plan)      STAGE_LABEL="Plan" ;;
+  *)         STAGE_LABEL="$STAGE" ;;
+esac
+
 GREEN='\033[32m'
 RESET='\033[0m'
 
-echo -e "${GREEN}▶ Pipeline${RESET} ${SC} ${GREEN}→ ${STAGE}${RESET}"
+echo -e "${GREEN}Agentic Pipeline:${RESET} [${SC_UPPER}]  ${GREEN}|  Agent:${RESET} [${STAGE_LABEL}]"
