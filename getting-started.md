@@ -101,7 +101,7 @@ This invokes the Orchestrator, which spawns each sub-agent in sequence. You'll s
 ⚙  Agentic Pipeline: [SC-660363]  |  Agent: [Implement]  |  Stage: [1/4]  8m
 ```
 
-Go make a coffee. Come back in 20-30 minutes.
+A full run typically takes 20-30 minutes. The status line will reflect the current stage throughout.
 
 ---
 
