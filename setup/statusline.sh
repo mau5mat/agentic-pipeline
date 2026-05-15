@@ -43,6 +43,7 @@ esac
 
 GREEN='\033[32m'
 BOLD_WHITE='\033[1;97m'
+DIM='\033[2m'
 RESET='\033[0m'
 
 # Stage progress
@@ -65,7 +66,7 @@ if [ -n "$START_TIME" ]; then
       TIME_VAL="${MINS}m"
     fi
   fi
-  ELAPSED_STR="  ${GREEN}|  Time:${RESET} ${BOLD_WHITE}[${TIME_VAL}]${RESET}"
+  ELAPSED_STR="  ${DIM}|  Time: [${TIME_VAL}]${RESET}"
 fi
 
 echo -e "⚙  ${GREEN}Agentic Pipeline:${RESET} ${BOLD_WHITE}[${SC_UPPER}]${RESET}  ${GREEN}|  Agent:${RESET} ${BOLD_WHITE}[${STAGE_LABEL}]${RESET}${PROGRESS}${ELAPSED_STR}"
