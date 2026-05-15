@@ -66,6 +66,8 @@ example-happy-path.md            ← annotated happy-path example (WorkItem + na
 example-unhappy-path.md          ← annotated unhappy-path example
 findings/                        ← post-run findings from real pipeline sessions
   trial-run-sc-668234-findings.md
+  trial-run-sc-652177-findings.md
+  trial-run-sc-648809-findings.md
 ```
 
 ## Status line setup (optional but recommended)
