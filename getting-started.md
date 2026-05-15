@@ -23,6 +23,47 @@ The stages, in order:
 | **Review** | `pipeline-review` | Fresh-eyes pass — checks every acceptance criterion is met, tests are meaningful, no scope creep |
 | **Ship** | `pipeline-ship` | Pushes the branch, creates the PR |
 
+### The WorkItem is the shared state
+
+The WorkItem (`<repo-root>/.workitems/workitem-sc-XXXXXX.md`) is a markdown file on disk that accumulates across the entire run. Each sub-agent reads the full file at the start of its stage, does its work, then appends its own section — decisions made, files changed, issues encountered, notes for the next agent. By the time Ship runs, the complete history of the run is in one document:
+
+```
+Spec → Implementation → Tests → Review → Ship
+```
+
+Because the state is file-based, it survives crashes and session restarts. This is why `/pipeline` can always resume from the first incomplete stage — it reads the WorkItem to determine what has already passed.
+
+No sub-agent has memory of prior conversations. The WorkItem is the mechanism that gives each fresh agent the full picture of what came before.
+
+### Gates — how the pipeline decides to continue or stop
+
+Every sub-agent ends by writing a **gate** — a single explicit result appended to the WorkItem:
+
+```
+### Gate
+PASS
+```
+
+or
+
+```
+### Gate
+FAIL [type]: <reason>
+```
+
+The Orchestrator independently verifies each stage before accepting a PASS — it does not rely solely on the agent's self-report. If the gate is missing, it is treated as a failure.
+
+When a failure occurs, the type prefix tells you immediately where the problem lies:
+
+| Type | Meaning | Action |
+|------|---------|--------|
+| `[env]` | Infrastructure problem — OOM, missing dependency, network | Fix the environment |
+| `[code]` | Code problem — test failure, lint error, acceptance criterion not met | Fix the implementation or tests |
+| `[spec]` | Spec is wrong or infeasible | Revise the spec and retry |
+| `[pipeline]` | Stage ownership violation or tooling bug | Check the pipeline setup |
+
+The Orchestrator surfaces the failure with three options: **Retry** (fix and re-run), **Override** (continue anyway, recorded permanently in the WorkItem), or **Halt** (stop the pipeline). Overrides are never silent — they are written into the WorkItem and appear in the handover doc.
+
 ---
 
 ## What you need
@@ -120,14 +161,7 @@ Open the handover doc — that's your human-readable summary of the run.
 
 ## When something fails
 
-The Orchestrator stops and tells you what went wrong and what type of failure it is:
-
-- **`[env]`** — infrastructure problem (OOM, missing dependency, network). Not your code. Fix the environment and re-run `/pipeline`.
-- **`[code]`** — the implementation or tests have a problem. Fix the code manually, then re-run `/pipeline` to resume.
-- **`[spec]`** — the spec is wrong or infeasible. Go back and revise before retrying.
-- **`[pipeline]`** — a tooling or ownership issue. Check the pipeline setup.
-
-You'll be given three options: **Retry** (fix and re-run), **Override** (continue anyway, recorded in the audit trail), or **Halt** (stop here).
+The Orchestrator stops, explains the failure type (see Gates above), and presents three options: **Retry**, **Override**, or **Halt**.
 
 Re-running `/pipeline` always resumes from the first incomplete stage — stages that already passed are not re-run.
 
