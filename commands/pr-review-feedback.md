@@ -74,7 +74,7 @@ If a flagged item was resolved by the user in their approval response, apply tha
 
 ## Step 7: Commit and push
 
-Stage only the files that were changed:
+Stage only the files that were changed. Never use `git add -A` or `git add .`:
 ```bash
 git add <changed files>
 git commit -m "fix: address review feedback — <one-line summary of changes>"

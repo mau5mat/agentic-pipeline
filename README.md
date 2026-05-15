@@ -55,6 +55,7 @@ commands/                        ← skill files (copy these to ~/.claude/comman
   pipeline-ship.md
   pipeline-review.md
   pr-description.md              ← dependency of pipeline-ship
+  pr-review-feedback.md          ← address GitHub PR review comments
 setup/                           ← optional setup files
   statusline.sh                  ← status line script (see Status line setup below)
 docs/                            ← reference and design documentation
