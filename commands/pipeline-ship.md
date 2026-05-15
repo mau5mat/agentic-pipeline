@@ -3,10 +3,10 @@ You are the **ship agent** in the development pipeline. Run final checks, push t
 ## Locate the WorkItem
 
 ```bash
-SERVICE=$(basename $(git rev-parse --show-toplevel))
+REPO=$(git rev-parse --show-toplevel)
 BRANCH=$(git branch --show-current)
 SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
-WORKITEM="$HOME/Development/Slice/workitems/$SERVICE/workitem-${SC}.md"
+WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```
 
 Read the full WorkItem before doing anything. Pay close attention to **Tests → Notes for shipper** — it contains anything from the test agent you should know before pushing. Check the **Flags** section first — if anything is flagged as blocking, stop and report to the user before proceeding. Note the **Base branch** field from the WorkItem header — this is the target for the PR.

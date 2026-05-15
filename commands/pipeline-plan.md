@@ -20,7 +20,7 @@ REPO=$(git rev-parse --show-toplevel)
 SERVICE=$(basename "$REPO")
 SLUG=$(echo "$BRANCH" | sed "s|.*${SC}/||")   # e.g. -fix-task-discovery-for-workers
 SHORTCUT_URL="https://app.shortcut.com/slicernd/story/${SC_ID}/${SLUG}"
-WORKITEM="$HOME/Development/Slice/workitems/${SERVICE}/workitem-${SC}.md"
+WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ENCODED=$(echo "$REPO" | sed 's|[/.]|-|g')
 REPO_MEMORY="$HOME/.claude/projects/${ENCODED}/memory"
 SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
@@ -63,9 +63,9 @@ Do not print bash variable assignments to the terminal. After running this block
    - **Known constraints / gotchas** — ask the user explicitly; check repo memory files for relevant entries
    - **Out of scope** — explicitly name what will NOT be done in this work item
 5. Present the full draft spec (including Repo style) to the user. Revise until explicitly approved.
-6. Run `mkdir -p $(dirname $WORKITEM)` then write the WorkItem document.
+6. Run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
 
-   Note: the WorkItem lives in `~/Development/Slice/workitems/<service>/`. Handover docs and PR bodies go to `~/Development/Slice/pr-descriptions/<service>/` — these are separate directories by design.
+   Note: the WorkItem lives in `<repo-root>/.workitems/` — inside the repo, hidden, and never pushed. Handover docs go to `<repo-root>/.handovers/`. Both are pipeline-internal artifacts. Add `.workitems/` and `.handovers/` to your global gitignore (`~/.gitignore_global`) to prevent accidental staging.
 
 ## WorkItem to write
 

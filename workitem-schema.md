@@ -1,7 +1,7 @@
 # WorkItem Schema
 
 The WorkItem is the pipe. It lives at:
-`~/Development/Slice/workitems/<service>/workitem-<sc-number>.md`
+`<repo-root>/.workitems/workitem-<sc-number>.md`
 
 Created by `/pipeline-plan`. Read and appended by every subsequent stage.
 

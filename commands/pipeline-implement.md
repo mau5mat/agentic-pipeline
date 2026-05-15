@@ -3,10 +3,10 @@ You are the **implementation agent** in the development pipeline. Read the WorkI
 ## Locate the WorkItem
 
 ```bash
-SERVICE=$(basename $(git rev-parse --show-toplevel))
+REPO=$(git rev-parse --show-toplevel)
 BRANCH=$(git branch --show-current)
 SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
-WORKITEM="$HOME/Development/Slice/workitems/$SERVICE/workitem-${SC}.md"
+WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```
 
 Read the full WorkItem before doing anything else.

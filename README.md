@@ -23,7 +23,7 @@ All skills live in `~/.claude/commands/`.
 ## What flows between stages
 
 A single WorkItem document at:
-`~/Development/Slice/workitems/<service>/workitem-<sc-number>.md`
+`<repo-root>/.workitems/workitem-<sc-number>.md`
 
 Each stage reads the full document and appends its section. The document accumulates:
 Spec → Implementation + handoff notes → Tests + handoff notes → Review (gate) → Ship (PR URL)
@@ -59,10 +59,21 @@ findings/                        ← post-run findings from real pipeline sessio
   trial-run-sc-668234-findings.md
 ```
 
-## Runtime output (stays local, not in this repo)
+## Runtime output (stays local, never pushed)
+
+Pipeline artifacts live inside each service repo in hidden directories:
 
 | Artifact | Location |
 |----------|----------|
-| WorkItems | `~/Development/Slice/workitems/<service>/workitem-<sc>.md` |
-| PR descriptions | `~/Development/Slice/pr-descriptions/<service>/<service>-<sc>.md` |
-| Handover docs | `~/Development/Slice/pr-descriptions/<service>/handover-<sc>.md` |
+| WorkItems | `<repo-root>/.workitems/workitem-<sc>.md` |
+| Handover docs | `<repo-root>/.handovers/handover-<sc>.md` |
+| PR descriptions | `<repo-root>/.handovers/<service>-<sc>.md` |
+
+These directories are created automatically. **Add `.workitems/` and `.handovers/` to your global gitignore** (`~/.gitignore_global`) to prevent accidental staging — the pipeline does not touch any `.gitignore` file itself.
+
+```bash
+echo '.workitems/' >> ~/.gitignore_global
+echo '.handovers/' >> ~/.gitignore_global
+# Make sure your global gitignore is configured:
+git config --global core.excludesfile ~/.gitignore_global
+```

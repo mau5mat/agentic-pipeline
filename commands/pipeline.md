@@ -23,10 +23,9 @@ After loading, report explicitly: "Loaded N feedback rules from [repo memory pat
 ## Step 2: Find the WorkItem
 
 ```bash
-SERVICE=$(basename "$REPO")
 BRANCH=$(git branch --show-current)
 SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
-WORKITEM="$HOME/Development/Slice/workitems/$SERVICE/workitem-${SC}.md"
+WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```
 
 If no WorkItem exists at that path, stop immediately: "No WorkItem found for branch $BRANCH. Run `/pipeline-plan` first to create one."
@@ -184,7 +183,7 @@ This is not a silent bypass — the override is always recorded in the WorkItem.
 
 After Ship gate passes, read the full WorkItem and generate a handover document.
 
-Write it to: `$HOME/Development/Slice/pr-descriptions/$SERVICE/handover-${SC}.md`
+Write it to: `$REPO/.handovers/handover-${SC}.md` (create the directory with `mkdir -p "$REPO/.handovers"` first)
 
 Then print **only** these two lines to the terminal — do not print the handover doc in full:
 

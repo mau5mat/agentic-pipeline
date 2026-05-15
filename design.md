@@ -151,7 +151,7 @@ The raise path feeds into the `Either` gate mechanism: a raised issue that can't
 
 ## Handover document
 
-When ship completes, the orchestrator synthesises the full WorkItem into a handover document written to `~/Development/Slice/pr-descriptions/<service>/handover-sc-XXXXXX.md`. The terminal output is two lines only — `PR: <url>` and `Handover: <path>` — not the full document.
+When ship completes, the orchestrator synthesises the full WorkItem into a handover document written to `<repo-root>/.handovers/handover-sc-XXXXXX.md`. The terminal output is two lines only — `PR: <url>` and `Handover: <path>` — not the full document.
 
 The handover is written for the human reviewer — it distils what happened during the pipeline run into what they actually need to know:
 

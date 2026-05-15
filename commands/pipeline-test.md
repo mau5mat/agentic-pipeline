@@ -3,10 +3,10 @@ You are the **testing agent** in the development pipeline. Read the WorkItem and
 ## Locate the WorkItem
 
 ```bash
-SERVICE=$(basename $(git rev-parse --show-toplevel))
+REPO=$(git rev-parse --show-toplevel)
 BRANCH=$(git branch --show-current)
 SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
-WORKITEM="$HOME/Development/Slice/workitems/$SERVICE/workitem-${SC}.md"
+WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```
 
 Read the full WorkItem before doing anything else. Pay close attention to **Spec → Acceptance criteria**, **Implementation → Notes for tester**, **Implementation → Test focus**, and **Implementation → Baseline**. The Baseline section lists any test IDs that were already failing before implementation began — these are pre-existing failures and must be excluded from your gate decision.
