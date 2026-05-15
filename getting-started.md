@@ -66,6 +66,20 @@ The Orchestrator surfaces the failure with three options: **Retry** (fix and re-
 
 ---
 
+## Auto mode (recommended)
+
+The pipeline runs best with auto mode enabled. Each stage spawns a sub-agent that makes dozens of tool calls — permission prompts between them will interrupt the flow and can stall a stage mid-run.
+
+Enable auto mode in Claude Code before running `/pipeline`:
+
+```
+/auto
+```
+
+This is a per-session setting and does not persist. It remains your decision whether to enable it.
+
+---
+
 ## What you need
 
 - Claude Code (CLI or desktop app)
