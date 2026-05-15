@@ -192,7 +192,10 @@ After verification, read the WorkItem gate:
 
   - **Retry** → stop. User will fix and re-run.
   - **Override** → append to the **Flags** section: `[orchestrator] Gate override at [stage]: <reason> — user chose to proceed.` Then continue to the next stage.
-  - **Halt** → stop. Report current WorkItem state so the user knows where things stand.
+  - **Halt** → clear the pipeline state file, then stop. Report current WorkItem state so the user knows where things stand.
+    ```bash
+    printf '{"sc":"%s","stage":"done","status":"done"}' "$SC" > "$HOME/.claude/pipeline-state.json"
+    ```
 
 This is not a silent bypass — the override is always recorded in the WorkItem.
 
