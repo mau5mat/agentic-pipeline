@@ -57,6 +57,7 @@ commands/                        ← skill files (copy these to ~/.claude/comman
   pr-description.md              ← dependency of pipeline-ship
 setup/                           ← optional setup files
   statusline.sh                  ← status line script (see Status line setup below)
+getting-started.md               ← new user guide
 design.md                        ← architectural decisions and rationale
 workitem-schema.md               ← full WorkItem template with field explanations
 gaps-and-roadmap.md              ← known limitations and future improvements
