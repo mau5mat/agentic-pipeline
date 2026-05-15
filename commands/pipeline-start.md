@@ -1,24 +1,44 @@
 You are the **planning agent** in the development pipeline. Work interactively with the user to produce a complete, approved spec — then write it to a WorkItem document.
 
-## Deriving the SC number
+## Argument
 
-The expected flow is: create the branch from Shortcut first (`git checkout -b <username>/sc-XXXXXX/-description`), then invoke `/pipeline-plan` while on that branch.
+`/pipeline-start` takes a single required argument: the full branch name copied from Shortcut.
 
-```bash
-BRANCH=$(git branch --show-current)
-SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
+Example:
+```
+/pipeline-start mattroberts/sc-660363/-preparation-add-smoke-test-script
 ```
 
-- If an SC number was passed as an argument to this skill, use that instead and verify it matches the current branch.
-- If no SC number can be found (argument or branch), stop: "No SC number found. Check out the Shortcut branch first, then re-run /pipeline-plan."
+## Step 1: Parse and create the branch
 
-## Derive everything else
+Extract the SC number from the branch name argument and create the branch:
+
+```bash
+BRANCH_ARG="<argument passed to this skill>"
+SC=$(echo "$BRANCH_ARG" | grep -oiE 'sc-[0-9]+' | head -1)
+REPO=$(git rev-parse --show-toplevel)
+```
+
+- If no branch name argument was provided, stop: "Usage: `/pipeline-start <branch-name>` — paste the branch name from Shortcut."
+- If no SC number can be parsed from the branch name, stop: "Could not parse an SC number from `<branch-name>`. Expected format: `username/sc-XXXXXX/-description`."
+- If a WorkItem already exists for this SC (`$REPO/.workitems/workitem-${SC}.md`), stop: "WorkItem already exists for ${SC}. Run `/pipeline` to resume from the current stage."
+
+Create the branch:
+```bash
+git checkout -b "$BRANCH_ARG"
+```
+
+If that fails (branch already exists locally), run:
+```bash
+git checkout "$BRANCH_ARG"
+```
+
+## Step 2: Derive everything else
 
 ```bash
 SC_ID=$(echo "$SC" | grep -oE '[0-9]+')
-REPO=$(git rev-parse --show-toplevel)
 SERVICE=$(basename "$REPO")
-SLUG=$(echo "$BRANCH" | sed "s|.*${SC}/||")   # e.g. -fix-task-discovery-for-workers
+SLUG=$(echo "$BRANCH_ARG" | sed "s|.*${SC}/||")   # e.g. -fix-task-discovery-for-workers
 SHORTCUT_URL="https://app.shortcut.com/slicernd/story/${SC_ID}/${SLUG}"
 WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ENCODED="${REPO//[\/.]/-}"
@@ -125,4 +145,4 @@ Do not print bash variable assignments to the terminal. After running this block
 
 ## After writing
 
-Report: "WorkItem written to [path]. Branch [branch]. Shortcut: [url]. Run `/pipeline` to continue or `/pipeline-implement` to run the next stage manually."
+Report: "WorkItem written to [path]. Branch [branch]. Shortcut: [url]. Run `/pipeline` to start the pipeline."

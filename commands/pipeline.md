@@ -28,7 +28,7 @@ SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
 WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```
 
-If no WorkItem exists at that path, stop immediately: "No WorkItem found for branch $BRANCH. Run `/pipeline-plan` first to create one."
+If no WorkItem exists at that path, stop immediately: "No WorkItem found for branch $BRANCH. Run `/pipeline-start <branch-name>` first to create one."
 
 Read the WorkItem silently. Report a single line: `Branch: <branch> | SC: <sc> | Stage: <first incomplete stage> | WorkItem: <path>`
 

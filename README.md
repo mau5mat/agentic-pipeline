@@ -9,11 +9,17 @@ Without the pipeline, work is conversational and sequential — you prompt each 
 ## The two commands
 
 ```
-/pipeline-plan   — interactive: work out the spec together, write WorkItem (run while on the Shortcut branch)
-/pipeline        — automated: implement → test → review → ship, hands you a PR URL when done
+/pipeline-start <branch-name>   — interactive: create branch, work out spec, write WorkItem
+/pipeline                       — automated: implement → test → review → ship, hands you a PR URL when done
 ```
 
-Expected flow: create the branch from Shortcut first (`git checkout -b mattroberts/sc-XXXXXX/-description`), then invoke `/pipeline-plan` while on that branch. The SC number is read from the branch automatically.
+Expected flow: copy the branch name from Shortcut, then run `/pipeline-start` with it. The pipeline creates the branch, runs planning interactively, then `/pipeline` chains all remaining stages automatically.
+
+```
+/pipeline-start mattroberts/sc-660363/-preparation-add-smoke-test-script
+```
+
+If the pipeline fails at any stage, fix the issue and run `/pipeline` again — it resumes from the first incomplete stage.
 
 Individual stages can be run standalone if needed:
 `/pipeline-implement`, `/pipeline-test`, `/pipeline-review`, `/pipeline-ship`
@@ -36,14 +42,14 @@ Copy the skill files to your Claude commands directory:
 cp commands/*.md ~/.claude/commands/
 ```
 
-That's it. Invoke `/pipeline-plan` from any service repo to start.
+That's it. Invoke `/pipeline-start <branch-name>` from any service repo to start.
 
 ## Repository structure
 
 ```
 commands/                        ← skill files (copy these to ~/.claude/commands/)
   pipeline.md                    ← orchestrator
-  pipeline-plan.md
+  pipeline-start.md
   pipeline-implement.md
   pipeline-test.md
   pipeline-ship.md
