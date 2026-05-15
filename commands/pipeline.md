@@ -76,6 +76,14 @@ Write `### Baseline\nClean — no pre-existing failures.` to the WorkItem Implem
 
 ## Step 5: Run each stage in sequence
 
+Before spawning each stage agent, write the current stage to the pipeline state file so the status line can display it:
+
+```bash
+printf '{"sc":"%s","stage":"%s","status":"running"}' "$SC" "<stage-name>" > "$HOME/.claude/pipeline-state.json"
+```
+
+After the stage gate passes and verification completes, update status to reflect the next stage (or `done` after ship).
+
 For each incomplete stage, spawn an agent using the Agent tool with this prompt:
 
 > "Read the instructions at `~/.claude/commands/pipeline-[stage].md` and follow them exactly. The repository is at `[REPO]`. The WorkItem is at `[WORKITEM]`.
@@ -190,7 +198,12 @@ This is not a silent bypass — the override is always recorded in the WorkItem.
 
 ## Final report
 
-After Ship gate passes, read the full WorkItem and generate a handover document.
+After Ship gate passes, clear the pipeline state:
+```bash
+printf '{"sc":"%s","stage":"done","status":"done"}' "$SC" > "$HOME/.claude/pipeline-state.json"
+```
+
+Read the full WorkItem and generate a handover document.
 
 Write it to: `$REPO/.handovers/handover-${SC}.md` (create the directory with `mkdir -p "$REPO/.handovers"` first)
 

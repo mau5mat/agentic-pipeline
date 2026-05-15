@@ -49,6 +49,8 @@ commands/                        ← skill files (copy these to ~/.claude/comman
   pipeline-ship.md
   pipeline-review.md
   pr-description.md              ← dependency of pipeline-ship
+setup/                           ← optional setup files
+  statusline.sh                  ← status line script (see Status line setup below)
 design.md                        ← architectural decisions and rationale
 workitem-schema.md               ← full WorkItem template with field explanations
 gaps-and-roadmap.md              ← known limitations and future improvements
@@ -58,6 +60,29 @@ example-unhappy-path.md          ← annotated unhappy-path example
 findings/                        ← post-run findings from real pipeline sessions
   trial-run-sc-668234-findings.md
 ```
+
+## Status line setup (optional but recommended)
+
+The pipeline writes its current stage to `~/.claude/pipeline-state.json` while running. A status line script reads this and displays it persistently in the Claude Code UI — useful during the 10-30 minute quiet gaps between stage turns.
+
+```bash
+cp setup/statusline.sh ~/.claude/statusline.sh
+chmod +x ~/.claude/statusline.sh
+```
+
+Then add to `~/.claude/settings.json` (create the file if it doesn't exist):
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "refreshInterval": 3
+  }
+}
+```
+
+The status line will show: `▶ Pipeline sc-XXXXXX → implement` while a stage is active, and disappear once the pipeline completes.
 
 ## Runtime output (stays local, never pushed)
 
