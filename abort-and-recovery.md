@@ -68,7 +68,7 @@ You do not need to clear the whole section unless the content is wrong.
 
 ## WorkItem got corrupted or is in a bad state
 
-The WorkItem is a plain markdown file at `~/Development/Slice/workitems/<service>/workitem-<sc>.md`. Edit it directly to fix any state issue — the pipeline reads it fresh each time.
+The WorkItem is a plain markdown file at `<repo-root>/.workitems/workitem-<sc>.md`. Edit it directly to fix any state issue — the pipeline reads it fresh each time.
 
 If you're unsure what state a run left things in:
 ```bash

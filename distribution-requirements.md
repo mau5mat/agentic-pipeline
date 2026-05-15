@@ -6,15 +6,8 @@ What would need to change to make this pipeline a self-contained, shareable pack
 
 ## What is currently Slice/Matt-specific
 
-### 1. Hardcoded output paths
-Every skill file derives WorkItem and handover paths from `~/Development/Slice/workitems/` and `~/Development/Slice/pr-descriptions/`. These are personal directory conventions.
-
-**Fix:** A config file (e.g. `~/.claude/pipeline.conf`) that each user populates once at install time:
-```
-PIPELINE_WORKITEMS_DIR=~/Development/Slice/workitems
-PIPELINE_OUTPUT_DIR=~/Development/Slice/pr-descriptions
-```
-All skill files source this config rather than hardcoding the paths.
+### 1. ~~Hardcoded output paths~~ — resolved 2026-05-15
+WorkItems and handover docs now live at `<repo-root>/.workitems/` and `<repo-root>/.handovers/` — derived from `git rev-parse --show-toplevel`. No personal paths, no config needed. Both directories are gitignored locally and never pushed.
 
 ---
 

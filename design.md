@@ -103,8 +103,8 @@ The orchestrator reports what it loaded (counts and found/not-found for each sou
 
 Memory path encoding: Claude Code encodes project paths by replacing `/` and `.` with `-`.
 ```bash
-ENCODED=$(echo "$REPO" | sed 's|[/.]|-|g')
-MEMORY_DIR="$HOME/.claude/projects/${ENCODED}/memory"
+ENCODED="${REPO//[\/.]/-}"
+MEMORY_DIR="$HOME/.claude/projects/$ENCODED/memory"
 ```
 
 ## The "handoff notes" concept
