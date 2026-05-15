@@ -50,6 +50,29 @@ Start at the first incomplete stage. If all four are complete, skip to the final
 
 Before spawning the implementation agent, scan the WorkItem Spec for independent sub-tasks. If the implementation can be split into parallel workstreams (tasks with no ordering dependency between them), flag this to the user before proceeding: name the tasks and suggest running them as parallel worktree sessions rather than sequentially.
 
+## Step 4b: Establish test baseline (before spawning implement agent)
+
+Run the full test suite command from `### Repo style` (Make targets). This must happen before the implement agent is spawned — the baseline reflects the repo state before any changes.
+
+```bash
+<full suite command from Repo style>
+EXIT_CODE=$?
+```
+
+**If exit code is 137, or if output contains "Killed", "signal: killed", or "OOM":**
+Stop immediately. Do not spawn the implement agent. Report to the user:
+> "Environment failure: test suite was killed (OOM/SIGKILL, exit 137). This is an infrastructure problem, not a code problem. Fix the environment (e.g. Docker memory limits) and re-run `/pipeline`."
+Write `[orchestrator] Step 4b: environment failure — test suite killed (OOM/SIGKILL)` to the Flags section and halt.
+
+**If the suite cannot run at all** (import error, missing dependency, environment broken):
+Stop immediately. Do not spawn the implement agent. Report to the user what failed. Write `[orchestrator] Step 4b: environment broken — cannot establish test baseline` to Flags and halt.
+
+**If some tests fail:**
+Write their IDs (not full output) to `### Baseline` in the WorkItem Implementation section. Proceed to implement.
+
+**If all tests pass:**
+Write `### Baseline\nClean — no pre-existing failures.` to the WorkItem Implementation section. Proceed to implement.
+
 ## Step 5: Run each stage in sequence
 
 For each incomplete stage, spawn an agent using the Agent tool with this prompt:
@@ -79,7 +102,7 @@ Do not trust the agent's self-reported gate alone. After each stage, independent
 
 **After implement:**
 - Check the `### Issues` section — if it contains any unresolved lint failures (not `[self-resolved]`), override gate to FAIL. Do **not** re-run `make lint` yourself; trust the agent's recorded result.
-- Run the full test suite command from `### Repo style` (Make targets) once as the correctness gate — if it fails on tests **not** listed in `### Baseline`, override gate to FAIL. This is the only full suite run in the pipeline; subsequent stages use targeted runs.
+- Run the full test suite command from `### Repo style` (Make targets) as the correctness gate — if it fails on tests **not** listed in `### Baseline`, override gate to FAIL. If exit code is 137 or output contains "Killed"/"signal: killed", override gate to FAIL with: `[orchestrator] Post-implement: test suite killed (OOM/SIGKILL) — environment problem, not a code failure.` Subsequent stages use targeted runs only.
 - Check these fields are present in the Implementation section: `### Branch`, `### Files changed`, `### Baseline`, `### Key decisions`, `### Notes for tester`, `### Test focus`, `### Issues`, `### Gate`
 - Check that no files under `tests/` appear in `### Files changed` — if they do, override gate to FAIL and flag: `[orchestrator] implement stage created test files — tests/ is owned by the test stage`
 - If all checks pass: commit the stage output using conventional commits format (see below)

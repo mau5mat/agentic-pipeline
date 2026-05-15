@@ -26,10 +26,7 @@ Read the full WorkItem before doing anything else.
 
 3. Read `### Repo style` in the WorkItem and note the **Make targets** — the exact lint, full suite, and targeted test commands for this repo. Use these throughout; do not assume `make test.unit` or any other default.
 
-   Run the full test suite command to establish a baseline **before writing any code**:
-   - If the suite cannot run at all (import error, missing dependency, environment failure) → stop immediately. Write `### Gate\nFAIL: environment broken — cannot establish test baseline` and report to the user. Do not proceed.
-   - If some tests fail: note the failing test IDs (not full output) — you will write them to `### Baseline` when you populate the Implementation section in Step 5. Proceed with implementation.
-   - If all tests pass: note "Clean" — you will write `### Baseline\nClean — no pre-existing failures.` in Step 5. Proceed.
+   Read the `### Baseline` field already written in the WorkItem — the orchestrator ran the test suite and wrote this before spawning you. Do not re-run the test suite. Do not overwrite `### Baseline`.
 
 4. Implement the changes required to satisfy every acceptance criterion. Follow AGENTS.md and CLAUDE.md conventions exactly. Do not implement anything listed under "Out of scope".
 
@@ -69,8 +66,7 @@ Read the full WorkItem before doing anything else.
 Run the following checks. For each failure, classify and handle as below before writing the gate result.
 
 **Checks:**
-- Lint — use the lint command from `### Repo style`
-- Full test suite — use the full suite command from `### Repo style`
+- Lint — use the lint command from `### Repo style`. Do not run the test suite — the orchestrator runs that as the post-implement correctness gate.
 - Every acceptance criterion in the Spec is addressed
 - Nothing in "Out of scope" was implemented
 - No files were created under `tests/`
@@ -79,11 +75,9 @@ Run the following checks. For each failure, classify and handle as below before 
 
 Self-resolve (attempt fix, max 2 retries, then re-run the check):
 - Lint errors → fix them
-- Test failures you introduced → fix the code or the test
 - Out-of-scope code accidentally included → remove it
 
 Raise immediately (do not attempt to fix):
-- Test failures that are NOT in `### Baseline` and that you did not introduce (unexpected regression)
 - An acceptance criterion cannot be met without a design decision
 - Self-resolve failed after 2 attempts
 
