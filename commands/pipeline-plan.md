@@ -57,7 +57,7 @@ SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memor
 4. Work with the user to fill every field in the Spec section:
    - **Goal** — what this achieves and why it is needed
    - **Acceptance criteria** — specific, testable conditions (not vague)
-   - **Files likely touched** — confirm by reading the code, not guessing
+   - **Files likely touched** — confirm by reading the code, not guessing. Also check AGENTS.md for any files the agent is **required** to create or modify as part of a standard workflow (e.g. bug docs, ADRs, changelogs). If AGENTS.md mandates them, include them here — they are in scope by definition, not optional.
    - **Known constraints / gotchas** — ask the user explicitly; check repo memory files for relevant entries
    - **Out of scope** — explicitly name what will NOT be done in this work item
 5. Present the full draft spec (including Repo style) to the user. Revise until explicitly approved.
