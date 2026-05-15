@@ -58,8 +58,9 @@ Do not print bash variable assignments to the terminal. After running this block
    - **Files likely touched** — confirm by reading the code, not guessing. Also check AGENTS.md for any files the agent is **required** to create or modify as part of a standard workflow (e.g. bug docs, ADRs, changelogs). If AGENTS.md mandates them, include them here — they are in scope by definition, not optional.
    - **Known constraints / gotchas** — ask the user explicitly; check repo memory files for relevant entries
    - **Out of scope** — explicitly name what will NOT be done in this work item
-5. Present the full draft spec (including Repo style) to the user. Revise until explicitly approved.
-6. Run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
+5. Write the complete draft spec to the plan file and call `ExitPlanMode` to present it for formal approval. The plan file should contain the full WorkItem spec exactly as it will be written (all fields filled in, Repo style included). The user reviews it, gives feedback if needed, and approves. Do not write the WorkItem until approval is received.
+
+6. After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
 
    Note: the WorkItem lives in `<repo-root>/.workitems/` — inside the repo, hidden, and never pushed. Handover docs go to `<repo-root>/.handovers/`. Both are pipeline-internal artifacts. Add `.workitems/` and `.handovers/` to your global gitignore (`~/.gitignore_global`) to prevent accidental staging.
 
