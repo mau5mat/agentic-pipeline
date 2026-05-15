@@ -57,17 +57,19 @@ commands/                        ← skill files (copy these to ~/.claude/comman
   pr-description.md              ← dependency of pipeline-ship
 setup/                           ← optional setup files
   statusline.sh                  ← status line script (see Status line setup below)
-getting-started.md               ← new user guide
-design.md                        ← architectural decisions and rationale
-workitem-schema.md               ← full WorkItem template with field explanations
-gaps-and-roadmap.md              ← known limitations and future improvements
-abort-and-recovery.md            ← how to stop, undo, or resume a pipeline run
-example-happy-path.md            ← annotated happy-path example (WorkItem + narrative + handover)
-example-unhappy-path.md          ← annotated unhappy-path example
+docs/                            ← reference and design documentation
+  design.md                      ← architectural decisions and rationale
+  workitem-schema.md             ← full WorkItem template with field explanations
+  gaps-and-roadmap.md            ← known limitations and future improvements
+  abort-and-recovery.md          ← how to stop, undo, or resume a pipeline run
+  distribution-requirements.md  ← what needs to change for distribution
+  example-happy-path.md          ← annotated happy-path example
+  example-unhappy-path.md        ← annotated unhappy-path example
 findings/                        ← post-run findings from real pipeline sessions
   trial-run-sc-668234-findings.md
   trial-run-sc-652177-findings.md
   trial-run-sc-648809-findings.md
+getting-started.md               ← new user guide
 ```
 
 ## Status line setup (optional but recommended)
