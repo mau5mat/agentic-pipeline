@@ -93,13 +93,13 @@ The status line will show: `▶ Pipeline sc-XXXXXX → implement` while a stage 
 
 ## Runtime output (stays local, never pushed)
 
-Pipeline artifacts live inside each service repo in hidden directories:
+Most pipeline artifacts live inside each service repo in hidden directories:
 
 | Artifact | Location |
 |----------|----------|
 | WorkItems | `<repo-root>/.workitems/workitem-<sc>.md` |
 | Handover docs | `<repo-root>/.handovers/handover-<sc>.md` |
-| PR descriptions | `<repo-root>/.handovers/<service>-<sc>.md` |
+| PR descriptions | `~/Development/Slice/pr-descriptions/<service>/<service>-sc-<number>.md` |
 
 These directories are created automatically. **Add `.workitems/` and `.handovers/` to your global gitignore** (`~/.gitignore_global`) to prevent accidental staging — the pipeline does not touch any `.gitignore` file itself.
 

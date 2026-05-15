@@ -4,9 +4,9 @@ A chain of AI agents that takes a feature from spec to PR without manual interve
 
 The pipeline produces three artifacts:
 
-- **WorkItem** — the internal document that accumulates context across every stage (agent-facing)
-- **Handover** — a human-readable summary of the run: what was built, issues encountered, timing, and a QA checklist
-- **PR + description** — the pull request, ready for review
+- **WorkItem** (`<repo-root>/.workitems/`) — the internal document that accumulates context across every stage (agent-facing, not intended for human consumption)
+- **Handover** (`<repo-root>/.handovers/`) — a human-readable summary of the run: what was built, issues encountered, timing, and a QA checklist
+- **PR** — the pull request created on GitHub, with a generated description written to `~/Development/Slice/pr-descriptions/` before creation
 
 ---
 
