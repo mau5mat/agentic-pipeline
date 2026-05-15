@@ -33,6 +33,11 @@ If that fails (branch already exists locally), run:
 git checkout "$BRANCH_ARG"
 ```
 
+Write pipeline state so the status line shows while planning is in progress:
+```bash
+printf '{"sc":"%s","stage":"plan","start_time":%d,"status":"running"}' "$SC" "$(date +%s)" > "$HOME/.claude/pipeline-state.json"
+```
+
 ## Step 2: Derive everything else
 
 ```bash
@@ -144,5 +149,10 @@ Do not print bash variable assignments to the terminal. After running this block
 ```
 
 ## After writing
+
+Clear the pipeline state:
+```bash
+printf '{"sc":"%s","stage":"done","status":"done"}' "$SC" > "$HOME/.claude/pipeline-state.json"
+```
 
 Report: "WorkItem written to [path]. Branch [branch]. Shortcut: [url]. Run `/pipeline` to start the pipeline."
