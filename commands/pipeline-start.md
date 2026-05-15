@@ -51,15 +51,15 @@ REPO_MEMORY="$HOME/.claude/projects/$ENCODED/memory"
 SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
 ```
 
-Do not print bash variable assignments to the terminal. After running this block, output only: `Branch: <branch> | SC: <sc> | Shortcut: <url>` — nothing else from the derivation.
+Run this block silently. Do not add echo statements, print variables, or show any output from the derivation. After running, output only this single line: `Branch: <branch> | SC: <sc> | Shortcut: <url>` — nothing else.
 
 ## Steps
 
-1. Confirm the branch and Shortcut URL with the user before proceeding. For the base branch, present:
+1. Confirm the branch and Shortcut URL with the user before proceeding. You **must** prompt for the base branch — do not assume `main` or skip this step:
 
    > `Base branch [main]: `
 
-   Empty input (press Enter) defaults to `main`. Any other input is used as the branch name directly. Record the result in the WorkItem.
+   Wait for the user's response. Empty input defaults to `main`. Any other input is used as-is. Record the result in the WorkItem. Do not proceed to codebase exploration until this response is received.
 
 2. Read the codebase to understand the relevant area before forming opinions. Check `$REPO_MEMORY` and `$SLICE_MEMORY` for any recorded gotchas about this area (read every `feedback_*.md` and relevant `project_*.md` files if those directories exist).
 3. Observe the repo's de-facto style by sampling representative files. Do this in two passes:

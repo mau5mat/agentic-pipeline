@@ -33,12 +33,14 @@ fi
 # Uppercase ticket and map stage to friendly name
 SC_UPPER=$(echo "$SC" | tr '[:lower:]' '[:upper:]')
 case "$STAGE" in
-  implement) STAGE_LABEL="Implement" ;;
-  test)      STAGE_LABEL="Test" ;;
-  review)    STAGE_LABEL="Review" ;;
-  ship)      STAGE_LABEL="Ship" ;;
-  plan)      STAGE_LABEL="Plan" ;;
-  *)         STAGE_LABEL="$STAGE" ;;
+  implement)     STAGE_LABEL="Implement" ;;
+  test)          STAGE_LABEL="Test" ;;
+  review)        STAGE_LABEL="Review" ;;
+  ship)          STAGE_LABEL="Ship" ;;
+  plan)          STAGE_LABEL="Plan" ;;
+  orchestrating) STAGE_LABEL="Orchestrating" ;;
+  verifying)     STAGE_LABEL="Verifying" ;;
+  *)             STAGE_LABEL="$STAGE" ;;
 esac
 
 GREEN='\033[32m'
@@ -69,4 +71,4 @@ if [ -n "$START_TIME" ]; then
   ELAPSED_STR="  ${DIM}${TIME_VAL}${RESET}"
 fi
 
-echo -e "⚙  ${GREEN}Agentic Pipeline:${RESET} ${BOLD_WHITE}[${SC_UPPER}]${RESET}  ${GREEN}|  Agent:${RESET} ${BOLD_WHITE}[${STAGE_LABEL}]${RESET}${PROGRESS}${ELAPSED_STR}"
+echo -e "${GREEN}⚙  Agentic Pipeline:${RESET} ${BOLD_WHITE}[${SC_UPPER}]${RESET}  ${GREEN}|  Agent:${RESET} ${BOLD_WHITE}[${STAGE_LABEL}]${RESET}${PROGRESS}${ELAPSED_STR}"

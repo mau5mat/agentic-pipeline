@@ -42,6 +42,9 @@ Read the full WorkItem before doing anything. Pay close attention to **Tests →
 
 ### Issues
 [populated during triage — see below]
+
+### Gate
+PASS | FAIL [type]: <reason>
 ```
 
 ## Triage and gate

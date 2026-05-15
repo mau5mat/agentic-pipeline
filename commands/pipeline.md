@@ -30,6 +30,12 @@ WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 
 If no WorkItem exists at that path, stop immediately: "No WorkItem found for branch $BRANCH. Run `/pipeline-start <branch-name>` first to create one."
 
+Record pipeline start time and write orchestrator state so the status line shows immediately:
+```bash
+PIPELINE_START=$(date +%s)
+printf '{"sc":"%s","stage":"orchestrating","start_time":%d,"status":"running"}' "$SC" "$PIPELINE_START" > "$HOME/.claude/pipeline-state.json"
+```
+
 Read the WorkItem silently. Report a single line: `Branch: <branch> | SC: <sc> | Stage: <first incomplete stage> | WorkItem: <path>`
 
 ## Step 3: Determine current stage
@@ -126,7 +132,11 @@ For each incomplete stage, spawn an agent using the Agent tool with this prompt:
 
 Use these stage names in order: `pipeline-implement`, `pipeline-test`, `pipeline-review`, `pipeline-ship`.
 
-**After each agent completes, run the post-stage verification checks below before reading the gate.**
+**After each agent completes, immediately update the status line to show the orchestrator is verifying, then run the post-stage verification checks below before reading the gate:**
+
+```bash
+printf '{"sc":"%s","stage":"verifying","stage_num":%d,"start_time":%d,"status":"running"}' "$SC" <stage-num> "$(date +%s)" > "$HOME/.claude/pipeline-state.json"
+```
 
 ### Post-stage verification
 
@@ -266,15 +276,16 @@ Handover: <path to handover doc>
 ## Pipeline run
 
 ### Timing
-[Read `### Timing` from each completed stage section in the WorkItem. Render as a table. For retried stages, show the full accumulated string (e.g. `20m + 8m`). Sum all stage totals for the Total row — when a stage has retries, sum all attempts.]
+[Read `### Timing` from each completed stage section in the WorkItem. Render as a table. For retried stages, show the full accumulated string (e.g. `20m + 8m`). Compute wall-clock total using `PIPELINE_START` recorded at Step 2 and `$(date +%s)` now. Agent total is the sum of all stage durations; wall-clock total includes orchestrator overhead (baseline, verification, commits).]
 
-| Stage      | Duration |
-|------------|----------|
-| Implement  | [value]  |
-| Test       | [value]  |
-| Review     | [value]  |
-| Ship       | [value]  |
-| **Total**  | **[sum]** |
+| Stage              | Duration        |
+|--------------------|-----------------|
+| Implement          | [value]         |
+| Test               | [value]         |
+| Review             | [value]         |
+| Ship               | [value]         |
+| **Agent total**    | **[sum of above]** |
+| **Wall-clock total** | **[date +%s minus PIPELINE_START, formatted]** |
 
 ### Issues self-resolved
 [Collate all `[self-resolved]` entries from every stage's Issues section. One line each: stage, issue, fix applied.]
