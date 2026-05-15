@@ -66,7 +66,7 @@ if [ -n "$START_TIME" ]; then
       TIME_VAL="${MINS}m"
     fi
   fi
-  ELAPSED_STR="  ${DIM}|  Time: [${TIME_VAL}]${RESET}"
+  ELAPSED_STR="  ${DIM}${TIME_VAL}${RESET}"
 fi
 
 echo -e "⚙  ${GREEN}Agentic Pipeline:${RESET} ${BOLD_WHITE}[${SC_UPPER}]${RESET}  ${GREEN}|  Agent:${RESET} ${BOLD_WHITE}[${STAGE_LABEL}]${RESET}${PROGRESS}${ELAPSED_STR}"
