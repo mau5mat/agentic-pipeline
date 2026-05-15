@@ -76,16 +76,36 @@ Write `### Baseline\nClean — no pre-existing failures.` to the WorkItem Implem
 
 ## Step 5: Run each stage in sequence
 
-Before spawning each stage agent, write the current stage to the pipeline state file so the status line can display it. Include the stage number (1–4) and a unix start timestamp:
+Before spawning each stage agent, write the current stage to the pipeline state file so the status line can display it. Include the stage number (1–4) and a unix start timestamp. Also record the start time in a named variable for timing:
 
 ```bash
+STAGE_START=$(date +%s)
 printf '{"sc":"%s","stage":"%s","stage_num":%d,"start_time":%d,"status":"running"}' \
-  "$SC" "<stage-name>" <stage-num> "$(date +%s)" > "$HOME/.claude/pipeline-state.json"
+  "$SC" "<stage-name>" <stage-num> "$STAGE_START" > "$HOME/.claude/pipeline-state.json"
 ```
 
 Stage numbers: `implement=1`, `test=2`, `review=3`, `ship=4`.
 
-After the stage gate passes and verification completes, update status to reflect the next stage (or `done` after ship).
+After the stage gate passes and verification completes, compute the duration and write it to the WorkItem. This survives restarts — on retry, the previous duration is preserved and the new one appended:
+
+```bash
+STAGE_END=$(date +%s)
+ELAPSED_MINS=$(( (STAGE_END - STAGE_START) / 60 ))
+[ $ELAPSED_MINS -lt 1 ] && ELAPSED_MINS=1  # minimum 1m
+if [ $ELAPSED_MINS -ge 60 ]; then
+  DURATION_STR="$(( ELAPSED_MINS / 60 ))h $(( ELAPSED_MINS % 60 ))m"
+else
+  DURATION_STR="${ELAPSED_MINS}m"
+fi
+```
+
+Then append to the stage's section in the WorkItem:
+- If no `### Timing` field exists yet in this stage section: write `### Timing\n${DURATION_STR}`
+- If a `### Timing` field already exists (this is a retry): append ` + ${DURATION_STR}` to the existing value
+
+Example after two attempts: `### Timing\n20m + 8m`
+
+Update status to reflect the next stage (or `done` after ship).
 
 For each incomplete stage, spawn an agent using the Agent tool with this prompt:
 
@@ -240,6 +260,17 @@ Handover: <path to handover doc>
 ---
 
 ## Pipeline run
+
+### Timing
+[Read `### Timing` from each completed stage section in the WorkItem. Render as a table. For retried stages, show the full accumulated string (e.g. `20m + 8m`). Sum all stage totals for the Total row — when a stage has retries, sum all attempts.]
+
+| Stage      | Duration |
+|------------|----------|
+| Implement  | [value]  |
+| Test       | [value]  |
+| Review     | [value]  |
+| Ship       | [value]  |
+| **Total**  | **[sum]** |
 
 ### Issues self-resolved
 [Collate all `[self-resolved]` entries from every stage's Issues section. One line each: stage, issue, fix applied.]

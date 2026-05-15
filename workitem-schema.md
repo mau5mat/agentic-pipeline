@@ -3,7 +3,7 @@
 The WorkItem is the pipe. It lives at:
 `<repo-root>/.workitems/workitem-<sc-number>.md`
 
-Created by `/pipeline-plan`. Read and appended by every subsequent stage.
+Created by `/pipeline-start`. Read and appended by every subsequent stage.
 
 ---
 
@@ -59,6 +59,8 @@ Created by `/pipeline-plan`. Read and appended by every subsequent stage.
 ### Test focus
 ### Issues
 > Each issue logged as `[self-resolved]` or `[raised]` with what it was and how it was handled.
+### Timing
+> Written by the orchestrator after the stage gate passes. On retry, previous value is preserved and new duration appended (e.g. `20m + 8m`).
 ### Gate
 > PASS or FAIL: <reason>. Written last. Orchestrator will not proceed if FAIL.
 
@@ -74,6 +76,8 @@ Created by `/pipeline-plan`. Read and appended by every subsequent stage.
 ### Notes for shipper
 ### Issues
 > Each issue logged as `[self-resolved]` or `[raised]` with what it was and how it was handled.
+### Timing
+> Written by the orchestrator after the stage gate passes. On retry, previous value is preserved and new duration appended (e.g. `6m + 3m`).
 ### Gate
 > PASS or FAIL: <reason>. Written last. Orchestrator will not proceed if FAIL.
 
@@ -85,6 +89,8 @@ Created by `/pipeline-plan`. Read and appended by every subsequent stage.
 ### Outcome
 approved | changes requested | blocked
 ### Notes
+### Timing
+> Written by the orchestrator after the stage gate passes.
 ### Gate
 > PASS or FAIL: <reason>. approved → PASS. changes requested or blocked → FAIL.
 
@@ -97,6 +103,8 @@ approved | changes requested | blocked
 ### Commit SHA
 ### Issues
 > Each issue logged as `[self-resolved]` or `[raised]` with what it was and how it was handled.
+### Timing
+> Written by the orchestrator after the stage gate passes.
 ### Gate
 > PASS or FAIL: <reason>. Written last.
 ```
