@@ -22,7 +22,7 @@ Read the full WorkItem before doing anything else.
    - Are there contradictions, missing information, or acceptance criteria that require a design decision not captured in the spec?
    - Do the "Files likely touched" point to code that exists and matches the spec's assumptions?
 
-   If the spec cannot be satisfied as written: stop immediately. Do not write any code. Append to the **Flags** section: `[implementer] Spec blocker: <description>`. Report to the user: "Cannot proceed — spec blocker: <reason>." Then write `### Gate\nFAIL: spec blocker — <reason>` and stop.
+   If the spec cannot be satisfied as written: stop immediately. Do not write any code. Append to the **Flags** section: `[implementer] Spec blocker: <description>`. Report to the user: "Cannot proceed — spec blocker: <reason>." Then write `### Gate\nFAIL [spec]: spec blocker — <reason>` and stop.
 
 3. Read `### Repo style` in the WorkItem and note the **Make targets** — the exact lint, full suite, and targeted test commands for this repo. Use these throughout; do not assume `make test.unit` or any other default.
 
@@ -90,6 +90,8 @@ Raise immediately (do not attempt to fix):
 
 **Gate result** (write as final action):
 - All checks pass, no unresolved raises → `### Gate\nPASS`
-- Any unresolved raise → `### Gate\nFAIL: <reason>` — stop and await user decision via orchestrator
+- Spec infeasible or contradictory → `### Gate\nFAIL [spec]: <reason>`
+- Lint unresolved, AC not met, self-resolve exhausted → `### Gate\nFAIL [code]: <reason>`
+- Created test files → `### Gate\nFAIL [pipeline]: created test files — tests/ is owned by the test stage`
 
-Report: "Implementation complete. Gate: PASS." (or "Gate: FAIL: <reason>")
+Report: "Implementation complete. Gate: PASS." (or "Gate: FAIL [type]: <reason>")

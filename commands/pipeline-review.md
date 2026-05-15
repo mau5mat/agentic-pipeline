@@ -50,8 +50,8 @@ PASS | FAIL: <summary of blocking issues>
 
 Gate rules:
 - `approved` → `### Gate\nPASS`
-- `changes requested` → `### Gate\nFAIL: changes requested — <one-line summary>`
-- `blocked` → `### Gate\nFAIL: blocked — <one-line summary>`
+- `changes requested` → `### Gate\nFAIL [code]: changes requested — <one-line summary>`
+- `blocked` → `### Gate\nFAIL [code]: blocked — <one-line summary>`
 
 7. Report the outcome clearly. If "changes requested" or "blocked", list the specific issues with file and line references where applicable.
 

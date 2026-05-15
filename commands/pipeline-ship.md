@@ -66,6 +66,7 @@ Raise immediately:
 
 **Gate result** (write as final action):
 - All checks pass → `### Gate\nPASS`
-- Any unresolved raise → `### Gate\nFAIL: <reason>`
+- Lint unresolved, test failures → `### Gate\nFAIL [code]: <reason>`
+- Push failure, PR creation failure → `### Gate\nFAIL [env]: <reason>`
 
-Report: "PR created: [url]. Gate: PASS." (or "Gate: FAIL: <reason>")
+Report: "PR created: [url]. Gate: PASS." (or "Gate: FAIL [type]: <reason>")

@@ -60,11 +60,13 @@ EXIT_CODE=$?
 
 **If exit code is 137, or if output contains "Killed", "signal: killed", or "OOM":**
 Stop immediately. Do not spawn the implement agent. Report to the user:
-> "Environment failure: test suite was killed (OOM/SIGKILL, exit 137). This is an infrastructure problem, not a code problem. Fix the environment (e.g. Docker memory limits) and re-run `/pipeline`."
-Write `[orchestrator] Step 4b: environment failure — test suite killed (OOM/SIGKILL)` to the Flags section and halt.
+> "**Gate: FAIL [env]** — test suite was killed (OOM/SIGKILL, exit 137). This is an infrastructure problem, not a code problem. Fix the environment (e.g. Docker memory limits) and re-run `/pipeline`."
+Write `[orchestrator] Step 4b: FAIL [env] — test suite killed (OOM/SIGKILL)` to the Flags section and halt.
 
 **If the suite cannot run at all** (import error, missing dependency, environment broken):
-Stop immediately. Do not spawn the implement agent. Report to the user what failed. Write `[orchestrator] Step 4b: environment broken — cannot establish test baseline` to Flags and halt.
+Stop immediately. Do not spawn the implement agent. Report to the user what failed.
+> "**Gate: FAIL [env]** — environment broken, cannot establish test baseline: <what failed>"
+Write `[orchestrator] Step 4b: FAIL [env] — environment broken: <reason>` to Flags and halt.
 
 **If some tests fail:**
 Write their IDs (not full output) to `### Baseline` in the WorkItem Implementation section. Proceed to implement.
@@ -101,15 +103,15 @@ Do not trust the agent's self-reported gate alone. After each stage, independent
 
 **After implement:**
 - Check the `### Issues` section — if it contains any unresolved lint failures (not `[self-resolved]`), override gate to FAIL. Do **not** re-run `make lint` yourself; trust the agent's recorded result.
-- Run the full test suite command from `### Repo style` (Make targets) as the correctness gate — if it fails on tests **not** listed in `### Baseline`, override gate to FAIL. If exit code is 137 or output contains "Killed"/"signal: killed", override gate to FAIL with: `[orchestrator] Post-implement: test suite killed (OOM/SIGKILL) — environment problem, not a code failure.` Subsequent stages use targeted runs only.
+- Run the full test suite command from `### Repo style` (Make targets) as the correctness gate — if it fails on tests **not** listed in `### Baseline`, override gate to `FAIL [code]: <N> tests failing, not in baseline`. If exit code is 137 or output contains "Killed"/"signal: killed", override gate to `FAIL [env]: test suite killed (OOM/SIGKILL) — infrastructure problem, not a code failure`. Subsequent stages use targeted runs only.
 - Check these fields are present in the Implementation section: `### Branch`, `### Files changed`, `### Baseline`, `### Key decisions`, `### Notes for tester`, `### Test focus`, `### Issues`, `### Gate`
-- Check that no files under `tests/` appear in `### Files changed` — if they do, override gate to FAIL and flag: `[orchestrator] implement stage created test files — tests/ is owned by the test stage`
+- Check that no files under `tests/` appear in `### Files changed` — if they do, override gate to `FAIL [pipeline]: implement stage created test files — tests/ is owned by the test stage`
 - If all checks pass: commit the stage output using conventional commits format (see below)
 
 **After test:**
 - Read the `### Run with` field from the Tests section — it contains the exact targeted test command. Run it. If it fails, override gate to FAIL. Do not run the full suite again.
 - Check these fields are present in the Tests section: `### Files changed`, `### What's covered`, `### Edge cases verified`, `### Run with`, `### Notes for shipper`, `### Issues`, `### Gate`
-- Check that no file in Tests `### Files changed` also appears in Implementation `### Files changed` — if any overlap exists, the test agent modified a source file. Override gate to FAIL and flag: `[orchestrator] test stage modified source files — source files are owned by the implement stage`
+- Check that no file in Tests `### Files changed` also appears in Implementation `### Files changed` — if any overlap exists, override gate to `FAIL [pipeline]: test stage modified source files — source files are owned by the implement stage`
 - If all checks pass: commit the stage output using conventional commits format (see below)
 
 **After review:**
@@ -162,13 +164,20 @@ Stage commits give a clean breadcrumb trail — one commit per passing stage, wi
 After verification, read the WorkItem gate:
 
 - `Gate: PASS` (and all verification checks passed) → continue to the next stage immediately.
-- `Gate: FAIL: <reason>` or gate field missing → pause and present the user with options:
+- `Gate: FAIL [type]: <reason>` or gate field missing → pause and present the user with options.
 
-  > "**Gate failed at [stage]:** <reason>
+  **Failure type prefix — interpret for the user before showing options:**
+  - `[env]` — infrastructure/environment problem (OOM, missing deps, network). **Not your code.** Fix the environment.
+  - `[code]` — code problem: test failure, lint error, AC not met. **You need to fix the implementation or tests.**
+  - `[spec]` — spec is wrong or infeasible. **Return to planning** before retrying implementation.
+  - `[pipeline]` — ownership violation or tooling bug. Check the pipeline stage files.
+
+  Present the options:
+  > "**Gate: FAIL [type] at [stage]:** <reason>
   >
   > How would you like to proceed?
-  > 1. **Retry** — fix the issue yourself and re-run `/pipeline` to resume from this stage
-  > 2. **Override** — acknowledge the failure and continue to the next stage anyway
+  > 1. **Retry** — fix the issue and re-run `/pipeline` to resume from this stage
+  > 2. **Override** — acknowledge and continue anyway (recorded in Flags)
   > 3. **Halt** — stop the pipeline here"
 
   Wait for the user's response before doing anything.

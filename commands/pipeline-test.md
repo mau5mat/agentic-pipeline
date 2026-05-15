@@ -90,6 +90,8 @@ Any test ID that appears in `### Baseline` and is still failing is **not** a rai
 
 **Gate result** (write as final action):
 - All checks pass, no unresolved raises → `### Gate\nPASS`
-- Any unresolved raise → `### Gate\nFAIL: <reason>` — stop and await user decision via orchestrator
+- Test failures, missing coverage, self-resolve exhausted → `### Gate\nFAIL [code]: <reason>`
+- Test cannot pass without modifying source → `### Gate\nFAIL [code]: implementation bug — <reason>`
+- Modified source files → `### Gate\nFAIL [pipeline]: test stage modified source files — source files are owned by the implement stage`
 
-Report: "Tests complete. Gate: PASS." (or "Gate: FAIL: <reason>")
+Report: "Tests complete. Gate: PASS." (or "Gate: FAIL [type]: <reason>")
