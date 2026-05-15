@@ -66,7 +66,7 @@ Read the full WorkItem before doing anything else.
 Run the following checks. For each failure, classify and handle as below before writing the gate result.
 
 **Checks:**
-- Lint — use the lint command from `### Repo style`. Do not run the test suite — the orchestrator runs that as the post-implement correctness gate.
+- Lint — use the lint command from `### Repo style`. **Use only Makefile targets — do not invoke linters, formatters, or test runners directly** (e.g. no `ruff`, `black`, `flake8`, `pytest`, `docker run ... ruff`, or similar). Always go through the Makefile target, even for a quick format fix. Do not run the test suite — the orchestrator runs that as the post-implement correctness gate.
 - Every acceptance criterion in the Spec is addressed
 - Nothing in "Out of scope" was implemented
 - No files were created under `tests/`
