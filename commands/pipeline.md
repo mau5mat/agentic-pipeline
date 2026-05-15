@@ -6,8 +6,8 @@ Run the following to find and read all repo-specific and project-level memory ru
 
 ```bash
 REPO=$(git rev-parse --show-toplevel)
-ENCODED=$(echo "$REPO" | sed 's|[/.]|-|g')
-REPO_MEMORY="$HOME/.claude/projects/${ENCODED}/memory"
+ENCODED="${REPO//[\/.]/-}"
+REPO_MEMORY="$HOME/.claude/projects/$ENCODED/memory"
 SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
 ```
 

@@ -21,8 +21,8 @@ SERVICE=$(basename "$REPO")
 SLUG=$(echo "$BRANCH" | sed "s|.*${SC}/||")   # e.g. -fix-task-discovery-for-workers
 SHORTCUT_URL="https://app.shortcut.com/slicernd/story/${SC_ID}/${SLUG}"
 WORKITEM="$REPO/.workitems/workitem-${SC}.md"
-ENCODED=$(echo "$REPO" | sed 's|[/.]|-|g')
-REPO_MEMORY="$HOME/.claude/projects/${ENCODED}/memory"
+ENCODED="${REPO//[\/.]/-}"
+REPO_MEMORY="$HOME/.claude/projects/$ENCODED/memory"
 SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
 ```
 
