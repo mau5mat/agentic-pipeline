@@ -30,15 +30,11 @@ Do not print bash variable assignments to the terminal. After running this block
 
 ## Steps
 
-1. Confirm the branch and Shortcut URL with the user before proceeding. Present this exact prompt for the base branch — do not ask an open question:
+1. Confirm the branch and Shortcut URL with the user before proceeding. For the base branch, present:
 
-   ```
-   Base branch:
-   1. main
-   2. other (type branch name)
-   ```
+   > `Base branch [main]: `
 
-   Option 1 is always `main`. Option 2 is always shown. User types 1 or 2; if 2, they provide the branch name. Record the result in the WorkItem.
+   Empty input (press Enter) defaults to `main`. Any other input is used as the branch name directly. Record the result in the WorkItem.
 
 2. Read the codebase to understand the relevant area before forming opinions. Check `$REPO_MEMORY` and `$SLICE_MEMORY` for any recorded gotchas about this area (read every `feedback_*.md` and relevant `project_*.md` files if those directories exist).
 3. Observe the repo's de-facto style by sampling representative files. Do this in two passes:
