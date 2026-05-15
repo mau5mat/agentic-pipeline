@@ -26,6 +26,8 @@ REPO_MEMORY="$HOME/.claude/projects/${ENCODED}/memory"
 SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
 ```
 
+Do not print bash variable assignments to the terminal. After running this block, output only: `Branch: <branch> | SC: <sc> | Shortcut: <url>` — nothing else from the derivation.
+
 ## Steps
 
 1. Confirm the branch and Shortcut URL with the user before proceeding. Present this exact prompt for the base branch — do not ask an open question:
