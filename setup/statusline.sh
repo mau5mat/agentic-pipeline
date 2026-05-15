@@ -28,9 +28,7 @@ if [ -z "$SC" ] || [ "$STATUS" = "done" ]; then
   exit 0
 fi
 
-CYAN='\033[36m'
-YELLOW='\033[33m'
 GREEN='\033[32m'
 RESET='\033[0m'
 
-echo -e "${CYAN}▶ Pipeline${RESET} ${SC} ${YELLOW}→ ${STAGE}${RESET}"
+echo -e "${GREEN}▶ Pipeline${RESET} ${SC} ${GREEN}→ ${STAGE}${RESET}"
