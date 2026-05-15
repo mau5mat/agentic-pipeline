@@ -41,10 +41,14 @@ case "$STAGE" in
   *)         STAGE_LABEL="$STAGE" ;;
 esac
 
+GREEN='\033[32m'
+BOLD_WHITE='\033[1;97m'
+RESET='\033[0m'
+
 # Stage progress
 PROGRESS=""
 if [ -n "$STAGE_NUM" ]; then
-  PROGRESS="  [${STAGE_NUM}/4]"
+  PROGRESS="  ${GREEN}|  Stage:${RESET} ${BOLD_WHITE}[${STAGE_NUM}/4]${RESET}"
 fi
 
 # Time elapsed
@@ -52,20 +56,16 @@ ELAPSED_STR=""
 if [ -n "$START_TIME" ]; then
   ELAPSED=$(( $(date +%s) - START_TIME ))
   if [ $ELAPSED -lt 60 ]; then
-    ELAPSED_STR="  ${ELAPSED}s"
+    TIME_VAL="${ELAPSED}s"
   else
     MINS=$(( ELAPSED / 60 ))
     if [ $MINS -ge 60 ]; then
-      ELAPSED_STR="  $(( MINS / 60 ))h $(( MINS % 60 ))m"
+      TIME_VAL="$(( MINS / 60 ))h $(( MINS % 60 ))m"
     else
-      ELAPSED_STR="  ${MINS}m"
+      TIME_VAL="${MINS}m"
     fi
   fi
+  ELAPSED_STR="  ${GREEN}|  Time:${RESET} ${BOLD_WHITE}[${TIME_VAL}]${RESET}"
 fi
 
-GREEN='\033[32m'
-BOLD_WHITE='\033[1;97m'
-DIM='\033[2m'
-RESET='\033[0m'
-
-echo -e "⚙  ${GREEN}Agentic Pipeline:${RESET} ${BOLD_WHITE}[${SC_UPPER}]${RESET}  ${GREEN}|  Agent:${RESET} ${BOLD_WHITE}[${STAGE_LABEL}]${RESET}${DIM}${PROGRESS}${ELAPSED_STR}${RESET}"
+echo -e "⚙  ${GREEN}Agentic Pipeline:${RESET} ${BOLD_WHITE}[${SC_UPPER}]${RESET}  ${GREEN}|  Agent:${RESET} ${BOLD_WHITE}[${STAGE_LABEL}]${RESET}${PROGRESS}${ELAPSED_STR}"
