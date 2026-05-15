@@ -89,6 +89,10 @@ Do not print bash variable assignments to the terminal. After running this block
 
    Note: the WorkItem lives in `<repo-root>/.workitems/` — inside the repo, hidden, and never pushed. Handover docs go to `<repo-root>/.handovers/`. Both are pipeline-internal artifacts. Add `.workitems/` and `.handovers/` to your global gitignore (`~/.gitignore_global`) to prevent accidental staging.
 
+   **Directory scope (strict):**
+   - `.workitems/` contains **only** WorkItem files named `workitem-sc-XXXXXX.md`. Nothing else goes here.
+   - `.handovers/` contains **only** handover files named `handover-sc-XXXXXX.md`. Nothing else goes here — not PR descriptions, not notes, not any other pipeline artifact.
+
 ## WorkItem to write
 
 ```

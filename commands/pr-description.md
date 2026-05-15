@@ -12,4 +12,4 @@ Follow these rules:
 - Backout should always say "To backout the changes, create a revert PR targeting master"
 - Remove the Migrations checklist item
 
-Once complete, write the filled-in description as a markdown file to `<repo-root>/.handovers/` named `<service-name>-<story_id>.md` (e.g. `.handovers/ros-service-sc-654433.md`), where `<repo-root>` is `$(git rev-parse --show-toplevel)` and the service name is derived from the repository directory name. Create the directory with `mkdir -p` first. Then print the contents so the user can review it.
+Once complete, write the filled-in description as a markdown file to `~/Development/Slice/pr-descriptions/<service-name>/<service-name>-sc-<number>.md` (e.g. `~/Development/Slice/pr-descriptions/restaurant-api/restaurant-api-sc-648809.md`), where the service name is derived from the repository directory name and the SC number is parsed from the branch name. Create the directory with `mkdir -p` first. Then print the contents so the user can review it.

@@ -157,12 +157,14 @@ If any verification check fails, log it in the Flags section as `[orchestrator] 
 
 ### Orchestrator commits
 
-After implement and test verification passes, stage all changes and commit. Do not add Co-Authored-By.
+After implement and test verification passes, stage only the files listed in `### Files changed` from the relevant stage section of the WorkItem. Do not add Co-Authored-By.
 
 ```bash
-git add -A
+git add <files listed in ### Files changed>
 git commit -m "<conventional commit message>"
 ```
+
+**Never** use `git add -A` or `git add .` — these will stage WorkItem and handover files, which are pipeline-internal artifacts that must never be committed. Only stage the source files the stage agent explicitly listed.
 
 **Type mapping** (read from WorkItem `**Type:**` field):
 - `feature` → `feat`
@@ -232,6 +234,8 @@ printf '{"sc":"%s","stage":"done","status":"done"}' "$SC" > "$HOME/.claude/pipel
 Read the full WorkItem and generate a handover document.
 
 Write it to: `$REPO/.handovers/handover-${SC}.md` (create the directory with `mkdir -p "$REPO/.handovers"` first)
+
+**Directory scope (strict):** `.handovers/` contains **only** handover files named `handover-sc-XXXXXX.md`. PR descriptions, notes, and any other artifacts go elsewhere — never in `.handovers/`. `.workitems/` contains **only** WorkItem files named `workitem-sc-XXXXXX.md`.
 
 Then print **only** these two lines to the terminal — do not print the handover doc in full:
 

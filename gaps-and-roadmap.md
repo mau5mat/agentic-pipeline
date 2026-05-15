@@ -2,7 +2,17 @@
 
 ## Known gaps (not yet fixed)
 
-All known gaps have been resolved. See Fixed section below.
+### Pipeline directories have strict scope — no foreign files (fixed 2026-05-15)
+
+`.workitems/` contains **only** `workitem-sc-XXXXXX.md` files. `.handovers/` contains **only** `handover-sc-XXXXXX.md` files. No PR descriptions, notes, or other pipeline artifacts go in either directory. Fixed by adding explicit scope notes to `pipeline-start.md` and `pipeline.md`. PR descriptions go to `~/Development/Slice/pr-descriptions/<service-name>.md` — fixed in `pr-description.md` which previously wrote to `<repo-root>/.handovers/` by mistake.
+
+---
+
+### Orchestrator must never stage WorkItem or handover files in git commits
+
+The orchestrator's stage commits (`git add lib/... .workitems/workitem-*.md`) have explicitly staged the WorkItem file, bypassing the global gitignore. Global gitignore entries only suppress *untracked* files from `git add -A` — an explicit `git add <path>` always stages, regardless of gitignore. The WorkItem and handover docs are pipeline-internal artifacts that must never leave the developer's local machine.
+
+**Rule:** When staging implement and test commits, the orchestrator must only `git add` files listed in `### Files changed` from the relevant stage section of the WorkItem. Never pass `.workitems/` or `.handovers/` paths to `git add` under any circumstances. If a WorkItem was accidentally committed, `git rm --cached` it immediately and force-push to clean the branch before creating the PR.
 
 ## Fixed
 
