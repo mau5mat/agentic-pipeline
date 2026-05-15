@@ -22,6 +22,8 @@ fi
 
 SC=$(jq -r '.sc // empty' "$STATE_FILE" 2>/dev/null)
 STAGE=$(jq -r '.stage // empty' "$STATE_FILE" 2>/dev/null)
+STAGE_NUM=$(jq -r '.stage_num // empty' "$STATE_FILE" 2>/dev/null)
+START_TIME=$(jq -r '.start_time // empty' "$STATE_FILE" 2>/dev/null)
 STATUS=$(jq -r '.status // empty' "$STATE_FILE" 2>/dev/null)
 
 if [ -z "$SC" ] || [ "$STATUS" = "done" ]; then
@@ -39,8 +41,31 @@ case "$STAGE" in
   *)         STAGE_LABEL="$STAGE" ;;
 esac
 
+# Stage progress
+PROGRESS=""
+if [ -n "$STAGE_NUM" ]; then
+  PROGRESS="  [${STAGE_NUM}/4]"
+fi
+
+# Time elapsed
+ELAPSED_STR=""
+if [ -n "$START_TIME" ]; then
+  ELAPSED=$(( $(date +%s) - START_TIME ))
+  if [ $ELAPSED -lt 60 ]; then
+    ELAPSED_STR="  ${ELAPSED}s"
+  else
+    MINS=$(( ELAPSED / 60 ))
+    if [ $MINS -ge 60 ]; then
+      ELAPSED_STR="  $(( MINS / 60 ))h $(( MINS % 60 ))m"
+    else
+      ELAPSED_STR="  ${MINS}m"
+    fi
+  fi
+fi
+
 GREEN='\033[32m'
 BOLD_WHITE='\033[1;97m'
+DIM='\033[2m'
 RESET='\033[0m'
 
-echo -e "⚙  ${GREEN}Agentic Pipeline:${RESET} ${BOLD_WHITE}[${SC_UPPER}]${RESET}  ${GREEN}|  Agent:${RESET} ${BOLD_WHITE}[${STAGE_LABEL}]${RESET}"
+echo -e "⚙  ${GREEN}Agentic Pipeline:${RESET} ${BOLD_WHITE}[${SC_UPPER}]${RESET}  ${GREEN}|  Agent:${RESET} ${BOLD_WHITE}[${STAGE_LABEL}]${RESET}${DIM}${PROGRESS}${ELAPSED_STR}${RESET}"

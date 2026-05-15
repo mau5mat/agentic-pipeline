@@ -76,11 +76,14 @@ Write `### Baseline\nClean — no pre-existing failures.` to the WorkItem Implem
 
 ## Step 5: Run each stage in sequence
 
-Before spawning each stage agent, write the current stage to the pipeline state file so the status line can display it:
+Before spawning each stage agent, write the current stage to the pipeline state file so the status line can display it. Include the stage number (1–4) and a unix start timestamp:
 
 ```bash
-printf '{"sc":"%s","stage":"%s","status":"running"}' "$SC" "<stage-name>" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"%s","stage_num":%d,"start_time":%d,"status":"running"}' \
+  "$SC" "<stage-name>" <stage-num> "$(date +%s)" > "$HOME/.claude/pipeline-state.json"
 ```
+
+Stage numbers: `implement=1`, `test=2`, `review=3`, `ship=4`.
 
 After the stage gate passes and verification completes, update status to reflect the next stage (or `done` after ship).
 
