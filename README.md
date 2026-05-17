@@ -10,7 +10,7 @@ Without the pipeline, work is conversational and sequential — you prompt each 
 
 ```
 /pipeline-plan <branch-name>   — interactive: create branch, work out spec, write WorkItem
-/pipeline-start                 — automated: implement → test → review → ship, hands you a PR URL when done
+/pipeline-run                   — automated: implement → test → review → ship, hands you a PR URL when done
 ```
 
 Expected flow: copy the branch name from Shortcut, then run `/pipeline-plan` with it. The pipeline creates the branch, runs planning interactively, then `/pipeline-run` chains all remaining stages automatically.
