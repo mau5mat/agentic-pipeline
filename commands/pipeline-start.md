@@ -9,9 +9,9 @@ Example:
 /pipeline-start mattroberts/sc-660363/-preparation-add-smoke-test-script
 ```
 
-## Step 1: Parse and create the branch
+## Step 1: Parse, reset to base branch, and create the branch
 
-Extract the SC number from the branch name argument and create the branch:
+Extract the SC number from the branch name argument:
 
 ```bash
 BRANCH_ARG="<argument passed to this skill>"
@@ -23,7 +23,30 @@ REPO=$(git rev-parse --show-toplevel)
 - If no SC number can be parsed from the branch name, stop: "Could not parse an SC number from `<branch-name>`. Expected format: `username/sc-XXXXXX/-description`."
 - If a WorkItem already exists for this SC (`$REPO/.workitems/workitem-${SC}.md`), stop: "WorkItem already exists for ${SC}. Run `/pipeline` to resume from the current stage."
 
-Create the branch:
+Check for uncommitted changes:
+```bash
+git diff-index --quiet HEAD --
+```
+If there are uncommitted changes, stop: "Uncommitted changes detected — commit or stash them before starting a new branch."
+
+**Prompt for the base branch before creating the new branch:**
+
+Output a blank line, then:
+```
+Base branch [main]: (press enter for main, or type a branch name)
+```
+
+Wait for the user's response. Empty input defaults to `main`. Any other input is used as-is. Record in `BASE_BRANCH`.
+
+**You MUST wait for the user's response before continuing. Do not assume main or skip this prompt.**
+
+Reset to the base branch and pull latest:
+```bash
+git checkout "$BASE_BRANCH"
+git pull
+```
+
+Create the new branch:
 ```bash
 git checkout -b "$BRANCH_ARG"
 ```
@@ -35,7 +58,7 @@ git checkout "$BRANCH_ARG"
 
 Write pipeline state so the status line shows while planning is in progress:
 ```bash
-printf '{"sc":"%s","stage":"plan","start_time":%d,"status":"running"}' "$SC" "$(date +%s)" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"plan","start_time":%d,"status":"running","repo_path":"%s"}' "$SC" "$(date +%s)" "$REPO" > "$HOME/.claude/pipeline-state.json"
 ```
 
 ## Step 2: Derive everything else
@@ -55,14 +78,8 @@ Run this block silently. Do not add echo statements, print variables, or show an
 
 ## Steps
 
-1. Confirm the branch and Shortcut URL with the user before proceeding. You **must** prompt for the base branch — do not assume `main` or skip this step:
-
-   > `Base branch [main]: `
-
-   Wait for the user's response. Empty input defaults to `main`. Any other input is used as-is. Record the result in the WorkItem. Do not proceed to codebase exploration until this response is received.
-
-2. Read the codebase to understand the relevant area before forming opinions. Check `$REPO_MEMORY` and `$SLICE_MEMORY` for any recorded gotchas about this area (read every `feedback_*.md` and relevant `project_*.md` files if those directories exist).
-3. Observe the repo's de-facto style by sampling representative files. Do this in two passes:
+1. Read the codebase to understand the relevant area before forming opinions. Check `$REPO_MEMORY` and `$SLICE_MEMORY` for any recorded gotchas about this area (read every `feedback_*.md` and relevant `project_*.md` files if those directories exist).
+2. Observe the repo's de-facto style by sampling representative files. Do this in two passes:
 
    **Pass 1 — survey the test taxonomy before sampling anything.** Look at the test directory structure, markers, decorators (`@pytest.mark.integration`, `@pytest.mark.unit`, etc.), and any test config (`pytest.ini`, `conftest.py`). Understand what categories of tests exist in this repo, how they're organised, and what each category looks like structurally. Identify which category the new tests for this work item will fall into.
 
@@ -77,15 +94,15 @@ Run this block silently. Do not add echo statements, print variables, or show an
 
    This becomes the `### Repo style` section and is injected into every downstream agent so they write code and tests that fit the existing codebase — not generic best-practice code.
 
-4. Work with the user to fill every field in the Spec section:
+3. Work with the user to fill every field in the Spec section:
    - **Goal** — what this achieves and why it is needed
    - **Acceptance criteria** — specific, testable conditions (not vague)
    - **Files likely touched** — confirm by reading the code, not guessing. Also check AGENTS.md for any files the agent is **required** to create or modify as part of a standard workflow (e.g. bug docs, ADRs, changelogs). If AGENTS.md mandates them, include them here — they are in scope by definition, not optional.
    - **Known constraints / gotchas** — ask the user explicitly; check repo memory files for relevant entries
    - **Out of scope** — explicitly name what will NOT be done in this work item
-5. Write the complete draft spec to the plan file and call `ExitPlanMode` to present it for formal approval. The plan file should contain the full WorkItem spec exactly as it will be written (all fields filled in, Repo style included). The user reviews it, gives feedback if needed, and approves. Do not write the WorkItem until approval is received.
+4. Call `EnterPlanMode`, write the complete draft spec to the plan file, then call `ExitPlanMode` to present it for formal approval. Calling `EnterPlanMode` first ensures this works regardless of whether the session is in auto-mode. The plan file should contain the full WorkItem spec exactly as it will be written (all fields filled in, Repo style included). The user reviews it, gives feedback if needed, and approves. Do not write the WorkItem until approval is received.
 
-6. After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
+5. After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
 
    Note: the WorkItem lives in `<repo-root>/.workitems/` — inside the repo, hidden, and never pushed. Handover docs go to `<repo-root>/.handovers/`. Both are pipeline-internal artifacts. Add `.workitems/` and `.handovers/` to your global gitignore (`~/.gitignore_global`) to prevent accidental staging.
 
