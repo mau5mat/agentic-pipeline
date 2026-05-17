@@ -12,7 +12,7 @@ The pipeline produces three artifacts:
 
 ## How it works
 
-When you run `/pipeline`, you are invoking the **Orchestrator** — a parent agent that manages the entire run. The Orchestrator does not do the implementation work itself. Instead, it spawns a dedicated **sub-agent** for each stage, waits for it to complete, verifies the result, then spawns the next one. Each sub-agent starts fresh with no memory of prior stages — the Orchestrator injects the context it needs.
+When you run `/pipeline-run`, you are invoking the **Orchestrator** — a parent agent that manages the entire run. The Orchestrator does not do the implementation work itself. Instead, it spawns a dedicated **sub-agent** for each stage, waits for it to complete, verifies the result, then spawns the next one. Each sub-agent starts fresh with no memory of prior stages — the Orchestrator injects the context it needs.
 
 The stages, in order:
 
@@ -31,7 +31,7 @@ The WorkItem (`<repo-root>/.workitems/workitem-sc-XXXXXX.md`) is a markdown file
 Spec → Implementation → Tests → Review → Ship
 ```
 
-Because the state is file-based, it survives crashes and session restarts. This is why `/pipeline` can always resume from the first incomplete stage — it reads the WorkItem to determine what has already passed.
+Because the state is file-based, it survives crashes and session restarts. This is why `/pipeline-run` can always resume from the first incomplete stage — it reads the WorkItem to determine what has already passed.
 
 No sub-agent has memory of prior conversations. The WorkItem is the mechanism that gives each fresh agent the full picture of what came before.
 
@@ -70,7 +70,7 @@ The Orchestrator surfaces the failure with three options: **Retry** (fix and re-
 
 The pipeline runs best with auto mode enabled. Each stage spawns a sub-agent that makes dozens of tool calls — permission prompts between them will interrupt the flow and can stall a stage mid-run.
 
-Enable auto mode in Claude Code before running `/pipeline`:
+Enable auto mode in Claude Code before running `/pipeline-run`:
 
 ```
 /auto
@@ -131,7 +131,7 @@ mattroberts/sc-660363/-preparation-add-smoke-test-script
 Open Claude Code in your service repo, then run:
 
 ```
-/pipeline-start mattroberts/sc-660363/-preparation-add-smoke-test-script
+/pipeline-plan mattroberts/sc-660363/-preparation-add-smoke-test-script
 ```
 
 The planning agent will:
@@ -147,7 +147,7 @@ This is the only interactive part of the pipeline. Once you approve the spec, th
 ## Step 2 — Run the pipeline
 
 ```
-/pipeline
+/pipeline-run
 ```
 
 This invokes the Orchestrator, which spawns each sub-agent in sequence. You'll see the status line update as each stage runs:
@@ -177,7 +177,7 @@ Open the handover doc — that's your human-readable summary of the run.
 
 The Orchestrator stops, explains the failure type (see Gates above), and presents three options: **Retry**, **Override**, or **Halt**.
 
-Re-running `/pipeline` always resumes from the first incomplete stage — stages that already passed are not re-run.
+Re-running `/pipeline-run` always resumes from the first incomplete stage — stages that already passed are not re-run.
 
 ---
 

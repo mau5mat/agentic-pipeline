@@ -3,7 +3,7 @@
 The WorkItem is the pipe. It lives at:
 `<repo-root>/.workitems/workitem-<sc-number>.md`
 
-Created by `/pipeline-start`. Read and appended by every subsequent stage.
+Created by `/pipeline-plan`. Read and appended by every subsequent stage.
 
 ---
 

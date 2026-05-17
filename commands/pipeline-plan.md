@@ -2,11 +2,11 @@ You are the **planning agent** in the development pipeline. Work interactively w
 
 ## Argument
 
-`/pipeline-start` takes a single required argument: the full branch name copied from Shortcut.
+`/pipeline-plan` takes a single required argument: the full branch name copied from Shortcut.
 
 Example:
 ```
-/pipeline-start mattroberts/sc-660363/-preparation-add-smoke-test-script
+/pipeline-plan mattroberts/sc-660363/-preparation-add-smoke-test-script
 ```
 
 ## Step 1: Parse, reset to base branch, and create the branch
@@ -19,9 +19,9 @@ SC=$(echo "$BRANCH_ARG" | grep -oiE 'sc-[0-9]+' | head -1)
 REPO=$(git rev-parse --show-toplevel)
 ```
 
-- If no branch name argument was provided, stop: "Usage: `/pipeline-start <branch-name>` — paste the branch name from Shortcut."
+- If no branch name argument was provided, stop: "Usage: `/pipeline-plan <branch-name>` — paste the branch name from Shortcut."
 - If no SC number can be parsed from the branch name, stop: "Could not parse an SC number from `<branch-name>`. Expected format: `username/sc-XXXXXX/-description`."
-- If a WorkItem already exists for this SC (`$REPO/.workitems/workitem-${SC}.md`), stop: "WorkItem already exists for ${SC}. Run `/pipeline` to resume from the current stage."
+- If a WorkItem already exists for this SC (`$REPO/.workitems/workitem-${SC}.md`), stop: "WorkItem already exists for ${SC}. Run `/pipeline-run` to resume from the current stage."
 
 Check for uncommitted changes:
 ```bash
@@ -216,4 +216,4 @@ Clear the pipeline state:
 printf '{"sc":"%s","stage":"done","status":"done","repo_path":"%s"}' "$SC" "$REPO" > "$HOME/.claude/pipeline-state.json"
 ```
 
-Report: "WorkItem written to [path]. Branch [branch]. Shortcut: [url]. Run `/pipeline` to start the pipeline."
+Report: "WorkItem written to [path]. Branch [branch]. Shortcut: [url]. Run `/pipeline-run` to start the pipeline."

@@ -28,7 +28,7 @@ SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
 WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```
 
-If no WorkItem exists at that path, stop immediately: "No WorkItem found for branch $BRANCH. Run `/pipeline-start <branch-name>` first to create one."
+If no WorkItem exists at that path, stop immediately: "No WorkItem found for branch $BRANCH. Run `/pipeline-plan <branch-name>` first to create one."
 
 Record pipeline start time and write orchestrator state so the status line shows immediately:
 ```bash
@@ -67,7 +67,7 @@ EXIT_CODE=$?
 
 **If exit code is 137, or if output contains "Killed", "signal: killed", or "OOM":**
 Stop immediately. Do not spawn the implement agent. Report to the user:
-> "**Gate: FAIL [env]** — test suite was killed (OOM/SIGKILL, exit 137). This is an infrastructure problem, not a code problem. Fix the environment (e.g. Docker memory limits) and re-run `/pipeline`."
+> "**Gate: FAIL [env]** — test suite was killed (OOM/SIGKILL, exit 137). This is an infrastructure problem, not a code problem. Fix the environment (e.g. Docker memory limits) and re-run `/pipeline-run`."
 Write `[orchestrator] Step 4b: FAIL [env] — test suite killed (OOM/SIGKILL)` to the Flags section and halt.
 
 **If the suite cannot run at all** (import error, missing dependency, environment broken):
@@ -220,7 +220,7 @@ After verification, read the WorkItem gate:
   > "**Gate: FAIL [type] at [stage]:** <reason>
   >
   > How would you like to proceed?
-  > 1. **Retry** — fix the issue and re-run `/pipeline` to resume from this stage
+  > 1. **Retry** — fix the issue and re-run `/pipeline-run` to resume from this stage
   > 2. **Override** — acknowledge and continue anyway (recorded in Flags)
   > 3. **Halt** — stop the pipeline here"
 

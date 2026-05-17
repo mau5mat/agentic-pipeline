@@ -4,7 +4,7 @@
 
 ### Pipeline directories have strict scope — no foreign files (fixed 2026-05-15)
 
-`.workitems/` contains **only** `workitem-sc-XXXXXX.md` files. `.handovers/` contains **only** `handover-sc-XXXXXX.md` files. No PR descriptions, notes, or other pipeline artifacts go in either directory. Fixed by adding explicit scope notes to `pipeline-start.md` and `pipeline.md`. PR descriptions go to `~/Development/Slice/pr-descriptions/<service-name>.md` — fixed in `pr-description.md` which previously wrote to `<repo-root>/.handovers/` by mistake.
+`.workitems/` contains **only** `workitem-sc-XXXXXX.md` files. `.handovers/` contains **only** `handover-sc-XXXXXX.md` files. No PR descriptions, notes, or other pipeline artifacts go in either directory. Fixed by adding explicit scope notes to `pipeline-plan.md` and `pipeline-run.md`. PR descriptions go to `~/Development/Slice/pr-descriptions/<service-name>.md` — fixed in `pr-description.md` which previously wrote to `<repo-root>/.handovers/` by mistake.
 
 ---
 

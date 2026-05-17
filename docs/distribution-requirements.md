@@ -25,7 +25,7 @@ Other teams use Jira (`PROJ-1234`), Linear (`ENG-456`), GitHub Issues (`#789`), 
 ---
 
 ### 3. Hardcoded org-level memory path
-`pipeline.md` and `pipeline-start.md` reference:
+`pipeline-run.md` and `pipeline-plan.md` reference:
 ```bash
 SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
 ```
@@ -38,7 +38,7 @@ This is doubly specific — it encodes both the username (`matt.roberts`) and th
 ### 4. Global `~/.claude/CLAUDE.md`
 Currently references Slice by name and the Slice-specific WorkItem path. Anyone installing the pipeline globally would need to edit this file manually, which is fragile.
 
-**Fix:** The pipeline shouldn't require edits to the user's global CLAUDE.md. Instead, ship a snippet they can append, or have the setup skill write it. Better still: make the pipeline discoverable without needing CLAUDE.md at all — the `/pipeline-start` skill is self-contained once installed.
+**Fix:** The pipeline shouldn't require edits to the user's global CLAUDE.md. Instead, ship a snippet they can append, or have the setup skill write it. Better still: make the pipeline discoverable without needing CLAUDE.md at all — the `/pipeline-plan` skill is self-contained once installed.
 
 ---
 

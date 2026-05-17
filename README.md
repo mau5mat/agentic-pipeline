@@ -9,17 +9,17 @@ Without the pipeline, work is conversational and sequential — you prompt each 
 ## The two commands
 
 ```
-/pipeline-start <branch-name>   — interactive: create branch, work out spec, write WorkItem
-/pipeline                       — automated: implement → test → review → ship, hands you a PR URL when done
+/pipeline-plan <branch-name>   — interactive: create branch, work out spec, write WorkItem
+/pipeline-start                 — automated: implement → test → review → ship, hands you a PR URL when done
 ```
 
-Expected flow: copy the branch name from Shortcut, then run `/pipeline-start` with it. The pipeline creates the branch, runs planning interactively, then `/pipeline` chains all remaining stages automatically.
+Expected flow: copy the branch name from Shortcut, then run `/pipeline-plan` with it. The pipeline creates the branch, runs planning interactively, then `/pipeline-run` chains all remaining stages automatically.
 
 ```
-/pipeline-start mattroberts/sc-660363/-preparation-add-smoke-test-script
+/pipeline-plan mattroberts/sc-660363/-preparation-add-smoke-test-script
 ```
 
-If the pipeline fails at any stage, fix the issue and run `/pipeline` again — it resumes from the first incomplete stage.
+If the pipeline fails at any stage, fix the issue and run `/pipeline-run` again — it resumes from the first incomplete stage.
 
 Individual stages can be run standalone if needed:
 `/pipeline-implement`, `/pipeline-test`, `/pipeline-review`, `/pipeline-ship`
@@ -42,14 +42,14 @@ Copy the skill files to your Claude commands directory:
 cp commands/*.md ~/.claude/commands/
 ```
 
-That's it. Invoke `/pipeline-start <branch-name>` from any service repo to start.
+That's it. Invoke `/pipeline-plan <branch-name>` from any service repo to start.
 
 ## Repository structure
 
 ```
 commands/                        ← skill files (copy these to ~/.claude/commands/)
-  pipeline.md                    ← orchestrator
-  pipeline-start.md
+  pipeline-run.md              ← orchestrator
+  pipeline-plan.md
   pipeline-implement.md
   pipeline-test.md
   pipeline-ship.md

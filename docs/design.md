@@ -78,7 +78,7 @@ This is the difference between trusting a summary and verifying a result. Shell 
 
 ## The orchestrator's job
 
-The orchestrator (`/pipeline`) is not a stage — it's the `(.)` operator. Its only job is:
+The orchestrator (`/pipeline-run`) is not a stage — it's the `(.)` operator. Its only job is:
 1. Load context: feedback rules from repo and project memory, CLAUDE.md and AGENTS.md from the repo root, and the `### Repo style` section from the WorkItem
 2. Read WorkItem state to determine next incomplete stage
 3. Spawn the appropriate stage agent with all loaded context injected as hard constraints
