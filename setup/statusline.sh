@@ -48,7 +48,7 @@ case "$STAGE" in
   ship)          STAGE_LABEL="Shipper" ;;
   plan)          STAGE_LABEL="Planner" ;;
   orchestrating) STAGE_LABEL="Orchestrator" ;;
-  verifying)     STAGE_LABEL="Verifying" ;;
+  verifying)     STAGE_LABEL="Orchestrator: Verifying" ;;
   *)             STAGE_LABEL="$STAGE" ;;
 esac
 
