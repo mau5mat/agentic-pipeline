@@ -24,7 +24,7 @@ Read the full WorkItem before doing anything. Pay close attention to **Tests →
    git push -u origin <branch-name>
    ```
 
-4. Create the PR with a title in conventional commits format — same type mapping as the implement commit (feature → feat, bug → fix, migration → chore), description from the WorkItem Goal:
+4. Create the PR with a title in conventional commits format — same type mapping as the implement commit (feature → feat, bug → fix, migration → chore), description from the WorkItem Goal. **No scope brackets of any kind** — not service names, directory names, or ticket prefixes.
    ```bash
    gh pr create --title "feat|fix|chore: <short description from Goal>" --base <base-branch-from-WorkItem> --body "$(cat <pr-description-file>)"
    ```

@@ -53,7 +53,7 @@ If any comment is ambiguous or appears to conflict with another, note it in the 
 
 ## Step 5: Present the plan for approval
 
-Call `ExitPlanMode` with the full plan. The plan must include:
+Call `EnterPlanMode`, write the plan, then call `ExitPlanMode` to present it for approval. Calling `EnterPlanMode` first ensures this works regardless of whether the session is in auto-mode. The plan must include:
 
 - **PR:** [url]
 - **Comments addressed:** [N]

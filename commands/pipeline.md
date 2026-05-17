@@ -239,7 +239,7 @@ This is not a silent bypass — the override is always recorded in the WorkItem.
 
 After Ship gate passes, clear the pipeline state:
 ```bash
-printf '{"sc":"%s","stage":"done","status":"done"}' "$SC" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"done","status":"done","repo_path":"%s"}' "$SC" "$REPO" > "$HOME/.claude/pipeline-state.json"
 ```
 
 Read the full WorkItem and generate a handover document.
