@@ -173,7 +173,7 @@ Run this block silently. Do not add echo statements, print variables, or show an
 
 Clear the pipeline state:
 ```bash
-printf '{"sc":"%s","stage":"done","status":"done"}' "$SC" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"done","status":"done","repo_path":"%s"}' "$SC" "$REPO" > "$HOME/.claude/pipeline-state.json"
 ```
 
 Report: "WorkItem written to [path]. Branch [branch]. Shortcut: [url]. Run `/pipeline` to start the pipeline."

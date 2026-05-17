@@ -25,7 +25,7 @@ Read the full WorkItem before doing anything else. Pay close attention to **Spec
    - Include at least one failure/negative case per meaningful code path
    - Follow the existing test patterns in this repo
 
-   **Do not create or modify any files outside the test directories (`tests/`, `spec/`, or equivalent).** If a source file needs changing to make a test pass, that is a bug in the implementation — raise it rather than fixing it yourself. Modifying source files will cause the gate to FAIL.
+   **Do not create or modify any files outside the test directories (`tests/`, `spec/`, `test/`, `__tests__/`).** If a source file needs changing to make a test pass, that is a bug in the implementation — raise it rather than fixing it yourself. Modifying source files will cause the gate to FAIL.
 
 4. Append to the **Tests** section of the WorkItem:
 
