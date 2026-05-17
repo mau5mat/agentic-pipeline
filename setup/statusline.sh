@@ -25,19 +25,28 @@ STAGE=$(jq -r '.stage // empty' "$STATE_FILE" 2>/dev/null)
 STAGE_NUM=$(jq -r '.stage_num // empty' "$STATE_FILE" 2>/dev/null)
 START_TIME=$(jq -r '.start_time // empty' "$STATE_FILE" 2>/dev/null)
 STATUS=$(jq -r '.status // empty' "$STATE_FILE" 2>/dev/null)
+REPO_PATH=$(jq -r '.repo_path // empty' "$STATE_FILE" 2>/dev/null)
 
 if [ -z "$SC" ] || [ "$STATUS" = "done" ]; then
   exit 0
 fi
 
+# Only show in the Claude Code session whose repo matches the pipeline's repo
+if [ -n "$REPO_PATH" ]; then
+  CURRENT_REPO=$(git rev-parse --show-toplevel 2>/dev/null)
+  if [ -z "$CURRENT_REPO" ] || [ "$CURRENT_REPO" != "$REPO_PATH" ]; then
+    exit 0
+  fi
+fi
+
 # Uppercase ticket and map stage to friendly name
 SC_UPPER=$(echo "$SC" | tr '[:lower:]' '[:upper:]')
 case "$STAGE" in
-  implement)     STAGE_LABEL="Implement" ;;
-  test)          STAGE_LABEL="Test" ;;
-  review)        STAGE_LABEL="Review" ;;
-  ship)          STAGE_LABEL="Ship" ;;
-  plan)          STAGE_LABEL="Plan" ;;
+  implement)     STAGE_LABEL="Implementor" ;;
+  test)          STAGE_LABEL="Tester" ;;
+  review)        STAGE_LABEL="Reviewer" ;;
+  ship)          STAGE_LABEL="Shipper" ;;
+  plan)          STAGE_LABEL="Planner" ;;
   orchestrating) STAGE_LABEL="Orchestrating" ;;
   verifying)     STAGE_LABEL="Verifying" ;;
   *)             STAGE_LABEL="$STAGE" ;;
