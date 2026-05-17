@@ -60,12 +60,12 @@ Currently references Slice by name and the Slice-specific WorkItem path. Anyone 
 
 A `/pipeline-setup` skill run once at install time that asks:
 
-1. Where should WorkItems be stored? (default: `~/Development/workitems`)
-2. Where should handover docs and PR descriptions go? (default: `~/Development/pr-descriptions`)
-3. What issue tracker do you use? (Shortcut / Jira / Linear / GitHub Issues / none)
-4. What is your ticket prefix? (e.g. `sc`, `ENG`, `PROJ`)
-5. What is your tracker URL template? (e.g. `https://app.shortcut.com/myorg/story/{id}`)
-6. Do you have an org-level memory directory? (optional — path to a shared `~/.claude/projects/.../memory` dir)
+1. What issue tracker do you use? (Shortcut / Jira / Linear / GitHub Issues / none)
+2. What is your ticket prefix? (e.g. `sc`, `ENG`, `PROJ`)
+3. What is your tracker URL template? (e.g. `https://app.shortcut.com/myorg/story/{id}`)
+4. Do you have an org-level memory directory? (optional — path to a shared `~/.claude/projects/.../memory` dir)
+
+Note: WorkItems (`<repo-root>/.workitems/`) and handover docs (`<repo-root>/.handovers/`) are now repo-local by default — no path config needed for those.
 
 Then writes `~/.claude/pipeline.conf` and appends the pipeline summary to `~/.claude/CLAUDE.md`.
 
@@ -91,6 +91,7 @@ Then writes `~/.claude/pipeline.conf` and appends the pipeline summary to `~/.cl
 - Claude Code CLI installed
 - `git` (obviously)
 - `gh` CLI authenticated (for GitHub PR creation — see #6 above)
+- `jq` installed (required for `statusline.sh` to parse `pipeline-state.json`)
 - A Makefile with lint and test targets, or equivalent (the planner discovers these — it just needs them to exist)
 - A repo with CLAUDE.md and/or AGENTS.md for best results (not required, but the pipeline is less useful without repo-specific constraints)
 
