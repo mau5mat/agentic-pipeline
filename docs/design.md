@@ -4,7 +4,7 @@
 
 The pipeline is a sequence of four specialist stages, each reading the full WorkItem and contributing its work before handing off to the next:
 
-- **Plan** — works interactively with the user to produce a spec, observe repo style, and write the WorkItem document
+- **Plan** — scoping conversation first (user-led, no code reads), then targeted codebase discovery informed by that conversation; produces a spec and writes the WorkItem document
 - **Implement** — reads the spec, writes the code, runs lint, appends implementation notes
 - **Test** — reads the spec and implementation notes, writes tests, appends coverage notes
 - **Review** — fresh-eyes pass: verifies every acceptance criterion is met, tests are meaningful, no scope creep, no security concerns
@@ -68,7 +68,7 @@ Context isolation. An agent that implemented the code will rationalise its own d
 
 The orchestrator does not trust stage agents' self-reported gate values alone. After each stage completes, before reading the gate, it independently verifies the most critical claims:
 
-- **After implement:** checks `### Issues` for unresolved lint failures (trusts the agent's recorded result — does not re-run lint); runs the full test suite command from `### Repo style` as the correctness gate; checks that no files under `tests/` appear in `### Files changed` (implement owns source, not tests). If any check fails, the gate is overridden to FAIL.
+- **After implement:** checks `### Issues` for unresolved lint failures (trusts the agent's recorded result — does not re-run lint); runs the full test suite command from `### Repo style` as the correctness gate (output captured once, not re-run for multiple greps); checks that no files under test directories (`tests/`, `spec/`, `test/`, `__tests__/`) appear in `### Files changed` (implement owns source, not tests). If any check fails, the gate is overridden to FAIL.
 - **After test:** reads `### Run with` and runs that exact targeted command; checks that no file in Tests `### Files changed` overlaps with Implementation `### Files changed` (test agent must not modify source files).
 - **After review:** checks that `### Outcome` and the gate are consistent — an outcome of `changes requested` or `blocked` with a `Gate: PASS` is a contradiction and is overridden to FAIL.
 - **After ship:** runs `gh pr view <url>` to verify the PR actually exists.

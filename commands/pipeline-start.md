@@ -78,31 +78,61 @@ Run this block silently. Do not add echo statements, print variables, or show an
 
 ## Steps
 
-1. Read the codebase to understand the relevant area before forming opinions. Check `$REPO_MEMORY` and `$SLICE_MEMORY` for any recorded gotchas about this area (read every `feedback_*.md` and relevant `project_*.md` files if those directories exist).
-2. Observe the repo's de-facto style by sampling representative files. Do this in two passes:
+### Step 1 — Scoping conversation (user-led, no code reads yet)
 
-   **Pass 1 — survey the test taxonomy before sampling anything.** Look at the test directory structure, markers, decorators (`@pytest.mark.integration`, `@pytest.mark.unit`, etc.), and any test config (`pytest.ini`, `conftest.py`). Understand what categories of tests exist in this repo, how they're organised, and what each category looks like structurally. Identify which category the new tests for this work item will fall into.
+Infer what the work involves from the branch slug — the descriptive part of the branch name after the SC number. Present this lightly as a starting point, not a conclusion:
 
-   **Pass 2 — sample with intent.** Read: 2-3 source files from the area being changed; 2-3 test files from the same category *and* the same area as what will be written; any linter/formatter config (`.flake8`, `pyproject.toml`, `.eslintrc`, etc.); the `Makefile` (if present).
+> "Based on the branch name, this looks like [inferred description]. What are you trying to build?"
 
-   Document what you observe across all of the following dimensions:
-   - **Code style:** naming conventions, function length, how errors are handled, how dependencies are injected, preferred patterns (e.g. dataclasses vs dicts, explicit returns vs early returns)
-   - **Test style:** framework and runner, test category being used for this work item, how fixtures are set up, how mocks are used, assertion style, file/function naming conventions
-   - **Paradigms:** OOP vs functional tendencies, sync vs async patterns, how the codebase is layered
-   - **Conventions:** import ordering, file structure, any patterns that appear consistently across files
-   - **Make targets:** the exact commands for lint, full test suite, and targeted test run — derived from the Makefile. If no Makefile, document the equivalent (e.g. `bundle exec rspec <path>`). Every downstream stage uses these commands; do not guess or assume defaults.
+Let the user lead. Your role is to listen, ask clarifying questions, and surface gaps — not to assume scope. The branch name may be imprecise or the scope may have shifted since the ticket was created. Work through:
 
-   This becomes the `### Repo style` section and is injected into every downstream agent so they write code and tests that fit the existing codebase — not generic best-practice code.
+- **Goal** — what problem is being solved and why? Ask the user to describe it in their own words.
+- **Acceptance criteria** — what does "done" look like? Push for specific, testable conditions rather than vague outcomes.
+- **Known constraints / gotchas** — anything they already know about the area? Tricky parts?
+- **Out of scope** — what is explicitly not part of this work?
 
-3. Work with the user to fill every field in the Spec section:
-   - **Goal** — what this achieves and why it is needed
-   - **Acceptance criteria** — specific, testable conditions (not vague)
-   - **Files likely touched** — confirm by reading the code, not guessing. Also check AGENTS.md for any files the agent is **required** to create or modify as part of a standard workflow (e.g. bug docs, ADRs, changelogs). If AGENTS.md mandates them, include them here — they are in scope by definition, not optional.
-   - **Known constraints / gotchas** — ask the user explicitly; check repo memory files for relevant entries
-   - **Out of scope** — explicitly name what will NOT be done in this work item
-4. Call `EnterPlanMode`, write the complete draft spec to the plan file, then call `ExitPlanMode` to present it for formal approval. Calling `EnterPlanMode` first ensures this works regardless of whether the session is in auto-mode. The plan file should contain the full WorkItem spec exactly as it will be written (all fields filled in, Repo style included). The user reviews it, gives feedback if needed, and approves. Do not write the WorkItem until approval is received.
+**Do not read any code during this phase.**
 
-5. After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
+Check `$REPO_MEMORY` and `$SLICE_MEMORY` for relevant recorded gotchas (read every `feedback_*.md` and relevant `project_*.md` files if those directories exist) and surface anything relevant during the conversation.
+
+---
+
+### Step 2 — Targeted codebase discovery (agent-led, now informed)
+
+With scope established, read the codebase with intent. Check `AGENTS.md` and `CLAUDE.md` if they exist. Read the specific files that came up in the conversation — confirm they match the spec's assumptions and identify the exact files that will need to change.
+
+Then do a two-pass repo style observation:
+
+**Pass 1 — survey the test taxonomy before sampling anything.** Look at the test directory structure, markers, decorators (`@pytest.mark.integration`, `@pytest.mark.unit`, etc.), and any test config (`pytest.ini`, `conftest.py`). Understand what categories of tests exist in this repo, how they're organised, and what each category looks like structurally. Identify which category the new tests for this work item will fall into.
+
+**Pass 2 — sample with intent.** Read: 2-3 source files from the area being changed; 2-3 test files from the same category *and* the same area as what will be written; any linter/formatter config (`.flake8`, `pyproject.toml`, `.eslintrc`, etc.); the `Makefile` (if present).
+
+Document what you observe across all of the following dimensions:
+- **Code style:** naming conventions, function length, how errors are handled, how dependencies are injected, preferred patterns (e.g. dataclasses vs dicts, explicit returns vs early returns)
+- **Test style:** framework and runner, test category being used for this work item, how fixtures are set up, how mocks are used, assertion style, file/function naming conventions
+- **Paradigms:** OOP vs functional tendencies, sync vs async patterns, how the codebase is layered
+- **Conventions:** import ordering, file structure, any patterns that appear consistently across files
+- **Make targets:** the exact commands for lint, full test suite, and targeted test run — derived from the Makefile. If no Makefile, document the equivalent (e.g. `bundle exec rspec <path>`). Every downstream stage uses these commands; do not guess or assume defaults.
+
+This becomes the `### Repo style` section and is injected into every downstream agent so they write code and tests that fit the existing codebase — not generic best-practice code.
+
+Confirm the final **Files likely touched** list. Also check AGENTS.md for any files the agent is **required** to create or modify as part of a standard workflow (e.g. bug docs, ADRs, changelogs) — if AGENTS.md mandates them, include them in scope.
+
+---
+
+### Step 3 — Fill any remaining spec gaps
+
+Resolve anything the scoping conversation left open that code reading now answers — exact file paths, constraints hidden in the existing implementation, or acceptance criteria that need tightening based on what you found.
+
+---
+
+### Step 4 — Present for approval and write WorkItem
+
+Call `EnterPlanMode`, write the complete draft spec to the plan file, then call `ExitPlanMode` to present it for formal approval. Calling `EnterPlanMode` first ensures this works regardless of whether the session is in auto-mode. The plan file should contain the full WorkItem spec exactly as it will be written (all fields filled in, Repo style included). The user reviews it, gives feedback if needed, and approves. Do not write the WorkItem until approval is received.
+
+### Step 5 — Write WorkItem
+
+After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
 
    Note: the WorkItem lives in `<repo-root>/.workitems/` — inside the repo, hidden, and never pushed. Handover docs go to `<repo-root>/.handovers/`. Both are pipeline-internal artifacts. Add `.workitems/` and `.handovers/` to your global gitignore (`~/.gitignore_global`) to prevent accidental staging.
 

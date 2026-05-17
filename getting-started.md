@@ -135,10 +135,10 @@ Open Claude Code in your service repo, then run:
 ```
 
 The planning agent will:
-- Create the branch and switch to it
-- Read the codebase to understand the relevant area
-- Work with you interactively to define the spec — goal, acceptance criteria, files likely touched, known gotchas, what's out of scope
-- Show you the full spec for approval before writing anything to disk
+- Ask for the base branch, check out to it, pull latest, then create the new branch
+- **Scoping conversation first** — infer what the work involves from the branch name and ask you to describe what you're building. You lead this conversation: goal, acceptance criteria, constraints, what's out of scope. No code is read yet.
+- **Targeted codebase discovery** — once scope is established, read the relevant files and observe the repo's de-facto style (test structure, naming conventions, Make targets). Discovery is aimed at what came out of the conversation, not a speculative broad scan.
+- Present the full spec for approval before writing anything to disk
 
 This is the only interactive part of the pipeline. Once you approve the spec, the WorkItem is written and you're ready to run.
 
