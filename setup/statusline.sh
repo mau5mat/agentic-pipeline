@@ -46,7 +46,9 @@ case "$STAGE" in
   test)          STAGE_LABEL="Tester" ;;
   review)        STAGE_LABEL="Reviewer" ;;
   ship)          STAGE_LABEL="Shipper" ;;
-  plan)          STAGE_LABEL="Planner" ;;
+  plan)               STAGE_LABEL="Planner" ;;
+  plan-scoping)       STAGE_LABEL="Planner: Scoping" ;;
+  plan-investigating) STAGE_LABEL="Planner: Investigating" ;;
   orchestrating) STAGE_LABEL="Orchestrator" ;;
   verifying)     STAGE_LABEL="Orchestrator: Verifying" ;;
   *)             STAGE_LABEL="$STAGE" ;;

@@ -80,6 +80,11 @@ Run this block silently. Do not add echo statements, print variables, or show an
 
 ### Step 1 — Scoping conversation (user-led, no code reads yet)
 
+Update pipeline state to reflect the scoping phase:
+```bash
+printf '{"sc":"%s","stage":"plan-scoping","start_time":%d,"status":"running","repo_path":"%s"}' "$SC" "$(date +%s)" "$REPO" > "$HOME/.claude/pipeline-state.json"
+```
+
 Infer what the work involves from the branch slug — the descriptive part of the branch name after the SC number. Present this lightly as a starting point, not a conclusion:
 
 > "Based on the branch name, this looks like [inferred description]. What are you trying to build?"
@@ -97,7 +102,12 @@ Check `$REPO_MEMORY` and `$SLICE_MEMORY` for relevant recorded gotchas (read eve
 
 ---
 
-### Step 2 — Targeted codebase discovery (agent-led, now informed)
+### Step 2 — Targeted codebase investigation (agent-led, now informed)
+
+Update pipeline state:
+```bash
+printf '{"sc":"%s","stage":"plan-investigating","start_time":%d,"status":"running","repo_path":"%s"}' "$SC" "$(date +%s)" "$REPO" > "$HOME/.claude/pipeline-state.json"
+```
 
 With scope established, read the codebase with intent. Check `AGENTS.md` and `CLAUDE.md` if they exist. Read the specific files that came up in the conversation — confirm they match the spec's assumptions and identify the exact files that will need to change.
 
