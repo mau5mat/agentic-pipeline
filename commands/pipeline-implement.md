@@ -26,11 +26,13 @@ Read the full WorkItem before doing anything else.
 
 3. Read `### Repo style` in the WorkItem and note the **Make targets** — the exact lint, full suite, and targeted test commands for this repo. Use these throughout; do not assume `make test.unit` or any other default.
 
-   Read the `### Baseline` field already written in the WorkItem — the orchestrator ran the test suite and wrote this before spawning you. Do not re-run the test suite. Do not overwrite `### Baseline`.
+   Read the `### Baseline` field already written in the WorkItem — the orchestrator ran the test suite and wrote this before spawning you. **Do not run the test suite.** Do not overwrite `### Baseline`.
+
+   **You run lint only during this stage. Do not run `make test`, `make unit`, or any other test suite command.** The orchestrator owns all full suite runs — before you were spawned and after you finish. Running the suite here is an ownership violation: it wastes time, may trigger status updates that confuse the user, and duplicates work the orchestrator will do anyway.
 
 4. Implement the changes required to satisfy every acceptance criterion. Follow AGENTS.md and CLAUDE.md conventions exactly. Do not implement anything listed under "Out of scope".
 
-   **Do not create any files under `tests/`.** Tests are exclusively the test agent's responsibility. If you find yourself writing test files, stop — that is out of scope for this stage. Creating test files will cause the gate to FAIL.
+   **Do not create or modify any files under test directories** (`tests/`, `spec/`, `test/`, `__tests__/`). Tests are exclusively the test agent's responsibility. If you find yourself writing test files, stop — that is out of scope for this stage. Creating or modifying test files will cause the gate to FAIL.
 
 5. Append to the **Implementation** section of the WorkItem:
 
@@ -69,7 +71,7 @@ Run the following checks. For each failure, classify and handle as below before 
 - Lint — use the lint command from `### Repo style`. **Use only Makefile targets — do not invoke linters, formatters, or test runners directly** (e.g. no `ruff`, `black`, `flake8`, `pytest`, `docker run ... ruff`, or similar). Always go through the Makefile target, even for a quick format fix. Do not run the test suite — the orchestrator runs that as the post-implement correctness gate.
 - Every acceptance criterion in the Spec is addressed
 - Nothing in "Out of scope" was implemented
-- No files were created under `tests/`
+- No files were created or modified under test directories (`tests/`, `spec/`, `test/`, `__tests__/`)
 
 **Classification:**
 
@@ -92,6 +94,6 @@ Raise immediately (do not attempt to fix):
 - All checks pass, no unresolved raises → `### Gate\nPASS`
 - Spec infeasible or contradictory → `### Gate\nFAIL [spec]: <reason>`
 - Lint unresolved, AC not met, self-resolve exhausted → `### Gate\nFAIL [code]: <reason>`
-- Created test files → `### Gate\nFAIL [pipeline]: created test files — tests/ is owned by the test stage`
+- Created or modified test files → `### Gate\nFAIL [pipeline]: created or modified test files — test directories (tests/, spec/, test/, __tests__/) are owned by the test stage`
 
 Report: "Implementation complete. Gate: PASS." (or "Gate: FAIL [type]: <reason>")
