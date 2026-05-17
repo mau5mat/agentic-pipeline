@@ -33,7 +33,7 @@ If no WorkItem exists at that path, stop immediately: "No WorkItem found for bra
 Record pipeline start time and write orchestrator state so the status line shows immediately:
 ```bash
 PIPELINE_START=$(date +%s)
-printf '{"sc":"%s","stage":"orchestrating","start_time":%d,"status":"running"}' "$SC" "$PIPELINE_START" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"orchestrating","start_time":%d,"status":"running","repo_path":"%s"}' "$SC" "$PIPELINE_START" "$REPO" > "$HOME/.claude/pipeline-state.json"
 ```
 
 Read the WorkItem silently. Report a single line: `Branch: <branch> | SC: <sc> | Stage: <first incomplete stage> | WorkItem: <path>`
@@ -59,8 +59,9 @@ Before spawning the implementation agent, scan the WorkItem Spec for independent
 
 Run the full test suite command from `### Repo style` (Make targets). This must happen before the implement agent is spawned — the baseline reflects the repo state before any changes.
 
+Capture output once and examine from the variable — do not run the suite more than once:
 ```bash
-<full suite command from Repo style>
+TEST_OUTPUT=$(<full suite command from Repo style> 2>&1)
 EXIT_CODE=$?
 ```
 
@@ -86,8 +87,8 @@ Before spawning each stage agent, write the current stage to the pipeline state 
 
 ```bash
 STAGE_START=$(date +%s)
-printf '{"sc":"%s","stage":"%s","stage_num":%d,"start_time":%d,"status":"running"}' \
-  "$SC" "<stage-name>" <stage-num> "$STAGE_START" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"%s","stage_num":%d,"start_time":%d,"status":"running","repo_path":"%s"}' \
+  "$SC" "<stage-name>" <stage-num> "$STAGE_START" "$REPO" > "$HOME/.claude/pipeline-state.json"
 ```
 
 Stage numbers: `implement=1`, `test=2`, `review=3`, `ship=4`.
@@ -135,7 +136,7 @@ Use these stage names in order: `pipeline-implement`, `pipeline-test`, `pipeline
 **After each agent completes, immediately update the status line to show the orchestrator is verifying, then run the post-stage verification checks below before reading the gate:**
 
 ```bash
-printf '{"sc":"%s","stage":"verifying","stage_num":%d,"start_time":%d,"status":"running"}' "$SC" <stage-num> "$(date +%s)" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"verifying","stage_num":%d,"start_time":%d,"status":"running","repo_path":"%s"}' "$SC" <stage-num> "$(date +%s)" "$REPO" > "$HOME/.claude/pipeline-state.json"
 ```
 
 ### Post-stage verification
@@ -144,9 +145,9 @@ Do not trust the agent's self-reported gate alone. After each stage, independent
 
 **After implement:**
 - Check the `### Issues` section — if it contains any unresolved lint failures (not `[self-resolved]`), override gate to FAIL. Do **not** re-run `make lint` yourself; trust the agent's recorded result.
-- Run the full test suite command from `### Repo style` (Make targets) as the correctness gate — if it fails on tests **not** listed in `### Baseline`, override gate to `FAIL [code]: <N> tests failing, not in baseline`. If exit code is 137 or output contains "Killed"/"signal: killed", override gate to `FAIL [env]: test suite killed (OOM/SIGKILL) — infrastructure problem, not a code failure`. Subsequent stages use targeted runs only.
+- Run the full test suite command from `### Repo style` (Make targets) as the correctness gate. Capture output once (`TEST_OUTPUT=$(<command> 2>&1); EXIT_CODE=$?`) and derive all checks from the captured variable — do not re-run the suite. If it fails on tests **not** listed in `### Baseline`, override gate to `FAIL [code]: <N> tests failing, not in baseline`. If exit code is 137 or output contains "Killed"/"signal: killed", override gate to `FAIL [env]: test suite killed (OOM/SIGKILL) — infrastructure problem, not a code failure`. Subsequent stages use targeted runs only.
 - Check these fields are present in the Implementation section: `### Branch`, `### Files changed`, `### Baseline`, `### Key decisions`, `### Notes for tester`, `### Test focus`, `### Issues`, `### Gate`
-- Check that no files under `tests/` appear in `### Files changed` — if they do, override gate to `FAIL [pipeline]: implement stage created test files — tests/ is owned by the test stage`
+- Check that no files under test directories (`tests/`, `spec/`, `test/`, `__tests__/`) appear in `### Files changed` — if they do, override gate to `FAIL [pipeline]: implement stage created or modified test files — test directories are owned by the test stage`
 - If all checks pass: commit the stage output using conventional commits format (see below)
 
 **After test:**
