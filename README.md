@@ -75,7 +75,7 @@ getting-started.md               ← new user guide
 
 ## Status line setup (optional but recommended)
 
-The pipeline writes its current stage to `~/.claude/pipeline-state.json` while running. A status line script reads this and displays it persistently in the Claude Code UI — useful during the 10-30 minute quiet gaps between stage turns.
+The pipeline writes its current stage to `<repo-root>/.pipeline-state/<sc-number>/pipeline-state.json` while running. A status line script reads this and displays it persistently in the Claude Code UI — useful during the 10-30 minute quiet gaps between stage turns.
 
 ```bash
 cp setup/statusline.sh ~/.claude/statusline.sh
@@ -104,13 +104,15 @@ Most pipeline artifacts live inside each service repo in hidden directories:
 |----------|----------|
 | WorkItems | `<repo-root>/.workitems/workitem-<sc>.md` |
 | Handover docs | `<repo-root>/.handovers/handover-<sc>.md` |
+| Pipeline state | `<repo-root>/.pipeline-state/<sc-number>/pipeline-state.json` |
 | PR descriptions | `~/Development/Slice/pr-descriptions/<service>/<service>-sc-<number>.md` |
 
-These directories are created automatically. **Add `.workitems/` and `.handovers/` to your global gitignore** (`~/.gitignore_global`) to prevent accidental staging — the pipeline does not touch any `.gitignore` file itself.
+These directories are created automatically. **Add `.workitems/`, `.handovers/`, and `.pipeline-state/` to your global gitignore** (`~/.gitignore_global`) to prevent accidental staging — the pipeline does not touch any `.gitignore` file itself.
 
 ```bash
 echo '.workitems/' >> ~/.gitignore_global
 echo '.handovers/' >> ~/.gitignore_global
+echo '.pipeline-state/' >> ~/.gitignore_global
 # Make sure your global gitignore is configured:
 git config --global core.excludesfile ~/.gitignore_global
 ```

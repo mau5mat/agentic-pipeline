@@ -7,7 +7,7 @@ What would need to change to make this pipeline a self-contained, shareable pack
 ## What is currently Slice/Matt-specific
 
 ### 1. ~~Hardcoded output paths~~ — resolved 2026-05-15
-WorkItems and handover docs now live at `<repo-root>/.workitems/` and `<repo-root>/.handovers/` — derived from `git rev-parse --show-toplevel`. No personal paths, no config needed. Both directories are gitignored locally and never pushed.
+WorkItems, handover docs, and pipeline state now live at `<repo-root>/.workitems/`, `<repo-root>/.handovers/`, and `<repo-root>/.pipeline-state/` — all derived from `git rev-parse --show-toplevel`. No personal paths, no config needed. All three directories are gitignored locally and never pushed.
 
 ---
 
@@ -65,7 +65,7 @@ A `/pipeline-setup` skill run once at install time that asks:
 3. What is your tracker URL template? (e.g. `https://app.shortcut.com/myorg/story/{id}`)
 4. Do you have an org-level memory directory? (optional — path to a shared `~/.claude/projects/.../memory` dir)
 
-Note: WorkItems (`<repo-root>/.workitems/`) and handover docs (`<repo-root>/.handovers/`) are now repo-local by default — no path config needed for those.
+Note: WorkItems (`<repo-root>/.workitems/`), handover docs (`<repo-root>/.handovers/`), and pipeline state (`<repo-root>/.pipeline-state/`) are all repo-local by default — no path config needed for those.
 
 Then writes `~/.claude/pipeline.conf` and appends the pipeline summary to `~/.claude/CLAUDE.md`.
 
@@ -91,7 +91,7 @@ Then writes `~/.claude/pipeline.conf` and appends the pipeline summary to `~/.cl
 - Claude Code CLI installed
 - `git` (obviously)
 - `gh` CLI authenticated (for GitHub PR creation — see #6 above)
-- `jq` installed (required for `statusline.sh` to parse `pipeline-state.json`)
+- `jq` installed (required for `statusline.sh` to parse per-ticket `pipeline-state.json` files)
 - A Makefile with lint and test targets, or equivalent (the planner discovers these — it just needs them to exist)
 - A repo with CLAUDE.md and/or AGENTS.md for best results (not required, but the pipeline is less useful without repo-specific constraints)
 

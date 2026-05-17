@@ -115,6 +115,7 @@ Add to your global gitignore so pipeline artifacts don't accidentally get commit
 ```bash
 echo '.workitems/' >> ~/.gitignore_global
 echo '.handovers/' >> ~/.gitignore_global
+echo '.pipeline-state/' >> ~/.gitignore_global
 git config --global core.excludesfile ~/.gitignore_global
 ```
 

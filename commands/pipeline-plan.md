@@ -16,6 +16,7 @@ Extract the SC number from the branch name argument:
 ```bash
 BRANCH_ARG="<argument passed to this skill>"
 SC=$(echo "$BRANCH_ARG" | grep -oiE 'sc-[0-9]+' | head -1)
+SC_NUM=$(echo "$SC" | grep -oE '[0-9]+')
 REPO=$(git rev-parse --show-toplevel)
 ```
 
@@ -58,7 +59,8 @@ git checkout "$BRANCH_ARG"
 
 Write pipeline state so the status line shows while planning is in progress:
 ```bash
-printf '{"sc":"%s","stage":"plan","start_time":%d,"status":"running","repo_path":"%s"}' "$SC" "$(date +%s)" "$REPO" > "$HOME/.claude/pipeline-state.json"
+mkdir -p "$REPO/.pipeline-state/$SC_NUM"
+printf '{"sc":"%s","stage":"plan","start_time":%d,"status":"running"}' "$SC" "$(date +%s)" > "$REPO/.pipeline-state/$SC_NUM/pipeline-state.json"
 ```
 
 ## Step 2: Derive everything else
@@ -82,7 +84,7 @@ Run this block silently. Do not add echo statements, print variables, or show an
 
 Update pipeline state to reflect the scoping phase:
 ```bash
-printf '{"sc":"%s","stage":"plan-scoping","start_time":%d,"status":"running","repo_path":"%s"}' "$SC" "$(date +%s)" "$REPO" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"plan-scoping","start_time":%d,"status":"running"}' "$SC" "$(date +%s)" > "$REPO/.pipeline-state/$SC_NUM/pipeline-state.json"
 ```
 
 Infer what the work involves from the branch slug — the descriptive part of the branch name after the SC number. Present this lightly as a starting point, not a conclusion:
@@ -106,7 +108,7 @@ Check `$REPO_MEMORY` and `$SLICE_MEMORY` for relevant recorded gotchas (read eve
 
 Update pipeline state:
 ```bash
-printf '{"sc":"%s","stage":"plan-investigating","start_time":%d,"status":"running","repo_path":"%s"}' "$SC" "$(date +%s)" "$REPO" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"plan-investigating","start_time":%d,"status":"running"}' "$SC" "$(date +%s)" > "$REPO/.pipeline-state/$SC_NUM/pipeline-state.json"
 ```
 
 With scope established, read the codebase with intent. Check `AGENTS.md` and `CLAUDE.md` if they exist. Read the specific files that came up in the conversation — confirm they match the spec's assumptions and identify the exact files that will need to change.
@@ -213,7 +215,7 @@ After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem docume
 
 Clear the pipeline state:
 ```bash
-printf '{"sc":"%s","stage":"done","status":"done","repo_path":"%s"}' "$SC" "$REPO" > "$HOME/.claude/pipeline-state.json"
+rm -rf "$REPO/.pipeline-state/$SC_NUM"
 ```
 
 Report: "WorkItem written to [path]. Branch [branch]. Shortcut: [url]. Run `/pipeline-run` to start the pipeline."

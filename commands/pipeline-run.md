@@ -25,6 +25,7 @@ After loading, report explicitly: "Loaded N feedback rules from [repo memory pat
 ```bash
 BRANCH=$(git branch --show-current)
 SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
+SC_NUM=$(echo "$SC" | grep -oE '[0-9]+')
 WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```
 
@@ -33,7 +34,8 @@ If no WorkItem exists at that path, stop immediately: "No WorkItem found for bra
 Record pipeline start time and write orchestrator state so the status line shows immediately:
 ```bash
 PIPELINE_START=$(date +%s)
-printf '{"sc":"%s","stage":"orchestrating","start_time":%d,"status":"running","repo_path":"%s"}' "$SC" "$PIPELINE_START" "$REPO" > "$HOME/.claude/pipeline-state.json"
+mkdir -p "$REPO/.pipeline-state/$SC_NUM"
+printf '{"sc":"%s","stage":"orchestrating","start_time":%d,"status":"running"}' "$SC" "$PIPELINE_START" > "$REPO/.pipeline-state/$SC_NUM/pipeline-state.json"
 ```
 
 Read the WorkItem silently. Report a single line: `Branch: <branch> | SC: <sc> | Stage: <first incomplete stage> | WorkItem: <path>`
@@ -87,8 +89,8 @@ Before spawning each stage agent, write the current stage to the pipeline state 
 
 ```bash
 STAGE_START=$(date +%s)
-printf '{"sc":"%s","stage":"%s","stage_num":%d,"start_time":%d,"status":"running","repo_path":"%s"}' \
-  "$SC" "<stage-name>" <stage-num> "$STAGE_START" "$REPO" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"%s","stage_num":%d,"start_time":%d,"status":"running"}' \
+  "$SC" "<stage-name>" <stage-num> "$STAGE_START" > "$REPO/.pipeline-state/$SC_NUM/pipeline-state.json"
 ```
 
 Stage numbers: `implement=1`, `test=2`, `review=3`, `ship=4`.
@@ -136,7 +138,7 @@ Use these stage names in order: `pipeline-implement`, `pipeline-test`, `pipeline
 **After each agent completes, immediately update the status line to show the orchestrator is verifying, then run the post-stage verification checks below before reading the gate:**
 
 ```bash
-printf '{"sc":"%s","stage":"verifying","stage_num":%d,"start_time":%d,"status":"running","repo_path":"%s"}' "$SC" <stage-num> "$(date +%s)" "$REPO" > "$HOME/.claude/pipeline-state.json"
+printf '{"sc":"%s","stage":"verifying","stage_num":%d,"start_time":%d,"status":"running"}' "$SC" <stage-num> "$(date +%s)" > "$REPO/.pipeline-state/$SC_NUM/pipeline-state.json"
 ```
 
 ### Post-stage verification
@@ -228,9 +230,9 @@ After verification, read the WorkItem gate:
 
   - **Retry** → stop. User will fix and re-run.
   - **Override** → append to the **Flags** section: `[orchestrator] Gate override at [stage]: <reason> — user chose to proceed.` Then continue to the next stage.
-  - **Halt** → clear the pipeline state file, then stop. Report current WorkItem state so the user knows where things stand.
+  - **Halt** → clear the pipeline state, then stop. Report current WorkItem state so the user knows where things stand.
     ```bash
-    printf '{"sc":"%s","stage":"done","status":"done","repo_path":"%s"}' "$SC" "$REPO" > "$HOME/.claude/pipeline-state.json"
+    rm -rf "$REPO/.pipeline-state/$SC_NUM"
     ```
 
 This is not a silent bypass — the override is always recorded in the WorkItem.
@@ -239,7 +241,7 @@ This is not a silent bypass — the override is always recorded in the WorkItem.
 
 After Ship gate passes, clear the pipeline state:
 ```bash
-printf '{"sc":"%s","stage":"done","status":"done","repo_path":"%s"}' "$SC" "$REPO" > "$HOME/.claude/pipeline-state.json"
+rm -rf "$REPO/.pipeline-state/$SC_NUM"
 ```
 
 Read the full WorkItem and generate a handover document.
