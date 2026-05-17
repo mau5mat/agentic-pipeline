@@ -21,18 +21,32 @@ Each stage needs context from all previous stages — the tester needs the spec 
 Each stage receives the WorkItem path, reads the full accumulated file, does its work, appends its section, and returns the same path — or a failure reason. The WorkItem path is the value threaded through the chain; the growing file content is the side effect of each stage.
 
 ```haskell
-type WorkItem = FilePath  -- constant address; content at that path grows as a side effect
+type BranchName = String
+type WorkItem   = FilePath  -- constant address; content at that path grows as a side effect
 
+-- /pipeline-plan: interactive — takes a branch name, converses with the user
+-- (scoping + codebase investigation), writes the approved spec to disk
+pipeline_plan :: BranchName -> IO WorkItem
+
+-- The four automated stages — each reads the WorkItem, appends its section,
+-- and returns the same path or a failure reason
 implement :: WorkItem -> IO (Either FailReason WorkItem)
 test      :: WorkItem -> IO (Either FailReason WorkItem)
 review    :: WorkItem -> IO (Either FailReason WorkItem)
 ship      :: WorkItem -> IO (Either FailReason WorkItem)
 
-pipeline :: WorkItem -> IO (Either FailReason WorkItem)
-pipeline = implement >=> test >=> review >=> ship
+-- /pipeline-run: chains the four stages; resumes from first incomplete on re-run
+pipeline_run :: WorkItem -> IO (Either FailReason WorkItem)
+pipeline_run = implement >=> test >=> review >=> ship
+
+-- Full flow: plan produces the WorkItem, run consumes it
+full_pipeline :: BranchName -> IO (Either FailReason WorkItem)
+full_pipeline branch = pipeline_plan branch >>= pipeline_run
 ```
 
 `Either e` is a Monad in Haskell, so `>=>` composes left-biased: the first `Left reason` short-circuits the rest of the chain. The orchestrator reads each gate before spawning the next agent. A missing gate is treated as `Left "gate not written"`.
+
+`pipeline_plan` is outside the `Either` chain — it produces the initial `WorkItem` value that the chain operates on. If planning fails or is abandoned, there is nothing to pass to `pipeline_run`. The `>>=` in `full_pipeline` is the handoff between the two commands.
 
 Each stage writes its gate as its final action — a `### Gate` field appended to its WorkItem section. This is the only thing the orchestrator inspects to decide whether to proceed.
 
