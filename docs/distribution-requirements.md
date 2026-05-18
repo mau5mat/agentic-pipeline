@@ -26,7 +26,7 @@ Ticket prefix, regex, URL template, and label are now read from `~/.claude/pipel
 
 ---
 
-### 5. ~~`slicernd` in the Shortcut URL~~ — resolved 2026-05-18
+### 5. ~~Hardcoded org slug in the Shortcut URL~~ — resolved 2026-05-18
 Covered by #2 — tracker URL is fully configurable via `/pipeline-setup`.
 
 ---
