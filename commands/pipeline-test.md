@@ -88,9 +88,19 @@ Any test ID that appears in `### Baseline` and is still failing is **not** a rai
 - [raised] test_bar.py::test_edge_case failing — implementation may not handle this case
 ```
 
+**Before writing the gate, run lint on your new test files:**
+
+Run the lint command from `### Repo style` on the files you created. Do not rely on the pre-commit hook to catch this. Self-resolve any errors (max 2 retries). Log the result in `### Issues`:
+- Clean: `[self-resolved] Lint: clean on test files`
+- Error fixed: `[self-resolved] Lint: <error> in <file> — fixed`
+- Unresolvable: `[raised] Lint: <error> — could not fix after 2 attempts`
+
+An unresolvable lint error is a raise → `Gate: FAIL [code]: lint error in test files — <reason>`
+
 **Gate result** (write as final action):
-- All checks pass, no unresolved raises → `### Gate\nPASS`
+- All checks pass, lint clean, no unresolved raises → `### Gate\nPASS`
 - Test failures, missing coverage, self-resolve exhausted → `### Gate\nFAIL [code]: <reason>`
+- Lint error on test files, self-resolve exhausted → `### Gate\nFAIL [code]: lint error in test files — <reason>`
 - Test cannot pass without modifying source → `### Gate\nFAIL [code]: implementation bug — <reason>`
 - Modified source files → `### Gate\nFAIL [pipeline]: test stage modified source files — source files are owned by the implement stage`
 
