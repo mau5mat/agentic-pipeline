@@ -1,0 +1,173 @@
+/* @theme catppuccin */
+
+@import 'default';
+
+:root {
+  --base:    #1e1e2e;
+  --mantle:  #181825;
+  --crust:   #11111b;
+  --surface0: #313244;
+  --surface1: #45475a;
+  --overlay0: #6c7086;
+  --text:    #cdd6f4;
+  --subtext: #a6adc8;
+  --mauve:   #cba6f7;
+  --blue:    #89b4fa;
+  --teal:    #94e2d5;
+  --green:   #a6e3a1;
+  --peach:   #fab387;
+  --red:     #f38ba8;
+  --yellow:  #f9e2af;
+}
+
+section {
+  background-color: var(--base);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  padding: 30px 70px 50px 70px;
+}
+
+section h1 {
+  color: var(--mauve);
+  border-bottom: 2px solid var(--surface1);
+  padding-bottom: 0.2em;
+}
+
+section h2 {
+  color: var(--blue);
+}
+
+section h3 {
+  color: var(--teal);
+}
+
+section a {
+  color: var(--blue);
+}
+
+section strong {
+  color: var(--peach);
+}
+
+section em {
+  color: var(--subtext);
+}
+
+section blockquote {
+  background: var(--surface0);
+  border-left: 4px solid var(--mauve);
+  color: var(--subtext);
+  padding: 0.5em 1em;
+  margin: 1em 0;
+  border-radius: 0 6px 6px 0;
+}
+
+section code {
+  background: var(--surface0);
+  color: var(--green);
+  border-radius: 4px;
+  padding: 0.1em 0.3em;
+  font-size: 0.9em;
+}
+
+section pre {
+  background: var(--mantle);
+  border: 1px solid var(--surface1);
+  border-radius: 8px;
+  padding: 1em;
+}
+
+section pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+}
+
+/* highlight.js syntax coloring */
+section pre .hljs-keyword,
+section pre .hljs-meta { color: var(--mauve); }
+
+section pre .hljs-type { color: var(--blue); }
+
+section pre .hljs-title,
+section pre .hljs-title.function_ { color: var(--teal); }
+
+section pre .hljs-operator { color: var(--peach); }
+
+section pre .hljs-string,
+section pre .hljs-attr { color: var(--green); }
+
+section pre .hljs-comment {
+  color: var(--overlay0);
+  font-style: italic;
+}
+
+section pre .hljs-number,
+section pre .hljs-literal { color: var(--yellow); }
+
+section pre .hljs-built_in { color: var(--peach); }
+
+section table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+section table th {
+  background: var(--surface1);
+  color: var(--mauve);
+  padding: 0.5em 0.8em;
+  text-align: left;
+}
+
+section table td {
+  color: var(--text);
+  padding: 0.4em 0.8em;
+  border-top: 1px solid var(--surface1);
+}
+
+section table tbody tr:nth-child(odd) td {
+  background: var(--surface0);
+}
+
+section table tbody tr:nth-child(even) td {
+  background: var(--mantle);
+}
+
+section.title {
+  background: var(--crust);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+section.title h1 {
+  font-size: 2.2em;
+  border: none;
+}
+
+section.title h3 {
+  color: var(--subtext);
+  font-weight: normal;
+}
+
+section footer,
+section header {
+  color: var(--overlay0);
+  font-size: 0.75em;
+}
+
+/* pagination */
+section::after {
+  color: var(--overlay0);
+}
+
+/* dense slides — applied via <!-- _class: dense --> */
+section.dense {
+  font-size: 0.88em;
+}
+
+section.dense pre {
+  padding: 0.75em;
+}

@@ -40,6 +40,7 @@ skills=(
   pipeline-review.md
   pipeline-ship.md
   pipeline-setup.md
+  pipeline-demo.md
   pr-description.md
   pr-review-feedback.md
 )

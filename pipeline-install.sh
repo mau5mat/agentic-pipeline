@@ -53,6 +53,7 @@ echo "    /pipeline-review      — review stage (also runnable standalone)"
 echo "    /pipeline-ship        — ship stage: push branch, open PR (also runnable standalone)"
 echo "    /pr-description       — generate a PR description from a WorkItem"
 echo "    /pr-review-feedback   — apply PR review feedback from a URL"
+echo "    /pipeline-demo        — simulated pipeline run with realistic output (good for testing your setup)"
 echo ""
 
 mkdir -p "$COMMANDS_DIR"
