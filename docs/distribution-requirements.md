@@ -11,41 +11,23 @@ WorkItems, handover docs, and pipeline state now live at `<repo-root>/.workitems
 
 ---
 
-### 2. Shortcut as the issue tracker
-Several things assume Shortcut:
-- Ticket format: `sc-XXXXXX` — extracted by `grep -oiE 'sc-[0-9]+'`
-- Branch convention: `<username>/sc-XXXXXX/-description`
-- Shortcut URL: `https://app.shortcut.com/slicernd/story/${SC_ID}/${SLUG}`
-- WorkItem header field: `**Shortcut:**`
-
-Other teams use Jira (`PROJ-1234`), Linear (`ENG-456`), GitHub Issues (`#789`), etc. — each with different URL formats and ticket prefixes.
-
-**Fix:** Config entries for ticket prefix pattern, branch extraction regex, and tracker URL template. The WorkItem header field becomes `**Ticket:**` generically. Planner derives the URL from the template. A reasonable default: if no tracker is configured, ticket field is omitted.
+### 2. ~~Shortcut as the issue tracker~~ — resolved 2026-05-18
+Ticket prefix, regex, URL template, and label are now read from `~/.claude/pipeline.conf`. Shortcut users answer one question (org slug); other tracker users configure prefix, URL template, and label. The WorkItem tracker field is omitted if no URL is configured.
 
 ---
 
-### 3. Hardcoded org-level memory path
-`pipeline-run.md` and `pipeline-plan.md` reference:
-```bash
-SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
-```
-This is doubly specific — it encodes both the username (`matt.roberts`) and the org (`Slice`). Anyone else running this gets an empty SLICE_MEMORY on every run.
-
-**Fix:** Config entry for an optional `PIPELINE_ORG_MEMORY` path, or derive it automatically from the parent directory of the repo (the same encoding logic Claude Code uses). Or simply make org-level memory optional and document that it's a shared team memory dir if teams want one.
+### 3. ~~Hardcoded org-level memory path~~ — resolved 2026-05-18
+`PIPELINE_ORG_MEMORY` is now read from `~/.claude/pipeline.conf`. Optional — empty string if not set. Both `pipeline-plan` and `pipeline-run` use `$ORG_MEMORY` instead of the hardcoded Slice path.
 
 ---
 
-### 4. Global `~/.claude/CLAUDE.md`
-Currently references Slice by name and the Slice-specific WorkItem path. Anyone installing the pipeline globally would need to edit this file manually, which is fragile.
-
-**Fix:** The pipeline shouldn't require edits to the user's global CLAUDE.md. Instead, ship a snippet they can append, or have the setup skill write it. Better still: make the pipeline discoverable without needing CLAUDE.md at all — the `/pipeline-plan` skill is self-contained once installed.
+### 4. ~~Global `~/.claude/CLAUDE.md`~~ — resolved 2026-05-18
+`/pipeline-setup` writes a generic pipeline block (between comment markers) to `~/.claude/CLAUDE.md`. Idempotent — re-running updates the block without touching surrounding content.
 
 ---
 
-### 5. `slicernd` in the Shortcut URL
-`SHORTCUT_URL="https://app.shortcut.com/slicernd/story/..."` — `slicernd` is the Slice org slug.
-
-**Fix:** Covered by #2 above — tracker URL is configurable.
+### 5. ~~`slicernd` in the Shortcut URL~~ — resolved 2026-05-18
+Covered by #2 — tracker URL is fully configurable via `/pipeline-setup`.
 
 ---
 
@@ -56,18 +38,13 @@ Currently references Slice by name and the Slice-specific WorkItem path. Anyone 
 
 ---
 
-## What a setup skill would look like
+## `/pipeline-setup` — ~~planned~~ shipped 2026-05-18
 
-A `/pipeline-setup` skill run once at install time that asks:
+Run once at install time. Shortcut users answer one question (org slug); other tracker users answer three (prefix, URL template, label). Org memory path is optional for both.
 
-1. What issue tracker do you use? (Shortcut / Jira / Linear / GitHub Issues / none)
-2. What is your ticket prefix? (e.g. `sc`, `ENG`, `PROJ`)
-3. What is your tracker URL template? (e.g. `https://app.shortcut.com/myorg/story/{id}`)
-4. Do you have an org-level memory directory? (optional — path to a shared `~/.claude/projects/.../memory` dir)
+Writes `~/.claude/pipeline.conf` and updates the pipeline block in `~/.claude/CLAUDE.md`.
 
 Note: WorkItems (`<repo-root>/.workitems/`), handover docs (`<repo-root>/.handovers/`), and pipeline state (`<repo-root>/.pipeline-state/`) are all repo-local by default — no path config needed for those.
-
-Then writes `~/.claude/pipeline.conf` and appends the pipeline summary to `~/.claude/CLAUDE.md`.
 
 ---
 

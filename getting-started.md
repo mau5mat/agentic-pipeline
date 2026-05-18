@@ -100,6 +100,8 @@ cp setup/statusline.sh ~/.claude/statusline.sh
 chmod +x ~/.claude/statusline.sh
 ```
 
+Then run `/pipeline-setup` once in Claude Code to configure your issue tracker. This writes `~/.claude/pipeline.conf` — all repos on this machine use it.
+
 Add to `~/.claude/settings.json`:
 ```json
 {

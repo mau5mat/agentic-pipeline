@@ -36,18 +36,21 @@ Spec → Implementation + handoff notes → Tests + handoff notes → Review (ga
 
 ## Installation
 
-Copy the skill files to your Claude commands directory:
-
 ```bash
+# 1. Copy skill files to Claude's commands directory
 cp commands/*.md ~/.claude/commands/
+
+# 2. Configure your tracker and preferences (one-time, per machine)
+/pipeline-setup
 ```
 
-That's it. Invoke `/pipeline-plan <branch-name>` from any service repo to start.
+`/pipeline-setup` asks for your issue tracker details and writes `~/.claude/pipeline.conf`. Run it once — all repos on this machine will use the same config. Re-run at any time to update settings.
 
 ## Repository structure
 
 ```
 commands/                        ← skill files (copy these to ~/.claude/commands/)
+  pipeline-setup.md            ← one-time setup: writes ~/.claude/pipeline.conf
   pipeline-run.md              ← orchestrator
   pipeline-plan.md
   pipeline-implement.md
