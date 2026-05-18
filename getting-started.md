@@ -93,34 +93,18 @@ This is a per-session setting and does not persist. It remains your decision whe
 
 ## Installation
 
-```bash
-# Copy skill files to Claude's commands directory
-cp commands/*.md ~/.claude/commands/
+Clone the repo and run the install script:
 
-# Install the status line script (shows pipeline progress in the UI)
-cp setup/statusline.sh ~/.claude/statusline.sh
-chmod +x ~/.claude/statusline.sh
+```bash
+./pipeline-install.sh
 ```
 
-Then run `/pipeline-setup` once in Claude Code to configure your issue tracker. This writes `~/.claude/pipeline.conf` — all repos on this machine use it.
+This checks prerequisites, installs skill files to `~/.claude/commands/`, sets up the status line, and walks you through tracker configuration. It will also tell you what to add to `~/.claude/settings.json` to enable the status line display, and remind you to add pipeline artifact directories to your global gitignore.
 
-Add to `~/.claude/settings.json`:
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "refreshInterval": 3
-  }
-}
-```
+To remove the pipeline later:
 
-Add to your global gitignore so pipeline artifacts don't accidentally get committed:
 ```bash
-echo '.workitems/' >> ~/.gitignore_global
-echo '.handovers/' >> ~/.gitignore_global
-echo '.pipeline-state/' >> ~/.gitignore_global
-git config --global core.excludesfile ~/.gitignore_global
+./pipeline-uninstall.sh
 ```
 
 ---

@@ -39,43 +39,15 @@ Each stage agent starts fresh — no memory of prior stages. The WorkItem (`<rep
 ## Installation
 
 ```bash
-# 1. Copy skill files to Claude's commands directory
-cp commands/*.md ~/.claude/commands/
-
-# 2. Configure your tracker and preferences (one-time, per machine)
-/pipeline-setup
+./pipeline-install.sh
 ```
 
-`/pipeline-setup` asks for your issue tracker details and writes `~/.claude/pipeline.conf`. Run it once — all repos on this machine share the same config. Re-run at any time to update.
+The script checks prerequisites, copies skill files to `~/.claude/commands/`, installs the status line script, and walks you through tracker configuration. Safe to re-run — updates existing config without touching unrelated settings.
 
-**Add pipeline artifact directories to your global gitignore** so they're never accidentally staged:
+To remove the pipeline from a machine:
 
 ```bash
-echo '.workitems/' >> ~/.gitignore_global
-echo '.handovers/' >> ~/.gitignore_global
-echo '.pipeline-state/' >> ~/.gitignore_global
-git config --global core.excludesfile ~/.gitignore_global
-```
-
-## Status line (optional but recommended)
-
-The pipeline writes its current stage to `<repo-root>/.pipeline-state/<ticket-id>/pipeline-state.json`. A status line script reads this and displays it in the Claude Code UI — useful during the 10–30 minute gaps between stages.
-
-```bash
-cp setup/statusline.sh ~/.claude/statusline.sh
-chmod +x ~/.claude/statusline.sh
-```
-
-Add to `~/.claude/settings.json`:
-
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "refreshInterval": 3
-  }
-}
+./pipeline-uninstall.sh
 ```
 
 ## Runtime artifacts (local only, never pushed)
@@ -90,9 +62,11 @@ Add to `~/.claude/settings.json`:
 ## Repository structure
 
 ```
-commands/          ← skill files (copy to ~/.claude/commands/)
-setup/             ← statusline.sh
-docs/              ← design docs, WorkItem schema, gaps, examples, abort/recovery
-findings/          ← post-run findings from real pipeline sessions
-getting-started.md ← new user guide
+commands/              ← skill files (copied to ~/.claude/commands/ by install script)
+setup/                 ← statusline.sh
+docs/                  ← design docs, WorkItem schema, gaps, examples, abort/recovery
+findings/              ← post-run findings from real pipeline sessions
+pipeline-install.sh    ← one-time install: prerequisites, config, skills, status line
+pipeline-uninstall.sh  ← remove everything the install script added
+getting-started.md     ← new user guide
 ```
