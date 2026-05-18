@@ -12,4 +12,4 @@ Follow these rules:
 - Backout should always say "To backout the changes, create a revert PR targeting master"
 - Remove the Migrations checklist item
 
-Once complete, write the filled-in description as a markdown file to `~/.claude/pr-descriptions/<service-name>/<service-name>-<ticket-id>.md` (e.g. `~/.claude/pr-descriptions/restaurant-api/restaurant-api-sc-648809.md`), where the service name is derived from the repository directory name and the ticket ID is parsed from the branch name. Create the directory with `mkdir -p` first. Then print the contents so the user can review it.
+Once complete, write the filled-in description as a markdown file to `~/.claude/pr-descriptions/<service-name>/<service-name>-<ticket-id>.md` (e.g. `~/.claude/pr-descriptions/my-service/my-service-sc-123456.md`), where the service name is derived from the repository directory name and the ticket ID is parsed from the branch name. Create the directory with `mkdir -p` first. Then print the contents so the user can review it.

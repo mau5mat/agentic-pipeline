@@ -109,7 +109,7 @@ The orchestrator loads three categories of context before spawning anything, the
 
 1. **Repo rules** — `CLAUDE.md`, `AGENTS.md`, and `.claude/CLAUDE.md` from the repo root. Explicit conventions, required patterns, things not to do.
 
-2. **Feedback rules** — all `feedback_*.md` files from both the repo-specific memory directory and the Slice-level memory directory. Accumulated corrections and validated decisions from prior sessions.
+2. **Feedback rules** — all `feedback_*.md` files from both the repo-specific memory directory and the org-level memory directory. Accumulated corrections and validated decisions from prior sessions.
 
 3. **Repo style** — the `### Repo style` section written by the planner into the WorkItem. Observed de-facto conventions sampled from the actual codebase: code style, test style, paradigms, naming. Ensures agents write code that fits, not just code that works.
 
@@ -177,7 +177,7 @@ The handover is written for the human reviewer — it distils what happened duri
 - **Review focus areas** — 3-5 specific things derived from the above: file names, function names, edge cases that deserve attention. Not generic advice.
 - **QA checklist** — one human-executable step per acceptance criterion: what to call, send, and observe in a running environment (not by reading code or tests)
 
-The review focus areas are the most valuable part — rather than "please review the code," the reviewer gets "pay attention to `services/delivery/app/celery.py:45` because the implementer tried approach A and there's an edge case in the queue suffix logic."
+The review focus areas are the most valuable part — rather than "please review the code," the reviewer gets "pay attention to `services/payments/app/tasks.py:45` because the implementer tried approach A and there's an edge case in the queue suffix logic."
 
 ## Opt-in design
 

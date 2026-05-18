@@ -3,7 +3,7 @@
 **Scenario:** Add a `delivery_notes` field to the order model so customers can include delivery instructions at checkout.
 
 - Service: `order-service`
-- Branch: `mattroberts/sc-11234/add-delivery-notes-field`
+- Branch: `username/sc-11234/add-delivery-notes-field`
 - Ticket: SC-11234
 
 ---
@@ -16,9 +16,9 @@
 **Service:** order-service
 **Type:** feature
 **Date:** 2026-05-15
-**Branch:** mattroberts/sc-11234/add-delivery-notes-field
+**Branch:** username/sc-11234/add-delivery-notes-field
 **Base branch:** main
-**Shortcut:** https://app.shortcut.com/slice/story/11234
+**Shortcut:** https://app.shortcut.com/your-org/story/11234
 
 ## Spec
 
@@ -57,7 +57,7 @@ Allow customers to add free-text delivery instructions (e.g. "leave at door", "c
 ## Implementation
 
 ### Branch
-mattroberts/sc-11234/add-delivery-notes-field
+username/sc-11234/add-delivery-notes-field
 
 ### Files changed
 - `app/models/order.py` — added `delivery_notes` column
@@ -133,7 +133,7 @@ PASS
 ## Ship
 
 ### PR URL
-https://github.com/slice/order-service/pull/892
+https://github.com/your-org/order-service/pull/892
 
 ### Commit SHA
 a3f7c91
@@ -158,7 +158,7 @@ None.
 ```
 Loaded:
   Repo rules:   CLAUDE.md (found), AGENTS.md (found), .claude/CLAUDE.md (not found)
-  Feedback:     2 feedback_*.md files from repo memory, 4 from Slice memory
+  Feedback:     2 feedback_*.md files from repo memory, 4 from org memory
   Repo style:   ### Repo style present in WorkItem
 ```
 
@@ -209,11 +209,11 @@ Consistent ✓
 
 Agent reads `### Run with`, runs targeted tests, pushes branch, creates PR. Orchestrator verifies:
 ```
-gh pr view https://github.com/slice/order-service/pull/892   → PR exists ✓
+gh pr view https://github.com/your-org/order-service/pull/892   → PR exists ✓
 ```
 Gate accepted.
 
-**Done.** PR URL returned: `https://github.com/slice/order-service/pull/892`
+**Done.** PR URL returned: `https://github.com/your-org/order-service/pull/892`
 
 ---
 
@@ -222,8 +222,8 @@ Gate accepted.
 ```markdown
 # Handover: SC-11234 — add delivery notes field to order model
 
-**PR:** https://github.com/slice/order-service/pull/892
-**Branch:** mattroberts/sc-11234/add-delivery-notes-field → main
+**PR:** https://github.com/your-org/order-service/pull/892
+**Branch:** username/sc-11234/add-delivery-notes-field → main
 **Commits:** a3f7c91
 
 ## What was built

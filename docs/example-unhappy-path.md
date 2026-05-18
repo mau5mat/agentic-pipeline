@@ -10,7 +10,7 @@ The unhappy path demonstrates:
 - Clean ship after retry
 
 - Service: `payment-service`
-- Branch: `mattroberts/sc-11456/add-payment-retry-webhook`
+- Branch: `username/sc-11456/add-payment-retry-webhook`
 - Ticket: SC-11456
 
 ---
@@ -23,9 +23,9 @@ The unhappy path demonstrates:
 **Service:** payment-service
 **Type:** feature
 **Date:** 2026-05-15
-**Branch:** mattroberts/sc-11456/add-payment-retry-webhook
+**Branch:** username/sc-11456/add-payment-retry-webhook
 **Base branch:** main
-**Shortcut:** https://app.shortcut.com/slice/story/11456
+**Shortcut:** https://app.shortcut.com/your-org/story/11456
 
 ## Spec
 
@@ -66,7 +66,7 @@ Fire a webhook to registered subscribers when a payment retry is scheduled. Subs
 ## Implementation
 
 ### Branch
-mattroberts/sc-11456/add-payment-retry-webhook
+username/sc-11456/add-payment-retry-webhook
 
 ### Files changed
 - `app/api/webhooks.py` — subscription registration endpoint
@@ -87,7 +87,7 @@ mattroberts/sc-11456/add-payment-retry-webhook
 - Delivery task is fire-and-forget; failures logged via structlog, not raised
 
 ### Notes for tester
-- Test HMAC header: `X-Slice-Signature: sha256=<hex>`; compute expected value with `hmac.new(key, payload, sha256).hexdigest()`
+- Test HMAC header: `X-Webhook-Signature: sha256=<hex>`; compute expected value with `hmac.new(key, payload, sha256).hexdigest()`
 - Test the case where `WEBHOOK_SIGNING_KEY` is missing from env — dispatcher should raise `ImproperlyConfigured`, not silently send unsigned requests
 - Celery runs eagerly in test mode so webhook delivery is synchronous in tests
 
@@ -149,7 +149,7 @@ PASS
 ## Ship
 
 ### PR URL
-https://github.com/slice/payment-service/pull/441
+https://github.com/your-org/payment-service/pull/441
 
 ### Commit SHA
 d9e2b47
@@ -176,7 +176,7 @@ PASS
 ```
 Loaded:
   Repo rules:   CLAUDE.md (found), AGENTS.md (found), .claude/CLAUDE.md (not found)
-  Feedback:     1 feedback_*.md file from repo memory, 4 from Slice memory
+  Feedback:     1 feedback_*.md file from repo memory, 4 from org memory
   Repo style:   ### Repo style present in WorkItem
 ```
 
@@ -285,11 +285,11 @@ Agent reads `### Notes for shipper` — notes `WEBHOOK_SIGNING_KEY` must be in s
 
 Orchestrator verifies:
 ```
-gh pr view https://github.com/slice/payment-service/pull/441   → PR exists ✓
+gh pr view https://github.com/your-org/payment-service/pull/441   → PR exists ✓
 ```
 Gate accepted.
 
-**Done.** PR URL returned: `https://github.com/slice/payment-service/pull/441`
+**Done.** PR URL returned: `https://github.com/your-org/payment-service/pull/441`
 
 ---
 
@@ -298,8 +298,8 @@ Gate accepted.
 ```markdown
 # Handover: SC-11456 — add payment retry webhook
 
-**PR:** https://github.com/slice/payment-service/pull/441
-**Branch:** mattroberts/sc-11456/add-payment-retry-webhook → main
+**PR:** https://github.com/your-org/payment-service/pull/441
+**Branch:** username/sc-11456/add-payment-retry-webhook → main
 **Commits:** feat: add payment retry webhook → test: add payment retry webhook → fix: address implement issues → fix: address test issues
 
 ## What was built

@@ -4,7 +4,7 @@ What would need to change to make this pipeline a self-contained, shareable pack
 
 ---
 
-## What is currently Slice/Matt-specific
+## What was previously hardcoded
 
 ### 1. ~~Hardcoded output paths~~ — resolved 2026-05-15
 WorkItems, handover docs, and pipeline state now live at `<repo-root>/.workitems/`, `<repo-root>/.handovers/`, and `<repo-root>/.pipeline-state/` — all derived from `git rev-parse --show-toplevel`. No personal paths, no config needed. All three directories are gitignored locally and never pushed.
@@ -17,7 +17,7 @@ Ticket prefix, regex, URL template, and label are now read from `~/.claude/pipel
 ---
 
 ### 3. ~~Hardcoded org-level memory path~~ — resolved 2026-05-18
-`PIPELINE_ORG_MEMORY` is now read from `~/.claude/pipeline.conf`. Optional — empty string if not set. Both `pipeline-plan` and `pipeline-run` use `$ORG_MEMORY` instead of the hardcoded Slice path.
+`PIPELINE_ORG_MEMORY` is now read from `~/.claude/pipeline.conf`. Optional — empty string if not set. Both `pipeline-plan` and `pipeline-run` use `$ORG_MEMORY` instead of a hardcoded path.
 
 ---
 
