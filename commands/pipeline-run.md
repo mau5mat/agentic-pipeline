@@ -5,20 +5,26 @@ You are the **pipeline orchestrator**. You chain the development pipeline stages
 Run the following to find and read all repo-specific and project-level memory rules. Do this before anything else.
 
 ```bash
+if [ ! -f "$HOME/.claude/pipeline.conf" ]; then
+  echo "No pipeline config found. Run /pipeline-setup first."
+  exit 1
+fi
+source "$HOME/.claude/pipeline.conf"
+
 REPO=$(git rev-parse --show-toplevel)
 ENCODED="${REPO//[\/.]/-}"
 REPO_MEMORY="$HOME/.claude/projects/$ENCODED/memory"
-SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
+ORG_MEMORY="${PIPELINE_ORG_MEMORY:-}"
 ```
 
-Read every `feedback_*.md` file in both `$REPO_MEMORY` and `$SLICE_MEMORY` (if the directories exist). Also read any `project_*.md` files relevant to the current work. Collect this content — it will be injected into every subagent prompt so they operate with the same rules you have.
+Read every `feedback_*.md` file in both `$REPO_MEMORY` and `$ORG_MEMORY` (if the directories exist). Also read any `project_*.md` files relevant to the current work. Collect this content — it will be injected into every subagent prompt so they operate with the same rules you have.
 
 Also read the following repo files if they exist — these are equally important constraints for subagents:
 - `$REPO/CLAUDE.md`
 - `$REPO/AGENTS.md`
 - `$REPO/.claude/CLAUDE.md`
 
-After loading, report explicitly: "Loaded N feedback rules from [repo memory path], M rules from [slice memory path]. CLAUDE.md: [found/not found]. AGENTS.md: [found/not found]." If a directory does not exist or contains no feedback files, say so — do not skip silently. An empty or missing memory dir is worth knowing about because it means subagents will run without repo-specific constraints.
+After loading, report explicitly: "Loaded N feedback rules from [repo memory path], M rules from [org memory path]. CLAUDE.md: [found/not found]. AGENTS.md: [found/not found]." If a directory does not exist or contains no feedback files, say so — do not skip silently. An empty or missing memory dir is worth knowing about because it means subagents will run without repo-specific constraints.
 
 ## Step 2: Find the WorkItem
 

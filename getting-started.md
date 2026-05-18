@@ -85,7 +85,7 @@ This is a per-session setting and does not persist. It remains your decision whe
 - Claude Code (CLI or desktop app)
 - `gh` CLI authenticated to GitHub
 - `jq` installed (`brew install jq`)
-- A Shortcut account (tickets are named `sc-XXXXXX`)
+- An issue tracker with ticket IDs in your branch names (Shortcut, Jira, Linear, etc.)
 
 ---
 
@@ -123,16 +123,16 @@ git config --global core.excludesfile ~/.gitignore_global
 
 ## Step 1 — Start a new ticket
 
-Go to Shortcut, open your ticket, and click the button to generate a branch name. It gives you something like:
+Open your ticket in your issue tracker and copy the branch name. It will look something like:
 
 ```
-mattroberts/sc-660363/-preparation-add-smoke-test-script
+username/sc-660363/-preparation-add-smoke-test-script
 ```
 
 Open Claude Code in your service repo, then run:
 
 ```
-/pipeline-plan mattroberts/sc-660363/-preparation-add-smoke-test-script
+/pipeline-plan username/sc-660363/-preparation-add-smoke-test-script
 ```
 
 The planning agent will:

@@ -17,7 +17,7 @@ Created by `/pipeline-plan`. Read and appended by every subsequent stage.
 **Date:** [YYYY-MM-DD]
 **Branch:** [branch-name]
 **Base branch:** [main | or user-specified branch]
-**Shortcut:** https://app.shortcut.com/slicernd/story/XXXXXX/-<description>
+**[Tracker label]:** [ticket URL — omitted if no tracker URL configured]
 
 ## Flags
 > Any stage may append here. Reviewed by human before ship.

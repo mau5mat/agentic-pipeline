@@ -2,11 +2,11 @@ You are the **planning agent** in the development pipeline. Work interactively w
 
 ## Argument
 
-`/pipeline-plan` takes a single required argument: the full branch name copied from Shortcut.
+`/pipeline-plan` takes a single required argument: the full branch name from your issue tracker.
 
 Example:
 ```
-/pipeline-plan mattroberts/sc-660363/-preparation-add-smoke-test-script
+/pipeline-plan username/sc-660363/-preparation-add-smoke-test-script
 ```
 
 ## Step 1: Parse, reset to base branch, and create the branch
@@ -14,15 +14,21 @@ Example:
 Extract the SC number from the branch name argument:
 
 ```bash
+if [ ! -f "$HOME/.claude/pipeline.conf" ]; then
+  echo "No pipeline config found. Run /pipeline-setup first."
+  exit 1
+fi
+source "$HOME/.claude/pipeline.conf"
+
 BRANCH_ARG="<argument passed to this skill>"
-SC=$(echo "$BRANCH_ARG" | grep -oiE 'sc-[0-9]+' | head -1)
+SC=$(echo "$BRANCH_ARG" | grep -oiE "$PIPELINE_TICKET_REGEX" | head -1)
 SC_NUM=$(echo "$SC" | grep -oE '[0-9]+')
 REPO=$(git rev-parse --show-toplevel)
 PLAN_START=$(date +%s)
 ```
 
-- If no branch name argument was provided, stop: "Usage: `/pipeline-plan <branch-name>` — paste the branch name from Shortcut."
-- If no SC number can be parsed from the branch name, stop: "Could not parse an SC number from `<branch-name>`. Expected format: `username/sc-XXXXXX/-description`."
+- If no branch name argument was provided, stop: "Usage: `/pipeline-plan <branch-name>` — paste the branch name from your issue tracker."
+- If no ticket ID can be parsed from the branch name, stop: "Could not parse a ticket ID from `<branch-name>`. Expected a branch containing `$PIPELINE_TICKET_REGEX`."
 - If a WorkItem already exists for this SC (`$REPO/.workitems/workitem-${SC}.md`), stop: "WorkItem already exists for ${SC}. Run `/pipeline-run` to resume from the current stage."
 
 Check for uncommitted changes:
@@ -69,15 +75,19 @@ printf '{"sc":"%s","stage":"plan","start_time":%d,"status":"running"}' "$SC" "$(
 ```bash
 SC_ID=$(echo "$SC" | grep -oE '[0-9]+')
 SERVICE=$(basename "$REPO")
-SLUG=$(echo "$BRANCH_ARG" | sed "s|.*${SC}/||")   # e.g. -fix-task-discovery-for-workers
-SHORTCUT_URL="https://app.shortcut.com/slicernd/story/${SC_ID}/${SLUG}"
+SLUG=$(echo "$BRANCH_ARG" | sed "s|.*${SC}/||")
+if [ -n "$PIPELINE_TRACKER_URL_TEMPLATE" ]; then
+  TICKET_URL=$(echo "$PIPELINE_TRACKER_URL_TEMPLATE" | sed "s|{id}|$SC_ID|g; s|{slug}|$SLUG|g")
+else
+  TICKET_URL=""
+fi
 WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ENCODED="${REPO//[\/.]/-}"
 REPO_MEMORY="$HOME/.claude/projects/$ENCODED/memory"
-SLICE_MEMORY="$HOME/.claude/projects/-Users-matt-roberts-Development-Slice/memory"
+ORG_MEMORY="${PIPELINE_ORG_MEMORY:-}"
 ```
 
-Run this block silently. Do not add echo statements, print variables, or show any output from the derivation. After running, output only this single line: `Branch: <branch> | SC: <sc> | Shortcut: <url>` — nothing else.
+Run this block silently. Do not add echo statements, print variables, or show any output from the derivation. After running, output only this single line: `Branch: <branch> | SC: <sc>${TICKET_URL:+ | $PIPELINE_TRACKER_LABEL: $TICKET_URL}` — nothing else.
 
 ## Steps
 
@@ -101,7 +111,7 @@ Let the user lead. Your role is to listen, ask clarifying questions, and surface
 
 **Do not read any code during this phase.**
 
-Check `$REPO_MEMORY` and `$SLICE_MEMORY` for relevant recorded gotchas (read every `feedback_*.md` and relevant `project_*.md` files if those directories exist) and surface anything relevant during the conversation.
+Check `$REPO_MEMORY` and `$ORG_MEMORY` for relevant recorded gotchas (read every `feedback_*.md` and relevant `project_*.md` files if those directories exist) and surface anything relevant during the conversation.
 
 ---
 
@@ -171,7 +181,7 @@ After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem docume
 **Date:** [YYYY-MM-DD]
 **Branch:** [branch]
 **Base branch:** [main | or user-specified branch]
-**Shortcut:** https://app.shortcut.com/slicernd/story/XXXXXX/-<description>
+[if TICKET_URL is non-empty: **${PIPELINE_TRACKER_LABEL}:** ${TICKET_URL} — otherwise omit this line]
 
 ## Flags
 > Any stage may append here. Reviewed by human before ship.
