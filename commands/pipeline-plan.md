@@ -111,7 +111,15 @@ Update pipeline state:
 printf '{"sc":"%s","stage":"plan-investigating","start_time":%d,"status":"running"}' "$SC" "$(date +%s)" > "$REPO/.pipeline-state/$SC_NUM/pipeline-state.json"
 ```
 
-With scope established, read the codebase with intent. Check `AGENTS.md` and `CLAUDE.md` if they exist. Read the specific files that came up in the conversation — confirm they match the spec's assumptions and identify the exact files that will need to change.
+With scope established, read the codebase with intent. Check `AGENTS.md` and `CLAUDE.md` if they exist.
+
+**Policy conflict check:** After reading AGENTS.md, identify any policies that apply to the proposed work — branching rules, PR structure, required file types, deploy ordering, anything that constrains how this work must be done. Cross-check each against the current plan. If a conflict exists, surface it to the user as a blocking question *before* proceeding to the spec:
+
+> "AGENTS.md [§N] requires [policy]. The current plan [conflicts because reason]. How do you want to proceed?"
+
+Wait for the user's decision. Update the plan accordingly before writing the spec. Do not record the conflict only in Flags and proceed — a policy conflict must be resolved at planning time, not discovered mid-implement.
+
+Read the specific files that came up in the conversation — confirm they match the spec's assumptions and identify the exact files that will need to change.
 
 Then do a two-pass repo style observation:
 
