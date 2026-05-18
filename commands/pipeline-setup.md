@@ -6,7 +6,26 @@ Writes `~/.claude/pipeline.conf` with your issue tracker and team memory setting
 
 Running this again updates the existing config.
 
-## Step 1: Check for existing config
+## Step 1: Check prerequisites
+
+Run the following checks and stop immediately if anything is missing:
+
+```bash
+missing=""
+command -v git >/dev/null 2>&1 || missing="$missing git"
+command -v gh  >/dev/null 2>&1 || missing="$missing gh"
+command -v jq  >/dev/null 2>&1 || missing="$missing jq"
+```
+
+If `$missing` is non-empty, stop and tell the user which tools are missing and how to install them:
+
+- `git` — install via your OS package manager or https://git-scm.com
+- `gh` — `brew install gh`, then run `gh auth login`
+- `jq` — `brew install jq`
+
+Do not proceed until all three are present.
+
+## Step 2: Check for existing config
 
 ```bash
 CONF="$HOME/.claude/pipeline.conf"
@@ -17,13 +36,13 @@ fi
 
 If an existing config was found, note the current values — you will use them as defaults in the prompts below.
 
-## Step 2: Gather configuration
+## Step 3: Gather configuration
 
 Ask each question in turn. Wait for a response before moving to the next.
 
 ---
 
-### 2a — Issue tracker
+### 3a — Issue tracker
 
 Ask:
 
@@ -90,7 +109,7 @@ SETUP_TRACKER_URL_TEMPLATE="<user's URL or empty>"
 
 ---
 
-### 2b — Org memory (optional, both paths)
+### 3b — Org memory (optional, both paths)
 
 Ask:
 
@@ -102,7 +121,7 @@ Record the path, or empty string if skipped.
 
 ---
 
-## Step 3: Confirm
+## Step 4: Confirm
 
 Print the following summary and ask the user to confirm before writing anything:
 
@@ -118,11 +137,11 @@ Here's what will be written to ~/.claude/pipeline.conf:
 Good to go?
 ```
 
-Wait for the user to confirm. Do not proceed to Step 4 until they do.
+Wait for the user to confirm. Do not proceed to Step 5 until they do.
 
 ---
 
-## Step 4: Write config
+## Step 5: Write config
 
 Write `~/.claude/pipeline.conf`:
 
@@ -142,7 +161,7 @@ Fill in the values from Step 2. Use empty string (`""`) for any optional field t
 
 ---
 
-## Step 5: Update ~/.claude/CLAUDE.md
+## Step 6: Update ~/.claude/CLAUDE.md
 
 This file tells Claude Code about the pipeline. Update the pipeline block — or create the file if it doesn't exist.
 
@@ -176,7 +195,7 @@ Individual stages can also be run standalone: `/pipeline-implement`, `/pipeline-
 
 ---
 
-## Step 6: Report
+## Step 7: Report
 
 Print:
 

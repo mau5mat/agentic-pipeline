@@ -20,6 +20,10 @@ if [ ! -f "$HOME/.claude/pipeline.conf" ]; then
 fi
 source "$HOME/.claude/pipeline.conf"
 
+command -v git >/dev/null 2>&1 || { echo "git is not installed."; exit 1; }
+command -v gh  >/dev/null 2>&1 || { echo "gh CLI is not installed — required for PR creation. Install with: brew install gh && gh auth login"; exit 1; }
+command -v jq  >/dev/null 2>&1 || { echo "jq is not installed — required for the status line. Install with: brew install jq"; exit 1; }
+
 BRANCH_ARG="<argument passed to this skill>"
 SC=$(echo "$BRANCH_ARG" | grep -oiE "$PIPELINE_TICKET_REGEX" | head -1)
 SC_NUM=$(echo "$SC" | grep -oE '[0-9]+')
