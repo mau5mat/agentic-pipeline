@@ -30,7 +30,7 @@ After loading, report explicitly: "Loaded N feedback rules from [repo memory pat
 
 ```bash
 BRANCH=$(git branch --show-current)
-SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
+SC=$(echo "$BRANCH" | grep -oiE "$PIPELINE_TICKET_REGEX" | head -1)
 SC_NUM=$(echo "$SC" | grep -oE '[0-9]+')
 WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```

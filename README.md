@@ -6,33 +6,30 @@ A chain of specialist AI agents that takes a feature from spec to PR without man
 
 Without the pipeline, work is conversational and sequential — you prompt each step individually, context bleeds between stages, and the agent that implemented the code also reviews it. The pipeline formalises this into isolated stages with clean handoffs.
 
-## The two commands
+## Usage
 
 ```
-/pipeline-plan <branch-name>   — interactive: create branch, work out spec, write WorkItem
+/pipeline-plan <branch-name>   — interactive: create branch, scope the work, write WorkItem
 /pipeline-run                   — automated: implement → test → review → ship, hands you a PR URL when done
 ```
 
-Expected flow: copy the branch name from Shortcut, then run `/pipeline-plan` with it. The pipeline creates the branch, runs planning interactively, then `/pipeline-run` chains all remaining stages automatically.
+Copy the branch name from your issue tracker and pass it to `/pipeline-plan`. The pipeline creates the branch and runs the planning conversation interactively. Once you approve the spec, `/pipeline-run` chains all remaining stages automatically.
 
 ```
-/pipeline-plan mattroberts/sc-660363/-preparation-add-smoke-test-script
+/pipeline-plan username/sc-660363/-preparation-add-smoke-test-script
 ```
 
 If the pipeline fails at any stage, fix the issue and run `/pipeline-run` again — it resumes from the first incomplete stage.
 
-Individual stages can be run standalone if needed:
-`/pipeline-implement`, `/pipeline-test`, `/pipeline-review`, `/pipeline-ship`
-
-All skills live in `~/.claude/commands/`.
+Individual stages can be run standalone: `/pipeline-implement`, `/pipeline-test`, `/pipeline-review`, `/pipeline-ship`
 
 ## What flows between stages
 
-A single WorkItem document at:
-`<repo-root>/.workitems/workitem-<sc-number>.md`
+A single WorkItem document at `<repo-root>/.workitems/workitem-<ticket-id>.md`. Each stage reads the full document and appends its section:
 
-Each stage reads the full document and appends its section. The document accumulates:
+```
 Spec → Implementation + handoff notes → Tests + handoff notes → Review (gate) → Ship (PR URL)
+```
 
 ## Installation
 
@@ -44,48 +41,27 @@ cp commands/*.md ~/.claude/commands/
 /pipeline-setup
 ```
 
-`/pipeline-setup` asks for your issue tracker details and writes `~/.claude/pipeline.conf`. Run it once — all repos on this machine will use the same config. Re-run at any time to update settings.
+`/pipeline-setup` asks for your issue tracker details and writes `~/.claude/pipeline.conf`. Run it once — all repos on this machine share the same config. Re-run at any time to update.
 
-## Repository structure
+**Add pipeline artifact directories to your global gitignore** so they're never accidentally staged:
 
-```
-commands/                        ← skill files (copy these to ~/.claude/commands/)
-  pipeline-setup.md            ← one-time setup: writes ~/.claude/pipeline.conf
-  pipeline-run.md              ← orchestrator
-  pipeline-plan.md
-  pipeline-implement.md
-  pipeline-test.md
-  pipeline-ship.md
-  pipeline-review.md
-  pr-description.md              ← dependency of pipeline-ship
-  pr-review-feedback.md          ← address GitHub PR review comments
-setup/                           ← optional setup files
-  statusline.sh                  ← status line script (see Status line setup below)
-docs/                            ← reference and design documentation
-  design.md                      ← architectural decisions and rationale
-  workitem-schema.md             ← full WorkItem template with field explanations
-  gaps-and-roadmap.md            ← known limitations and future improvements
-  abort-and-recovery.md          ← how to stop, undo, or resume a pipeline run
-  distribution-requirements.md  ← what needs to change for distribution
-  example-happy-path.md          ← annotated happy-path example
-  example-unhappy-path.md        ← annotated unhappy-path example
-findings/                        ← post-run findings from real pipeline sessions
-  trial-run-sc-668234-findings.md
-  trial-run-sc-652177-findings.md
-  trial-run-sc-648809-findings.md
-getting-started.md               ← new user guide
+```bash
+echo '.workitems/' >> ~/.gitignore_global
+echo '.handovers/' >> ~/.gitignore_global
+echo '.pipeline-state/' >> ~/.gitignore_global
+git config --global core.excludesfile ~/.gitignore_global
 ```
 
-## Status line setup (optional but recommended)
+## Status line (optional but recommended)
 
-The pipeline writes its current stage to `<repo-root>/.pipeline-state/<sc-number>/pipeline-state.json` while running. A status line script reads this and displays it persistently in the Claude Code UI — useful during the 10-30 minute quiet gaps between stage turns.
+The pipeline writes its current stage to `<repo-root>/.pipeline-state/<ticket-id>/pipeline-state.json`. A status line script reads this and displays it in the Claude Code UI — useful during the 10–30 minute gaps between stages.
 
 ```bash
 cp setup/statusline.sh ~/.claude/statusline.sh
 chmod +x ~/.claude/statusline.sh
 ```
 
-Then add to `~/.claude/settings.json` (create the file if it doesn't exist):
+Add to `~/.claude/settings.json`:
 
 ```json
 {
@@ -97,25 +73,21 @@ Then add to `~/.claude/settings.json` (create the file if it doesn't exist):
 }
 ```
 
-The status line will show: `▶ Pipeline sc-XXXXXX → implement` while a stage is active, and disappear once the pipeline completes.
-
-## Runtime output (stays local, never pushed)
-
-Most pipeline artifacts live inside each service repo in hidden directories:
+## Runtime artifacts (local only, never pushed)
 
 | Artifact | Location |
 |----------|----------|
-| WorkItems | `<repo-root>/.workitems/workitem-<sc>.md` |
-| Handover docs | `<repo-root>/.handovers/handover-<sc>.md` |
-| Pipeline state | `<repo-root>/.pipeline-state/<sc-number>/pipeline-state.json` |
-| PR descriptions | `~/.claude/pr-descriptions/<service>/<service>-<ticket-id>.md` |
+| WorkItems | `<repo-root>/.workitems/workitem-<ticket>.md` |
+| Handover docs | `<repo-root>/.handovers/handover-<ticket>.md` |
+| Pipeline state | `<repo-root>/.pipeline-state/<ticket>/pipeline-state.json` |
+| PR descriptions | `~/.claude/pr-descriptions/<service>/<service>-<ticket>.md` |
 
-These directories are created automatically. **Add `.workitems/`, `.handovers/`, and `.pipeline-state/` to your global gitignore** (`~/.gitignore_global`) to prevent accidental staging — the pipeline does not touch any `.gitignore` file itself.
+## Repository structure
 
-```bash
-echo '.workitems/' >> ~/.gitignore_global
-echo '.handovers/' >> ~/.gitignore_global
-echo '.pipeline-state/' >> ~/.gitignore_global
-# Make sure your global gitignore is configured:
-git config --global core.excludesfile ~/.gitignore_global
+```
+commands/          ← skill files (copy to ~/.claude/commands/)
+setup/             ← statusline.sh
+docs/              ← design docs, WorkItem schema, gaps, examples, abort/recovery
+findings/          ← post-run findings from real pipeline sessions
+getting-started.md ← new user guide
 ```
