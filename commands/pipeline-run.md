@@ -61,6 +61,12 @@ Before spawning the implementation agent, scan the WorkItem Spec for independent
 
 Run the full test suite command from `### Repo style` (Make targets). This must happen before the implement agent is spawned — the baseline reflects the repo state before any changes.
 
+First, clear any stale bytecode cache to avoid spurious import errors contaminating the baseline:
+```bash
+find . -name "*.pyc" -delete
+find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+```
+
 Capture output once and examine from the variable — do not run the suite more than once:
 ```bash
 TEST_OUTPUT=$(<full suite command from Repo style> 2>&1)
