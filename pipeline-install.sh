@@ -43,6 +43,18 @@ ok "git, gh, jq"
 
 bold "Installing skill files..."
 
+echo "  The following Claude Code skills will be added to $COMMANDS_DIR:"
+echo ""
+echo "    /pipeline-plan        — interactive planning: create branch, scope work, write WorkItem"
+echo "    /pipeline-run         — orchestrator: chains implement → test → review → ship automatically"
+echo "    /pipeline-implement   — implement stage (also runnable standalone)"
+echo "    /pipeline-test        — test stage (also runnable standalone)"
+echo "    /pipeline-review      — review stage (also runnable standalone)"
+echo "    /pipeline-ship        — ship stage: push branch, open PR (also runnable standalone)"
+echo "    /pr-description       — generate a PR description from a WorkItem"
+echo "    /pr-review-feedback   — apply PR review feedback from a URL"
+echo ""
+
 mkdir -p "$COMMANDS_DIR"
 cp "$SCRIPT_DIR"/commands/*.md "$COMMANDS_DIR/"
 ok "Skills copied to $COMMANDS_DIR"
