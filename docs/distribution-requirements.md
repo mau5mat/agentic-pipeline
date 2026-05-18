@@ -6,28 +6,28 @@ What would need to change to make this pipeline a self-contained, shareable pack
 
 ## What was previously hardcoded
 
-### 1. ~~Hardcoded output paths~~ — resolved 2026-05-15
-WorkItems, handover docs, and pipeline state now live at `<repo-root>/.workitems/`, `<repo-root>/.handovers/`, and `<repo-root>/.pipeline-state/` — all derived from `git rev-parse --show-toplevel`. No personal paths, no config needed. All three directories are gitignored locally and never pushed.
+### 1. ~~Hardcoded output paths~~ (resolved 2026-05-15)
+WorkItems, handover docs, and pipeline state now live at `<repo-root>/.workitems/`, `<repo-root>/.handovers/`, and `<repo-root>/.pipeline-state/`, all derived from `git rev-parse --show-toplevel`. No personal paths, no config needed. All three directories are gitignored locally and never pushed.
 
 ---
 
-### 2. ~~Shortcut as the issue tracker~~ — resolved 2026-05-18
+### 2. ~~Shortcut as the issue tracker~~ (resolved 2026-05-18)
 Ticket prefix, regex, URL template, and label are now read from `~/.claude/pipeline.conf`. Shortcut users answer one question (org slug); other tracker users configure prefix, URL template, and label. The WorkItem tracker field is omitted if no URL is configured.
 
 ---
 
-### 3. ~~Hardcoded org-level memory path~~ — resolved 2026-05-18
-`PIPELINE_ORG_MEMORY` is now read from `~/.claude/pipeline.conf`. Optional — empty string if not set. Both `pipeline-plan` and `pipeline-run` use `$ORG_MEMORY` instead of a hardcoded path.
+### 3. ~~Hardcoded org-level memory path~~ (resolved 2026-05-18)
+`PIPELINE_ORG_MEMORY` is now read from `~/.claude/pipeline.conf`. Optional: empty string if not set. Both `pipeline-plan` and `pipeline-run` use `$ORG_MEMORY` instead of a hardcoded path.
 
 ---
 
-### 4. ~~Global `~/.claude/CLAUDE.md`~~ — resolved 2026-05-18
-`/pipeline-setup` writes a generic pipeline block (between comment markers) to `~/.claude/CLAUDE.md`. Idempotent — re-running updates the block without touching surrounding content.
+### 4. ~~Global `~/.claude/CLAUDE.md`~~ (resolved 2026-05-18)
+`pipeline-install.sh` writes a generic pipeline block (between comment markers) to `~/.claude/CLAUDE.md`. Idempotent: re-running the install updates the block without touching surrounding content.
 
 ---
 
-### 5. ~~Hardcoded org slug in the Shortcut URL~~ — resolved 2026-05-18
-Covered by #2 — tracker URL is fully configurable via `/pipeline-setup`.
+### 5. ~~Hardcoded org slug in the Shortcut URL~~ (resolved 2026-05-18)
+Covered by #2: tracker URL is fully configurable via `pipeline-install.sh`.
 
 ---
 
@@ -38,13 +38,17 @@ Covered by #2 — tracker URL is fully configurable via `/pipeline-setup`.
 
 ---
 
-## `/pipeline-setup` — ~~planned~~ shipped 2026-05-18
+## `pipeline-install.sh` (shipped 2026-05-18)
 
-Run once at install time. Shortcut users answer one question (org slug); other tracker users answer three (prefix, URL template, label). Org memory path is optional for both.
+Run once at install time. Copies all pipeline skill files to `~/.claude/commands/`, writes `~/.claude/pipeline.conf`, installs the status line script at `~/.claude/statusline.sh`, and adds the pipeline block to `~/.claude/CLAUDE.md`.
 
-Writes `~/.claude/pipeline.conf` and updates the pipeline block in `~/.claude/CLAUDE.md`.
+Shortcut users answer one question (org slug); other tracker users configure prefix, URL template, and label. Org memory path is optional for both.
 
-Note: WorkItems (`<repo-root>/.workitems/`), handover docs (`<repo-root>/.handovers/`), and pipeline state (`<repo-root>/.pipeline-state/`) are all repo-local by default — no path config needed for those.
+WorkItems (`<repo-root>/.workitems/`), handover docs (`<repo-root>/.handovers/`), and pipeline state (`<repo-root>/.pipeline-state/`) are all repo-local by default: no path config needed for those.
+
+`pipeline-uninstall.sh` removes everything the install added: skill files, config, status line script, and the pipeline block from `~/.claude/CLAUDE.md`. Does not touch repo-local artifacts.
+
+`/pipeline-demo` provides a simulated pipeline run useful for demos and new-user setup verification. A successful demo run confirms git, config, status bar, and artifact paths are all working correctly.
 
 ---
 
@@ -59,7 +63,7 @@ Note: WorkItems (`<repo-root>/.workitems/`), handover docs (`<repo-root>/.handov
 - Handover document format
 - Retry detection and conventional commits
 - Abort and recovery docs
-- All the "why" — the design rationale is universal
+- All the "why": the design rationale is universal
 
 ---
 
@@ -67,22 +71,22 @@ Note: WorkItems (`<repo-root>/.workitems/`), handover docs (`<repo-root>/.handov
 
 - Claude Code CLI installed
 - `git` (obviously)
-- `gh` CLI authenticated (for GitHub PR creation — see #6 above)
+- `gh` CLI authenticated (for GitHub PR creation: see #6 above)
 - `jq` installed (required for `statusline.sh` to parse per-ticket `pipeline-state.json` files)
-- A Makefile with lint and test targets, or equivalent (the planner discovers these — it just needs them to exist)
+- A Makefile with lint and test targets, or equivalent (the planner discovers these; it just needs them to exist)
 - A repo with CLAUDE.md and/or AGENTS.md for best results (not required, but the pipeline is less useful without repo-specific constraints)
 
 ---
 
-## Effort estimate
+## Effort estimate (historical, now complete)
 
-| Item | Effort |
-|---|---|
-| Config file + path parameterisation | Low — mechanical find/replace in skill files |
-| Generic ticket format (drop Shortcut assumption) | Low-Medium — regex and URL template |
-| `/pipeline-setup` skill | Medium — interactive, writes config |
-| Org-level memory path derivation | Low |
-| Global CLAUDE.md snippet approach | Low |
-| `gh` abstraction for non-GitHub teams | Medium — probably out of scope for v1 |
+All items below have been resolved. Table retained for reference.
 
-A distributable v1 could reasonably be: config file + path parameterisation + generic ticket format + setup instructions. That covers ~90% of teams without building a setup skill. The setup skill is a nice-to-have for polish.
+| Item | Effort | Status |
+|---|---|---|
+| Config file + path parameterisation | Low | Done |
+| Generic ticket format (drop Shortcut assumption) | Low-Medium | Done |
+| `pipeline-install.sh` setup script | Medium | Done |
+| Org-level memory path derivation | Low | Done |
+| Global CLAUDE.md snippet approach | Low | Done |
+| `gh` abstraction for non-GitHub teams | Medium | Out of scope for v1 |

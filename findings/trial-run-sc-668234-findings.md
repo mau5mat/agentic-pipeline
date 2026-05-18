@@ -1,4 +1,4 @@
-# Pipeline Trial Run Findings — SC-668234
+# Pipeline Trial Run Findings: SC-668234
 
 First live run of the agentic pipeline on a real (test) ticket. These are observations, issues, and improvement suggestions from the session.
 
@@ -7,7 +7,7 @@ First live run of the agentic pipeline on a real (test) ticket. These are observ
 ## Issues to Fix
 
 ### 1. Implement agent must not write tests
-The implement agent wrote test files alongside implementation code. The test agent then had nothing to do except verify work already done. This is a pipeline contract violation — tests are exclusively the test agent's responsibility.
+The implement agent wrote test files alongside implementation code. The test agent then had nothing to do except verify work already done. This is a pipeline contract violation: tests are exclusively the test agent's responsibility.
 
 **Fix:** Add an explicit prohibition to `pipeline-implement.md`: do not create any files under `tests/`. If the agent produces test files, gate should be FAIL.
 
@@ -50,7 +50,7 @@ WorkItems are living documents that exist throughout the pipeline. `pr-descripti
 
 ## Improvements / Questions
 
-### 7. Implement agent is slow — biggest time sink
+### 7. Implement agent is slow: biggest time sink
 The implement agent re-explored the codebase independently despite the WorkItem containing a detailed Repo Style section. The planning stage is supposed to front-load this discovery so downstream agents can skip it.
 
 **Investigation needed:** Was the implement agent ignoring the Repo Style section, or is the section not detailed enough for it to trust? If agents are re-doing codebase exploration regardless, the Repo Style section needs to be made more explicit as a "read this, skip exploration" directive in `pipeline-implement.md`.
@@ -83,12 +83,12 @@ Each agent starts cold and re-reads the same files (AGENTS.md, existing domain f
 ### 11. Test agent gets weak handoff signal
 Even with the implement-writes-tests fix in place, the test agent only receives the WorkItem and the implementation files. The "Notes for tester" section in the Implementation output is the only handoff signal, and it describes what was built rather than prescribing what edge cases to focus on.
 
-**Fix:** Add a "Test focus" field to the Implementation section output — a short list of the trickiest behaviours, edge cases, and failure paths the implementer identified. This gives the test agent a starting point rather than requiring it to reverse-engineer test intent from the code.
+**Fix:** Add a "Test focus" field to the Implementation section output: a short list of the trickiest behaviours, edge cases, and failure paths the implementer identified. This gives the test agent a starting point rather than requiring it to reverse-engineer test intent from the code.
 
 ---
 
 ### 12. No rollback / undo path documented
-If the review gate fails or the pipeline is halted mid-run, there is no documented procedure for cleaning up — uncommitted changes, a pushed branch, a half-written WorkItem. Fine for a test run, but a problem for real work.
+If the review gate fails or the pipeline is halted mid-run, there is no documented procedure for cleaning up: uncommitted changes, a pushed branch, a half-written WorkItem. Fine for a test run, but a problem for real work.
 
 **Fix:** Add a "How to abort cleanly" section to the pipeline design docs covering: how to reset a half-written WorkItem, whether to delete the branch or leave it, and what state is safe to resume from vs. what needs manual cleanup.
 
@@ -117,7 +117,7 @@ The handover doc was printed inline at the end of a long session, making the PR 
 
 ## What Worked Well
 
-- WorkItem as shared state between agents — each agent had full context without re-derivation
+- WorkItem as shared state between agents: each agent had full context without re-derivation
 - Gate/section structure gave a clean audit trail throughout the run
 - Pre-commit hooks caught a real issue (codespell) that would have blocked a human committer too
 - Review agent was thorough, fast, and raised a non-blocking code quality observation
@@ -129,18 +129,18 @@ The handover doc was printed inline at the end of a long session, making the PR 
 
 | Priority | Item |
 |---|---|
-| High | #1 — implement must not write tests |
-| High | #2 — targeted test runs after first full pass |
-| High | #3 — lint run once, not twice |
-| Medium | #5 — orchestrator verbosity |
-| Medium | #6 — WorkItem directory |
-| Medium | #7 — implement agent speed / Repo Style trust |
-| Low | #4 — base branch assumption |
-| Low | #8 — plan mode |
-| Low | #9 — QA checklist in handover |
-| Ongoing | #10 — token efficiency |
-| High | #11 — test agent handoff signal (Notes for tester) |
-| Medium | #12 — rollback / abort path documented |
-| Medium | #13 — ADR status update after merge |
-| High | #14 — review agent reads diff, not just WorkItem |
-| High | #15 — final orchestrator output: PR URL + handover path only |
+| High | #1: implement must not write tests |
+| High | #2: targeted test runs after first full pass |
+| High | #3: lint run once, not twice |
+| Medium | #5: orchestrator verbosity |
+| Medium | #6: WorkItem directory |
+| Medium | #7: implement agent speed / Repo Style trust |
+| Low | #4: base branch assumption |
+| Low | #8: plan mode |
+| Low | #9: QA checklist in handover |
+| Ongoing | #10: token efficiency |
+| High | #11: test agent handoff signal (Notes for tester) |
+| Medium | #12: rollback / abort path documented |
+| Medium | #13: ADR status update after merge |
+| High | #14: review agent reads diff, not just WorkItem |
+| High | #15: final orchestrator output: PR URL + handover path only |

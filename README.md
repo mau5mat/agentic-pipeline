@@ -4,13 +4,13 @@ A chain of specialist AI agents that takes a feature from spec to PR without man
 
 ## The problem it solves
 
-Without the pipeline, work is conversational and sequential — you prompt each step individually, context bleeds between stages, and the agent that implemented the code also reviews it. The pipeline formalises this into isolated stages with clean handoffs.
+Without the pipeline, work is conversational and sequential: you prompt each step individually, context bleeds between stages, and the agent that implemented the code also reviews it. The pipeline formalises this into isolated stages with clean handoffs.
 
 ## Usage
 
 ```
-/pipeline-plan <branch-name>   — interactive: create branch, scope the work, write WorkItem
-/pipeline-run                   — automated: implement → test → review → ship, hands you a PR URL when done
+/pipeline-plan <branch-name>  : interactive: create branch, scope the work, write WorkItem
+/pipeline-run                  : automated: implement → test → review → ship, hands you a PR URL when done
 ```
 
 Copy the branch name from your issue tracker and pass it to `/pipeline-plan`. The pipeline creates the branch and runs the planning conversation interactively. Once you approve the spec, `/pipeline-run` chains all remaining stages automatically.
@@ -19,22 +19,22 @@ Copy the branch name from your issue tracker and pass it to `/pipeline-plan`. Th
 /pipeline-plan username/sc-660363/-preparation-add-smoke-test-script
 ```
 
-If the pipeline fails at any stage, fix the issue and run `/pipeline-run` again — it resumes from the first incomplete stage.
+If the pipeline fails at any stage, fix the issue and run `/pipeline-run` again: it resumes from the first incomplete stage.
 
 Individual stages can be run standalone: `/pipeline-implement`, `/pipeline-test`, `/pipeline-review`, `/pipeline-ship`
 
 ## The WorkItem
 
-Each stage agent starts fresh — no memory of prior stages. The WorkItem (`<repo-root>/.workitems/workitem-<ticket>.md`) is the shared state that gives each agent the full picture. Every agent reads the complete document, does its work, then appends its own section. By the time Ship runs, the entire history of the run is in one file.
+Each stage agent starts fresh: no memory of prior stages. The WorkItem (`<repo-root>/.workitems/workitem-<ticket>.md`) is the shared state that gives each agent the full picture. Every agent reads the complete document, does its work, then appends its own section. By the time Ship runs, the entire history of the run is in one file.
 
 ## Prerequisites
 
 - **Claude Code** (CLI or desktop app)
 - **`git`** with branch names that include a ticket ID (e.g. `sc-123456`, `ENG-456`)
-- **`gh` CLI** authenticated to GitHub — required for PR creation
-- **`jq`** — required for the status line script (`brew install jq`)
-- **Build tooling** — the pipeline discovers your lint and test commands during planning (Makefile, npm scripts, Rakefile, etc.). If it can't find them, it will ask. Empty test commands will stall the pipeline.
-- **`CLAUDE.md` or `AGENTS.md` in your repo** — optional but recommended; the pipeline injects these as hard constraints into every stage agent
+- **`gh` CLI** authenticated to GitHub: required for PR creation
+- **`jq`**: required for the status line script (`brew install jq`)
+- **Build tooling**: the pipeline discovers your lint and test commands during planning (Makefile, npm scripts, Rakefile, etc.). If it can't find them, it will ask. Empty test commands will stall the pipeline.
+- **`CLAUDE.md` or `AGENTS.md` in your repo**: optional but recommended; the pipeline injects these as hard constraints into every stage agent
 
 ## Installation
 
@@ -42,13 +42,33 @@ Each stage agent starts fresh — no memory of prior stages. The WorkItem (`<rep
 ./pipeline-install.sh
 ```
 
-The script checks prerequisites, copies skill files to `~/.claude/commands/`, installs the status line script, and walks you through tracker configuration. Safe to re-run — updates existing config without touching unrelated settings.
+The script checks prerequisites, copies skill files to `~/.claude/commands/`, installs the status line script, and walks you through tracker configuration. Safe to re-run: updates existing config without touching unrelated settings.
 
 To remove the pipeline from a machine:
 
 ```bash
 ./pipeline-uninstall.sh
 ```
+
+## Trying it out: `/pipeline-demo`
+
+After installing, run the demo in any git repo to see what a full pipeline run looks like and to verify your setup is working:
+
+```
+/pipeline-demo
+```
+
+The demo simulates a complete run (implement → test → review → ship) with realistic output: no source files are modified and no real PR is created. It writes a WorkItem and handover doc to `.workitems/` and `.handovers/` in your repo, and updates the status line in real time so you can see the stage progression.
+
+Use `--fail-at` to simulate a failure at a specific stage and see the Retry/Override/Halt flow in action:
+
+```
+/pipeline-demo --fail-at implement   ← lint failure, fix and retry
+/pipeline-demo --fail-at test        ← test failure mid-suite
+/pipeline-demo --fail-at review      ← review catches an unmet acceptance criterion
+```
+
+At the end it prompts to clean up (default yes). A successful demo run confirms that git, pipeline config, the status bar, and artifact paths are all working correctly before you run the real pipeline.
 
 ## Runtime artifacts (local only, never pushed)
 
@@ -57,7 +77,6 @@ To remove the pipeline from a machine:
 | WorkItems | `<repo-root>/.workitems/workitem-<ticket>.md` |
 | Handover docs | `<repo-root>/.handovers/handover-<ticket>.md` |
 | Pipeline state | `<repo-root>/.pipeline-state/<ticket>/pipeline-state.json` |
-| PR descriptions | `~/.claude/pr-descriptions/<service>/<service>-<ticket>.md` |
 
 ## Repository structure
 

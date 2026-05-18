@@ -1,6 +1,6 @@
-# Pipeline Trial Run Findings — SC-648810
+# Pipeline Trial Run Findings: SC-648810
 
-Fourth live run (Ruby service). Adjust HTTP error classification in a monitoring integration. Core pipeline logic — implement → test → review → ship with gates — worked without code-level issues. Findings are ergonomic and ownership issues.
+Fourth live run (Ruby service). Adjust HTTP error classification in a monitoring integration. Core pipeline logic: implement → test → review → ship with gates: worked without code-level issues. Findings are ergonomic and ownership issues.
 
 ---
 
@@ -13,12 +13,12 @@ If a previous session left Claude Code in auto-mode, calling `ExitPlanMode` duri
 
 ---
 
-### 2. Implement agent ran make test — not lint only
-The implement agent ran `make test` during its stage, triggering a "Verifying" status bar update mid-implement. This is an ownership violation — the orchestrator owns all full suite runs; the implement agent runs lint only. The agent itself acknowledged the issue when prompted.
+### 2. Implement agent ran make test: not lint only
+The implement agent ran `make test` during its stage, triggering a "Verifying" status bar update mid-implement. This is an ownership violation: the orchestrator owns all full suite runs; the implement agent runs lint only. The agent itself acknowledged the issue when prompted.
 
 Also noted: the agent was running `make test` multiple times to grep different things from the output, rather than capturing output once to a temp variable. Each run was a full 6-minute test suite.
 
-**Fix 1:** Strengthen the "lint only" instruction in `pipeline-implement.md` — explicit prohibition on `make test`, `make unit`, or any test suite command. Only the lint command from `### Repo style` may be run.
+**Fix 1:** Strengthen the "lint only" instruction in `pipeline-implement.md`: explicit prohibition on `make test`, `make unit`, or any test suite command. Only the lint command from `### Repo style` may be run.
 
 **Fix 2:** In `pipeline.md`, when running the baseline and post-stage test suites, capture output to a temp variable once (`TEST_OUTPUT=$(make test 2>&1)`) and grep from it as needed. Never run the suite a second time just to grep differently.
 
@@ -62,7 +62,7 @@ Base branch [main]: (press enter for main)
 
 **Fix:** Include `repo_path` in `pipeline-state.json`. In `statusline.sh`, run `git rev-parse --show-toplevel 2>/dev/null` and only display the status bar if the current repo path matches the one in state. Unrelated sessions suppress the display; the session running the pipeline shows it.
 
-Multi-concurrent-pipeline support is a separate, harder problem — not addressed here.
+Multi-concurrent-pipeline support is a separate, harder problem: not addressed here.
 
 ---
 
@@ -85,33 +85,33 @@ Current labels (`implement`, `test`, `review`, `ship`) describe the stage type b
 ### 8. Token spend tracking per stage
 Knowing the token cost of each agent invocation would be valuable for understanding pipeline cost and comparing stage efficiency. The timing table in the handover doc is the natural place for this.
 
-**Blocker:** Skills run inside Claude Code's agent invocation — there is no mechanism to read per-turn token counts from within a skill. Requires either Claude Code API support or external tooling.
+**Blocker:** Skills run inside Claude Code's agent invocation: there is no mechanism to read per-turn token counts from within a skill. Requires either Claude Code API support or external tooling.
 
 ---
 
 ### 9. Baseline run overhead for targeted changes
 The pre-implement baseline `make test` (6+ minutes) runs unconditionally, even for single-file changes with no plausible suite-wide impact. For very small changes this is mostly overhead.
 
-**Consideration:** A lighter pre-flight (e.g. run only the spec file for the changed module) for single-file changes. Not implemented — the correctness guarantee of a full baseline is worth the cost in most cases; optimising for small changes is premature.
+**Consideration:** A lighter pre-flight (e.g. run only the spec file for the changed module) for single-file changes. Not implemented: the correctness guarantee of a full baseline is worth the cost in most cases; optimising for small changes is premature.
 
 ---
 
 ### 10. Ship agent re-ran tests
-The ship agent ran the targeted test suite again during verification — a third run after baseline and the test-stage verify. This is by design (ship reads `### Run with`), but cumulative overhead is real. Not changed: the redundancy is a correctness guarantee at ship time.
+The ship agent ran the targeted test suite again during verification: a third run after baseline and the test-stage verify. This is by design (ship reads `### Run with`), but cumulative overhead is real. Not changed: the redundancy is a correctness guarantee at ship time.
 
 ---
 
 ### 11. Auto mode forced off after pipeline completes
 After the pipeline finishes, auto mode (if enabled) remains on for the next session. A user returning to normal prompting might not notice they are still in auto mode.
 
-**Consideration:** Forcing auto mode off on pipeline completion. Not actionable — no tool available to set Claude Code session mode from within a skill.
+**Consideration:** Forcing auto mode off on pipeline completion. Not actionable: no tool available to set Claude Code session mode from within a skill.
 
 ---
 
 ### 12. Issue tracker MCP for ticket description
 Reading the ticket description automatically during planning could reduce manual copy-paste of acceptance criteria.
 
-**Consideration:** Deferred — requires issue tracker MCP setup and user opt-in. Not a blocker.
+**Consideration:** Deferred: requires issue tracker MCP setup and user opt-in. Not a blocker.
 
 ---
 
@@ -129,15 +129,15 @@ Reading the ticket description automatically during planning could reduce manual
 
 | Priority | Item |
 |----------|------|
-| High | #1 — ExitPlanMode fails in auto-mode |
-| High | #2 — Implement agent running make test (ownership violation + redundant runs) |
-| High | #3 — spec/ ownership boundary missing (Ruby repos) |
-| Medium | #4 — pipeline-start: checkout main + pull before branch creation |
-| Medium | #5 — Base branch prompt not visually distinct |
-| Medium | #6 — Status bar bleeds across unrelated Claude Code instances |
-| Low | #7 — Status bar agent label names |
-| Deferred | #8 — Token spend tracking (no API support) |
-| Deferred | #9 — Baseline run overhead optimisation |
-| By design | #10 — Ship agent test re-run |
-| Deferred | #11 — Auto mode forced off after pipeline (no tool available) |
-| Future | #12 — Issue tracker MCP integration |
+| High | #1: ExitPlanMode fails in auto-mode |
+| High | #2: Implement agent running make test (ownership violation + redundant runs) |
+| High | #3: spec/ ownership boundary missing (Ruby repos) |
+| Medium | #4: pipeline-start: checkout main + pull before branch creation |
+| Medium | #5: Base branch prompt not visually distinct |
+| Medium | #6: Status bar bleeds across unrelated Claude Code instances |
+| Low | #7: Status bar agent label names |
+| Deferred | #8: Token spend tracking (no API support) |
+| Deferred | #9: Baseline run overhead optimisation |
+| By design | #10: Ship agent test re-run |
+| Deferred | #11: Auto mode forced off after pipeline (no tool available) |
+| Future | #12: Issue tracker MCP integration |

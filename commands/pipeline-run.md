@@ -1,4 +1,4 @@
-You are the **pipeline orchestrator**. You chain the development pipeline stages automatically — spawning a specialist agent for each stage and progressing without requiring manual invocations between steps.
+You are the **pipeline orchestrator**. You chain the development pipeline stages automatically: spawning a specialist agent for each stage and progressing without requiring manual invocations between steps.
 
 ## Step 1: Load memory
 
@@ -6,7 +6,7 @@ Run the following to find and read all repo-specific and project-level memory ru
 
 ```bash
 if [ ! -f "$HOME/.claude/pipeline.conf" ]; then
-  echo "No pipeline config found. Run /pipeline-setup first."
+  echo "No pipeline config found. Run pipeline-install.sh first."
   exit 1
 fi
 source "$HOME/.claude/pipeline.conf"
@@ -17,14 +17,14 @@ REPO_MEMORY="$HOME/.claude/projects/$ENCODED/memory"
 ORG_MEMORY="${PIPELINE_ORG_MEMORY:-}"
 ```
 
-Read every `feedback_*.md` file in both `$REPO_MEMORY` and `$ORG_MEMORY` (if the directories exist). Also read any `project_*.md` files relevant to the current work. Collect this content — it will be injected into every subagent prompt so they operate with the same rules you have.
+Read every `feedback_*.md` file in both `$REPO_MEMORY` and `$ORG_MEMORY` (if the directories exist). Also read any `project_*.md` files relevant to the current work. Collect this content: it will be injected into every subagent prompt so they operate with the same rules you have.
 
-Also read the following repo files if they exist — these are equally important constraints for subagents:
+Also read the following repo files if they exist: these are equally important constraints for subagents:
 - `$REPO/CLAUDE.md`
 - `$REPO/AGENTS.md`
 - `$REPO/.claude/CLAUDE.md`
 
-After loading, report explicitly: "Loaded N feedback rules from [repo memory path], M rules from [org memory path]. CLAUDE.md: [found/not found]. AGENTS.md: [found/not found]." If a directory does not exist or contains no feedback files, say so — do not skip silently. An empty or missing memory dir is worth knowing about because it means subagents will run without repo-specific constraints.
+After loading, report explicitly: "Loaded N feedback rules from [repo memory path], M rules from [org memory path]. CLAUDE.md: [found/not found]. AGENTS.md: [found/not found]." If a directory does not exist or contains no feedback files, say so: do not skip silently. An empty or missing memory dir is worth knowing about because it means subagents will run without repo-specific constraints.
 
 ## Step 2: Find the WorkItem
 
@@ -48,7 +48,7 @@ Read the WorkItem silently. Report a single line: `Branch: <branch> | SC: <sc> |
 
 ## Step 3: Determine current stage
 
-Read the WorkItem. A section is **complete** when its `### Gate` field is explicitly set to `PASS`. Do not treat a section as complete based on the presence of any other content — a partially-written section or a section with `Gate: FAIL` is not complete.
+Read the WorkItem. A section is **complete** when its `### Gate` field is explicitly set to `PASS`. Do not treat a section as complete based on the presence of any other content: a partially-written section or a section with `Gate: FAIL` is not complete.
 
 | Stage | Complete when |
 |-------|--------------|
@@ -65,7 +65,7 @@ Before spawning the implementation agent, scan the WorkItem Spec for independent
 
 ## Step 4b: Establish test baseline (before spawning implement agent)
 
-Run the full test suite command from `### Repo style` (Make targets). This must happen before the implement agent is spawned — the baseline reflects the repo state before any changes.
+Run the full test suite command from `### Repo style` (Make targets). This must happen before the implement agent is spawned: the baseline reflects the repo state before any changes.
 
 First, clear any stale bytecode cache to avoid spurious import errors contaminating the baseline:
 ```bash
@@ -73,7 +73,7 @@ find . -name "*.pyc" -delete
 find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
 ```
 
-Capture output once and examine from the variable — do not run the suite more than once:
+Capture output once and examine from the variable: do not run the suite more than once:
 ```bash
 TEST_OUTPUT=$(<full suite command from Repo style> 2>&1)
 EXIT_CODE=$?
@@ -81,19 +81,19 @@ EXIT_CODE=$?
 
 **If exit code is 137, or if output contains "Killed", "signal: killed", or "OOM":**
 Stop immediately. Do not spawn the implement agent. Report to the user:
-> "**Gate: FAIL [env]** — test suite was killed (OOM/SIGKILL, exit 137). This is an infrastructure problem, not a code problem. Fix the environment (e.g. Docker memory limits) and re-run `/pipeline-run`."
-Write `[orchestrator] Step 4b: FAIL [env] — test suite killed (OOM/SIGKILL)` to the Flags section and halt.
+> "**Gate: FAIL [env]**: test suite was killed (OOM/SIGKILL, exit 137). This is an infrastructure problem, not a code problem. Fix the environment (e.g. Docker memory limits) and re-run `/pipeline-run`."
+Write `[orchestrator] Step 4b: FAIL [env]: test suite killed (OOM/SIGKILL)` to the Flags section and halt.
 
 **If the suite cannot run at all** (import error, missing dependency, environment broken):
 Stop immediately. Do not spawn the implement agent. Report to the user what failed.
-> "**Gate: FAIL [env]** — environment broken, cannot establish test baseline: <what failed>"
-Write `[orchestrator] Step 4b: FAIL [env] — environment broken: <reason>` to Flags and halt.
+> "**Gate: FAIL [env]**: environment broken, cannot establish test baseline: <what failed>"
+Write `[orchestrator] Step 4b: FAIL [env]: environment broken: <reason>` to Flags and halt.
 
 **If some tests fail:**
-Check the `### Known broken tests` field in the WorkItem Spec. Any failing test IDs that match entries there are expected — exclude them from the baseline and log them as `[known broken, excluded]`. Write the remaining (unexpected) failing IDs to `### Baseline`. Proceed to implement.
+Check the `### Known broken tests` field in the WorkItem Spec. Any failing test IDs that match entries there are expected: exclude them from the baseline and log them as `[known broken, excluded]`. Write the remaining (unexpected) failing IDs to `### Baseline`. Proceed to implement.
 
 **If all tests pass:**
-Write `### Baseline\nClean — no pre-existing failures.` to the WorkItem Implementation section. Proceed to implement.
+Write `### Baseline\nClean: no pre-existing failures.` to the WorkItem Implementation section. Proceed to implement.
 
 ## Step 5: Run each stage in sequence
 
@@ -107,7 +107,7 @@ printf '{"sc":"%s","stage":"%s","stage_num":%d,"start_time":%d,"status":"running
 
 Stage numbers: `implement=1`, `test=2`, `review=3`, `ship=4`.
 
-After the stage gate passes and verification completes, compute the duration and write it to the WorkItem. This survives restarts — on retry, the previous duration is preserved and the new one appended:
+After the stage gate passes and verification completes, compute the duration and write it to the WorkItem. This survives restarts: on retry, the previous duration is preserved and the new one appended:
 
 ```bash
 STAGE_END=$(date +%s)
@@ -132,7 +132,7 @@ For each incomplete stage, spawn an agent using the Agent tool with this prompt:
 
 > "Read the instructions at `~/.claude/commands/pipeline-[stage].md` and follow them exactly. The repository is at `[REPO]`. The WorkItem is at `[WORKITEM]`.
 >
-> The following rules and context apply to this repository — treat them as hard constraints:
+> The following rules and context apply to this repository: treat them as hard constraints:
 >
 > **Repo rules (CLAUDE.md / AGENTS.md):**
 > [insert full content of CLAUDE.md and AGENTS.md read in Step 1, or "None found" if absent]
@@ -141,7 +141,7 @@ For each incomplete stage, spawn an agent using the Agent tool with this prompt:
 > [insert full content of all feedback_*.md files read in Step 1, or "None found" if absent]
 >
 > **Repo style and conventions:**
-> [insert the ### Repo style section from the WorkItem Spec — if the section is absent, skip this block and note it in the load report]
+> [insert the ### Repo style section from the WorkItem Spec: if the section is absent, skip this block and note it in the load report]
 >
 > Begin immediately without asking questions."
 
@@ -158,27 +158,27 @@ printf '{"sc":"%s","stage":"verifying","stage_num":%d,"start_time":%d,"status":"
 Do not trust the agent's self-reported gate alone. After each stage, independently verify the following before accepting a PASS:
 
 **After implement:**
-- Check the `### Issues` section — if it contains any unresolved lint failures (not `[self-resolved]`), override gate to FAIL. Do **not** re-run `make lint` yourself; trust the agent's recorded result.
-- Run the full test suite command from `### Repo style` (Make targets) as the correctness gate. Capture output once (`TEST_OUTPUT=$(<command> 2>&1); EXIT_CODE=$?`) and derive all checks from the captured variable — do not re-run the suite. If it fails on tests **not** listed in `### Baseline`, override gate to `FAIL [code]: <N> tests failing, not in baseline`. If exit code is 137 or output contains "Killed"/"signal: killed", override gate to `FAIL [env]: test suite killed (OOM/SIGKILL) — infrastructure problem, not a code failure`. Subsequent stages use targeted runs only.
+- Check the `### Issues` section: if it contains any unresolved lint failures (not `[self-resolved]`), override gate to FAIL. Do **not** re-run `make lint` yourself; trust the agent's recorded result.
+- Run the full test suite command from `### Repo style` (Make targets) as the correctness gate. Capture output once (`TEST_OUTPUT=$(<command> 2>&1); EXIT_CODE=$?`) and derive all checks from the captured variable: do not re-run the suite. If it fails on tests **not** listed in `### Baseline`, override gate to `FAIL [code]: <N> tests failing, not in baseline`. If exit code is 137 or output contains "Killed"/"signal: killed", override gate to `FAIL [env]: test suite killed (OOM/SIGKILL): infrastructure problem, not a code failure`. Subsequent stages use targeted runs only.
 - Check these fields are present in the Implementation section: `### Branch`, `### Files changed`, `### Baseline`, `### Key decisions`, `### Notes for tester`, `### Test focus`, `### Issues`, `### Gate`
-- Check that no files under test directories (`tests/`, `spec/`, `test/`, `__tests__/`) appear in `### Files changed` — if they do, override gate to `FAIL [pipeline]: implement stage created or modified test files — test directories are owned by the test stage`
+- Check that no files under test directories (`tests/`, `spec/`, `test/`, `__tests__/`) appear in `### Files changed`: if they do, override gate to `FAIL [pipeline]: implement stage created or modified test files: test directories are owned by the test stage`
 - If all checks pass: commit the stage output using conventional commits format (see below)
 
 **After test:**
-- Read the `### Run with` field from the Tests section — it contains the exact targeted test command. Run it. If it fails, override gate to FAIL. Do not run the full suite again.
+- Read the `### Run with` field from the Tests section: it contains the exact targeted test command. Run it. If it fails, override gate to FAIL. Do not run the full suite again.
 - Check these fields are present in the Tests section: `### Files changed`, `### What's covered`, `### Edge cases verified`, `### Run with`, `### Notes for shipper`, `### Issues`, `### Gate`
-- Check that no file in Tests `### Files changed` also appears in Implementation `### Files changed` — if any overlap exists, override gate to `FAIL [pipeline]: test stage modified source files — source files are owned by the implement stage`
+- Check that no file in Tests `### Files changed` also appears in Implementation `### Files changed`: if any overlap exists, override gate to `FAIL [pipeline]: test stage modified source files: source files are owned by the implement stage`
 - If all checks pass: commit the stage output using conventional commits format (see below)
 
 **After review:**
-- Check `### Outcome` is present. If it says `changes requested` or `blocked` but the gate says PASS, that is inconsistent — override to FAIL
+- Check `### Outcome` is present. If it says `changes requested` or `blocked` but the gate says PASS, that is inconsistent: override to FAIL
 - Check these fields are present: `### Outcome`, `### Notes`, `### Gate`
 
 **After ship:**
-- Verify the PR URL by running `gh pr view <url>` — if it fails, override gate to FAIL
+- Verify the PR URL by running `gh pr view <url>`: if it fails, override gate to FAIL
 - Check these fields are present: `### PR URL`, `### Commit SHA`, `### Issues`, `### Gate`
 
-If any verification check fails, log it in the Flags section as `[orchestrator] Post-stage verification failed at [stage]: <what failed>` and treat it as Gate: FAIL — then present the user with the Retry/Override/Halt options.
+If any verification check fails, log it in the Flags section as `[orchestrator] Post-stage verification failed at [stage]: <what failed>` and treat it as Gate: FAIL: then present the user with the Retry/Override/Halt options.
 
 ### Orchestrator commits
 
@@ -189,14 +189,14 @@ git add <files listed in ### Files changed>
 git commit -m "<conventional commit message>"
 ```
 
-**Never** use `git add -A` or `git add .` — these will stage WorkItem and handover files, which are pipeline-internal artifacts that must never be committed. Only stage the source files the stage agent explicitly listed.
+**Never** use `git add -A` or `git add .`: these will stage WorkItem and handover files, which are pipeline-internal artifacts that must never be committed. Only stage the source files the stage agent explicitly listed.
 
 **Type mapping** (read from WorkItem `**Type:**` field):
 - `feature` → `feat`
 - `bug` → `fix`
 - `migration` → `chore`
 
-**Retry detection** — check for existing pipeline commits on this branch:
+**Retry detection**: check for existing pipeline commits on this branch:
 ```bash
 BASE=$(git merge-base HEAD origin/HEAD)
 COMMITS=$(git log --format="%s" ${BASE}..HEAD)
@@ -207,15 +207,15 @@ COMMITS=$(git log --format="%s" ${BASE}..HEAD)
 
 **Implement commit:**
 - First run: `feat|fix|chore: <title from WorkItem>`
-- Retry: `fix: address implement issues — <one-line summary from Issues section>`
+- Retry: `fix: address implement issues: <one-line summary from Issues section>`
 
 **Test commit:**
 - First run: `test: <title from WorkItem>`
-- Retry: `fix: address test issues — <one-line summary from Issues section>`
+- Retry: `fix: address test issues: <one-line summary from Issues section>`
 
-**No scope brackets of any kind.** Do not add service names, directory names, or ticket prefixes in brackets — e.g. `fix: [delivery-service] handle errors` is wrong; `fix: handle errors at one layer to avoid duplicate error logs` is right. The branch name already contextualises the commit.
+**No scope brackets of any kind.** Do not add service names, directory names, or ticket prefixes in brackets: e.g. `fix: [delivery-service] handle errors` is wrong; `fix: handle errors at one layer to avoid duplicate error logs` is right. The branch name already contextualises the commit.
 
-Stage commits give a clean breadcrumb trail — one commit per passing stage, with retry fixes as separate commits. Each represents a verified state the pipeline has confirmed good.
+Stage commits give a clean breadcrumb trail: one commit per passing stage, with retry fixes as separate commits. Each represents a verified state the pipeline has confirmed good.
 
 ### Gate handling
 
@@ -224,30 +224,30 @@ After verification, read the WorkItem gate:
 - `Gate: PASS` (and all verification checks passed) → continue to the next stage immediately.
 - `Gate: FAIL [type]: <reason>` or gate field missing → pause and present the user with options.
 
-  **Failure type prefix — interpret for the user before showing options:**
-  - `[env]` — infrastructure/environment problem (OOM, missing deps, network). **Not your code.** Fix the environment.
-  - `[code]` — code problem: test failure, lint error, AC not met. **You need to fix the implementation or tests.**
-  - `[spec]` — spec is wrong or infeasible. **Return to planning** before retrying implementation.
-  - `[pipeline]` — ownership violation or tooling bug. Check the pipeline stage files.
+  **Failure type prefix: interpret for the user before showing options:**
+  - `[env]`: infrastructure/environment problem (OOM, missing deps, network). **Not your code.** Fix the environment.
+  - `[code]`: code problem: test failure, lint error, AC not met. **You need to fix the implementation or tests.**
+  - `[spec]`: spec is wrong or infeasible. **Return to planning** before retrying implementation.
+  - `[pipeline]`: ownership violation or tooling bug. Check the pipeline stage files.
 
   Present the options:
   > "**Gate: FAIL [type] at [stage]:** <reason>
   >
   > How would you like to proceed?
-  > 1. **Retry** — fix the issue and re-run `/pipeline-run` to resume from this stage
-  > 2. **Override** — acknowledge and continue anyway (recorded in Flags)
-  > 3. **Halt** — stop the pipeline here"
+  > 1. **Retry**: fix the issue and re-run `/pipeline-run` to resume from this stage
+  > 2. **Override**: acknowledge and continue anyway (recorded in Flags)
+  > 3. **Halt**: stop the pipeline here"
 
   Wait for the user's response before doing anything.
 
   - **Retry** → stop. User will fix and re-run.
-  - **Override** → append to the **Flags** section: `[orchestrator] Gate override at [stage]: <reason> — user chose to proceed.` Then continue to the next stage.
+  - **Override** → append to the **Flags** section: `[orchestrator] Gate override at [stage]: <reason>: user chose to proceed.` Then continue to the next stage.
   - **Halt** → clear the pipeline state, then stop. Report current WorkItem state so the user knows where things stand.
     ```bash
     rm -rf "$REPO/.pipeline-state/$SC_NUM"
     ```
 
-This is not a silent bypass — the override is always recorded in the WorkItem.
+This is not a silent bypass: the override is always recorded in the WorkItem.
 
 ## Final report
 
@@ -260,9 +260,9 @@ Read the full WorkItem and generate a handover document.
 
 Write it to: `$REPO/.handovers/handover-${SC}.md` (create the directory with `mkdir -p "$REPO/.handovers"` first)
 
-**Directory scope (strict):** `.handovers/` contains **only** handover files named `handover-sc-XXXXXX.md`. PR descriptions, notes, and any other artifacts go elsewhere — never in `.handovers/`. `.workitems/` contains **only** WorkItem files named `workitem-sc-XXXXXX.md`.
+**Directory scope (strict):** `.handovers/` contains **only** handover files named `handover-sc-XXXXXX.md`. PR descriptions, notes, and any other artifacts go elsewhere: never in `.handovers/`. `.workitems/` contains **only** WorkItem files named `workitem-sc-XXXXXX.md`.
 
-Then print **only** these two lines to the terminal — do not print the handover doc in full:
+Then print **only** these two lines to the terminal: do not print the handover doc in full:
 
 ```
 PR: <url>
@@ -272,11 +272,11 @@ Handover: <path to handover doc>
 ### Handover document format
 
 ```markdown
-# Handover: SC-XXXXXX — [title]
+# Handover SC-XXXXXX: [title]
 
 **PR:** [url]
 **Branch:** [branch]
-[if PIPELINE_TRACKER_LABEL is set: **${PIPELINE_TRACKER_LABEL}:** [ticket URL from WorkItem header] — otherwise omit this line]
+[if PIPELINE_TRACKER_LABEL is set: **${PIPELINE_TRACKER_LABEL}:** [ticket URL from WorkItem header]: otherwise omit this line]
 
 ---
 
@@ -284,7 +284,7 @@ Handover: <path to handover doc>
 [Goal from Spec]
 
 ## Acceptance criteria
-[checklist from Spec — tick any that were verified by tests]
+[checklist from Spec: tick any that were verified by tests]
 
 ---
 
@@ -302,7 +302,7 @@ Handover: <path to handover doc>
 | Ship               | [value]         |
 | **Agent total**    | **[sum of implement + test + review + ship]** |
 | **Pipeline total** | **[agent total + planning]** |
-| **Wall-clock total** | **[date +%s minus PIPELINE_START, formatted — includes orchestrator overhead]** |
+| **Wall-clock total** | **[date +%s minus PIPELINE_START, formatted: includes orchestrator overhead]** |
 
 ### Issues self-resolved
 [Collate all `[self-resolved]` entries from every stage's Issues section. One line each: stage, issue, fix applied.]
@@ -325,14 +325,14 @@ Handover: <path to handover doc>
 ---
 
 ## Review focus areas
-[Derive 3-5 specific things the human reviewer should pay attention to, based on the review agent's notes, the issues above, the key decisions in Implementation, and anything in Flags. Be specific — file names, function names, edge cases. Not generic advice.]
+[Derive 3-5 specific things the human reviewer should pay attention to, based on the review agent's notes, the issues above, the key decisions in Implementation, and anything in Flags. Be specific: file names, function names, edge cases. Not generic advice.]
 
 ---
 
 ## QA checklist
 Deploy the branch and verify each item manually:
 
-[For each acceptance criterion in the Spec, produce one QA step describing how a human would verify it in a running environment — not by reading the code or tests, but by actually exercising the feature. Be specific: what to call, what to send, what to observe.]
+[For each acceptance criterion in the Spec, produce one QA step describing how a human would verify it in a running environment: not by reading the code or tests, but by actually exercising the feature. Be specific: what to call, what to send, what to observe.]
 
 - [ ] [QA step derived from acceptance criterion 1]
 

@@ -30,7 +30,7 @@ Derive `{owner}` and `{repo}` from:
 gh repo view --json owner,name
 ```
 
-Filter to unresolved threads only — a thread is unresolved if it has not been marked as resolved via the GitHub UI (look for threads where `line` is present and no `resolved` marker). Also fetch top-level review bodies:
+Filter to unresolved threads only: a thread is unresolved if it has not been marked as resolved via the GitHub UI (look for threads where `line` is present and no `resolved` marker). Also fetch top-level review bodies:
 ```bash
 gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews
 ```
@@ -41,7 +41,7 @@ If there are no unresolved comments, stop: "No unresolved review comments found 
 
 ## Step 3: Read the code in context
 
-For each comment, read the file and line range it references. Do not form a plan based on the comment text alone — understand the surrounding code first.
+For each comment, read the file and line range it references. Do not form a plan based on the comment text alone: understand the surrounding code first.
 
 ## Step 4: Build the plan
 
@@ -61,7 +61,7 @@ Call `EnterPlanMode`, write the plan, then call `ExitPlanMode` to present it for
 - For each item:
   - The reviewer's comment (quoted)
   - File and line
-  - Proposed change (specific — not "refactor this" but "rename `x` to `y`")
+  - Proposed change (specific: not "refactor this" but "rename `x` to `y`")
 - **Flagged for your input:** any ambiguous or conflicting comments that need a decision before proceeding
 - **Out of scope:** any comments the skill will not action (e.g. questions, compliments, already-resolved threads)
 
@@ -78,7 +78,7 @@ If a flagged item was resolved by the user in their approval response, apply tha
 Stage only the files that were changed. Never use `git add -A` or `git add .`:
 ```bash
 git add <changed files>
-git commit -m "fix: address review feedback — <one-line summary of changes>"
+git commit -m "fix: address review feedback: <one-line summary of changes>"
 git push
 ```
 
@@ -90,5 +90,5 @@ Print:
 ```
 PR: <url>
 Changes: <N comments addressed>
-Skipped: <N flagged items not actioned — review manually>
+Skipped: <N flagged items not actioned: review manually>
 ```

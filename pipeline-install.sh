@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# pipeline-install.sh — one-time setup for the agentic development pipeline.
-# Safe to re-run — updates existing config without touching unrelated settings.
+# pipeline-install.sh: one-time setup for the agentic development pipeline.
+# Safe to re-run: updates existing config without touching unrelated settings.
 
 CONF="$HOME/.claude/pipeline.conf"
 CLAUDE_MD="$HOME/.claude/CLAUDE.md"
@@ -29,9 +29,9 @@ if [ ${#missing[@]} -gt 0 ]; then
   echo ""
   for tool in "${missing[@]}"; do
     case "$tool" in
-      git) echo "  git — xcode-select --install  (or https://git-scm.com)" ;;
-      gh)  echo "  gh  — brew install gh  →  gh auth login" ;;
-      jq)  echo "  jq  — brew install jq" ;;
+      git) echo "  git: xcode-select --install  (or https://git-scm.com)" ;;
+      gh)  echo "  gh : brew install gh  →  gh auth login" ;;
+      jq)  echo "  jq : brew install jq" ;;
     esac
   done
   echo ""
@@ -45,15 +45,15 @@ bold "Installing skill files..."
 
 echo "  The following Claude Code skills will be added to $COMMANDS_DIR:"
 echo ""
-echo "    /pipeline-plan        — interactive planning: create branch, scope work, write WorkItem"
-echo "    /pipeline-run         — orchestrator: chains implement → test → review → ship automatically"
-echo "    /pipeline-implement   — implement stage (also runnable standalone)"
-echo "    /pipeline-test        — test stage (also runnable standalone)"
-echo "    /pipeline-review      — review stage (also runnable standalone)"
-echo "    /pipeline-ship        — ship stage: push branch, open PR (also runnable standalone)"
-echo "    /pr-description       — generate a PR description from a WorkItem"
-echo "    /pr-review-feedback   — apply PR review feedback from a URL"
-echo "    /pipeline-demo        — simulated pipeline run with realistic output (good for testing your setup)"
+echo "    /pipeline-plan       : interactive planning: create branch, scope work, write WorkItem"
+echo "    /pipeline-run        : orchestrator: chains implement → test → review → ship automatically"
+echo "    /pipeline-implement  : implement stage (also runnable standalone)"
+echo "    /pipeline-test       : test stage (also runnable standalone)"
+echo "    /pipeline-review     : review stage (also runnable standalone)"
+echo "    /pipeline-ship       : ship stage: push branch, open PR (also runnable standalone)"
+echo "    /pr-description      : generate a PR description from a WorkItem"
+echo "    /pr-review-feedback  : apply PR review feedback from a URL"
+echo "    /pipeline-demo       : simulated pipeline run with realistic output (good for testing your setup)"
 echo ""
 
 mkdir -p "$COMMANDS_DIR"
@@ -70,7 +70,7 @@ ok "Status line script installed at ~/.claude/statusline.sh"
 
 SETTINGS="$HOME/.claude/settings.json"
 if [ -f "$SETTINGS" ] && grep -q "statusLine" "$SETTINGS" 2>/dev/null; then
-  warn "settings.json already has a statusLine entry — skipping. Verify it points to ~/.claude/statusline.sh"
+  warn "settings.json already has a statusLine entry: skipping. Verify it points to ~/.claude/statusline.sh"
 else
   echo ""
   echo "  Add the following to ~/.claude/settings.json to enable the status line:"
@@ -92,7 +92,7 @@ bold "Issue tracker config"
 if [ -f "$CONF" ]; then
   # shellcheck source=/dev/null
   source "$CONF"
-  echo "  (existing config found — current values shown as defaults)"
+  echo "  (existing config found: current values shown as defaults)"
 fi
 
 echo ""
@@ -129,7 +129,7 @@ else
   [ -z "$prefix" ] && { err "Ticket prefix required."; exit 1; }
 
   default_url="${PIPELINE_TRACKER_URL_TEMPLATE:-}"
-  prompt="  Tracker URL template — use {id} for ticket number (enter to skip)"
+  prompt="  Tracker URL template: use {id} for ticket number (enter to skip)"
   [ -n "$default_url" ] && prompt="$prompt [$default_url]"
   printf "%s: " "$prompt"
   read -r url_template
@@ -177,7 +177,7 @@ confirm="${confirm:-Y}"
 
 mkdir -p "$(dirname "$CONF")"
 cat > "$CONF" << EOF
-# Pipeline configuration — written by pipeline-install.sh
+# Pipeline configuration: written by pipeline-install.sh
 # Edit manually or re-run pipeline-install.sh to update.
 PIPELINE_TICKET_PREFIX="${SETUP_TICKET_PREFIX}"
 PIPELINE_TICKET_REGEX="${SETUP_TICKET_REGEX}"
@@ -193,11 +193,11 @@ ok "Config written to $CONF"
 PIPELINE_BLOCK='<!-- pipeline-block-start -->
 ## Development Pipeline
 
-A set of skills for running features through a structured agent pipeline. Use this for non-trivial work — a feature, bug fix, or migration with clear acceptance criteria.
+A set of skills for running features through a structured agent pipeline. Use this for non-trivial work: a feature, bug fix, or migration with clear acceptance criteria.
 
 **Flow:**
-1. `/pipeline-plan <branch-name>` — interactive planning session; paste the full branch name from your issue tracker. Creates the branch, produces a WorkItem document (spec, acceptance criteria, files, gotchas, out-of-scope).
-2. `/pipeline-run` — orchestrator; automatically chains implement → test → review → ship without further input; hands off a PR URL when done. Also used to resume after a failure — run with no args to continue from the first incomplete stage.
+1. `/pipeline-plan <branch-name>`: interactive planning session; paste the full branch name from your issue tracker. Creates the branch, produces a WorkItem document (spec, acceptance criteria, files, gotchas, out-of-scope).
+2. `/pipeline-run`: orchestrator; automatically chains implement → test → review → ship without further input; hands off a PR URL when done. Also used to resume after a failure: run with no args to continue from the first incomplete stage.
 
 Individual stages can also be run standalone: `/pipeline-implement`, `/pipeline-test`, `/pipeline-review`, `/pipeline-ship`.
 
@@ -205,7 +205,7 @@ Individual stages can also be run standalone: `/pipeline-implement`, `/pipeline-
 
 **When it is less useful:** Quick one-off fixes, exploratory spikes, or work that has not been scoped yet.
 
-**What flows between stages:** A WorkItem document at `<repo-root>/.workitems/workitem-<ticket-id>.md` — each stage reads the full document and appends its section. The document accumulates: Spec -> Implementation + handoff notes -> Tests + handoff notes -> Review (gate) -> Ship (PR URL).
+**What flows between stages:** A WorkItem document at `<repo-root>/.workitems/workitem-<ticket-id>.md`: each stage reads the full document and appends its section. The document accumulates: Spec -> Implementation + handoff notes -> Tests + handoff notes -> Review (gate) -> Ship (PR URL).
 <!-- pipeline-block-end -->'
 
 if [ ! -f "$CLAUDE_MD" ]; then

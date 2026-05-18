@@ -11,7 +11,7 @@
 ## The WorkItem (as it appears at end of pipeline)
 
 ```markdown
-# WorkItem
+# Work Item SC-11234: add delivery notes field to order model
 
 **Service:** order-service
 **Type:** feature
@@ -20,7 +20,15 @@
 **Base branch:** main
 **Shortcut:** https://app.shortcut.com/your-org/story/11234
 
+## Flags
+> Any stage may append here. Reviewed by human before ship.
+
+None.
+
+---
+
 ## Spec
+> Set during planning. Read-only for all downstream stages.
 
 ### Goal
 Allow customers to add free-text delivery instructions (e.g. "leave at door", "call on arrival") when placing an order. Field is optional and stored on the order record.
@@ -38,9 +46,12 @@ Allow customers to add free-text delivery instructions (e.g. "leave at door", "c
 - `app/api/orders.py`
 - `migrations/versions/xxxx_add_delivery_notes_to_orders.py`
 
-### Known constraints
-- Max 500 chars — consistent with other free-text fields in the schema
+### Known constraints / gotchas
+- Max 500 chars, consistent with other free-text fields in the schema
 - Field must be nullable (not all orders have delivery instructions)
+
+### Known broken tests
+None.
 
 ### Repo style
 - Models: SQLAlchemy declarative base, `app/models/`; nullable fields use `nullable=True, default=None`
@@ -49,46 +60,63 @@ Allow customers to add free-text delivery instructions (e.g. "leave at door", "c
 - Tests: pytest, integration tests hit a real test DB (no mocking); test files mirror `app/` structure in `tests/`
 - Naming: snake_case throughout; model field names match column names
 
+**Make targets:**
+- Lint: `make lint`
+- Full suite: `make test.unit`
+- Targeted: `make unit test=<space-separated paths>`
+
 ### Out of scope
 - UI changes
 - Validation beyond length (content filtering etc.)
 - Search or filtering by delivery notes
 
+### Planning timing
+4m
+
+---
+
 ## Implementation
+> Branch, Files changed, Key decisions, Notes for tester, Test focus, Issues, and Gate are filled by pipeline-implement. Baseline is written by the orchestrator before the implement agent is spawned.
 
 ### Branch
 username/sc-11234/add-delivery-notes-field
 
 ### Files changed
-- `app/models/order.py` — added `delivery_notes` column
-- `app/schemas/order.py` — added optional `delivery_notes` field to `OrderCreate` and `OrderResponse`
-- `app/api/orders.py` — no changes needed (schema handles it)
-- `migrations/versions/20260515_add_delivery_notes_to_orders.py` — Alembic migration
+- `app/models/order.py`: added `delivery_notes` column
+- `app/schemas/order.py`: added optional `delivery_notes` field to `OrderCreate` and `OrderResponse`
+- `app/api/orders.py`: no changes needed (schema handles it)
+- `migrations/versions/20260515_add_delivery_notes_to_orders.py`: Alembic migration
 
 ### Baseline
-Clean — all 147 tests passing. (Recorded by orchestrator before implement agent was spawned.)
+Clean: all 147 tests passing. (Recorded by orchestrator before implement agent was spawned.)
 
 ### Key decisions
 - Nullable varchar(500) rather than TEXT to enforce the stated constraint at DB level
 - No default value (NULL means "not provided", distinct from empty string)
-- Schema change is backwards-compatible — field absent from payload treated as None
+- Schema change is backwards-compatible: field absent from payload treated as None
 
 ### Notes for tester
-- Migration must run before tests or the column won't exist — `make test` handles this via the test DB fixture
-- Edge case: payload with `delivery_notes: ""` (empty string) should be stored as-is, not coerced to None — test this explicitly
+- Migration must run before tests or the column won't exist; `make test` handles this via the test DB fixture
+- Edge case: payload with `delivery_notes: ""` (empty string) should be stored as-is, not coerced to None; test this explicitly
 - The 500-char limit is enforced by the DB column definition; test that it raises correctly on overflow
 
 ### Test focus
-1. Empty string vs null distinction — most likely to be subtly wrong
-2. 500-char overflow path — ensure it surfaces at schema layer (422), not DB layer
+1. Empty string vs null distinction: most likely to be subtly wrong
+2. 500-char overflow path: ensure it surfaces at schema layer (422), not DB layer
 
 ### Issues
 None.
 
+### Timing
+14m
+
 ### Gate
 PASS
 
+---
+
 ## Tests
+> To be filled by pipeline-test.
 
 ### Files changed
 - `tests/api/test_orders.py`
@@ -97,7 +125,7 @@ PASS
 ### What's covered
 - Order creation with `delivery_notes` present
 - Order creation without `delivery_notes` (omitted from payload)
-- Order creation with `delivery_notes: ""` (empty string — stored as-is)
+- Order creation with `delivery_notes: ""` (empty string, stored as-is)
 - `delivery_notes` returned correctly in order detail response
 - `delivery_notes: null` for orders created without the field
 - 501-char input raises 422 validation error
@@ -105,21 +133,27 @@ PASS
 ### Edge cases verified
 - Empty string vs null distinction confirmed
 - Overflow raises at schema layer (Pydantic max_length) before hitting DB
-- Existing test suite unaffected — all 147 baseline tests still pass
+- Existing test suite unaffected: all 147 baseline tests still pass
 
 ### Run with
 `make unit test=tests/api/test_orders.py tests/models/test_order.py`
 
 ### Notes for shipper
-Clean — no known issues. Migration is additive (nullable column, no backfill needed), safe to run against production with no downtime.
+Clean: no known issues. Migration is additive (nullable column, no backfill needed), safe to run against production with no downtime.
 
 ### Issues
 None.
 
+### Timing
+9m
+
 ### Gate
 PASS
 
+---
+
 ## Review
+> To be filled by pipeline-review.
 
 ### Outcome
 approved
@@ -127,10 +161,16 @@ approved
 ### Notes
 Implementation is minimal and correct. Migration is safe. Schema change is backwards-compatible. Test coverage addresses all acceptance criteria including the empty-string edge case called out in handoff notes. No scope creep. No security concerns.
 
+### Timing
+6m
+
 ### Gate
 PASS
 
+---
+
 ## Ship
+> To be filled by pipeline-ship.
 
 ### PR URL
 https://github.com/your-org/order-service/pull/892
@@ -141,19 +181,18 @@ a3f7c91
 ### Issues
 None.
 
+### Timing
+2m
+
 ### Gate
 PASS
-
-## Flags
-
-None.
 ```
 
 ---
 
 ## Orchestrator narrative
 
-**Step 1 — Load context**
+**Step 1: Load context**
 
 ```
 Loaded:
@@ -162,21 +201,21 @@ Loaded:
   Repo style:   ### Repo style present in WorkItem
 ```
 
-**Step 2 — Establish baseline**
+**Step 2: Establish baseline**
 
 Orchestrator runs full suite before spawning implement agent:
 ```
 make test.unit → PASS (147/147)
-### Baseline written: Clean — all 147 tests passing.
+### Baseline written: Clean: all 147 tests passing.
 ```
 
-**Step 3 — Spawn implement agent**
+**Step 3: Spawn implement agent**
 
 Agent completes (lint only, no test suite). Orchestrator runs post-stage verification:
 ```
 Issues:        no unresolved lint failures ✓
-make test.unit → PASS (147/147) — no new failures vs baseline ✓
-Fields:        Branch ✓  Files changed ✓  Baseline ✓  Key decisions ✓  Notes for tester ✓  Test focus ✓  Gate ✓
+make test.unit → PASS (147/147): no new failures vs baseline ✓
+Fields:        Branch ✓  Files changed ✓  Baseline ✓  Key decisions ✓  Notes for tester ✓  Test focus ✓  Timing ✓  Gate ✓
 No test files in Files changed ✓
 ```
 Gate accepted. Orchestrator commits:
@@ -184,19 +223,19 @@ Gate accepted. Orchestrator commits:
 feat: add delivery notes field to order model
 ```
 
-**Step 3 — Spawn test agent**
+**Step 4: Spawn test agent**
 
 Agent completes. Orchestrator runs post-stage verification:
 ```
 make unit test=tests/api/test_orders.py tests/models/test_order.py → PASS (6/6)
-Fields:     Files changed ✓  What's covered ✓  Edge cases ✓  Run with ✓  Notes for shipper ✓  Gate ✓
+Fields:     Files changed ✓  What's covered ✓  Edge cases ✓  Run with ✓  Notes for shipper ✓  Timing ✓  Gate ✓
 ```
 Gate accepted. Orchestrator commits:
 ```
 test: add delivery notes field to order model
 ```
 
-**Step 4 — Spawn review agent**
+**Step 5: Spawn review agent**
 
 Agent completes. Orchestrator checks consistency:
 ```
@@ -205,7 +244,7 @@ Gate:    PASS
 Consistent ✓
 ```
 
-**Step 5 — Spawn ship agent**
+**Step 6: Spawn ship agent**
 
 Agent reads `### Run with`, runs targeted tests, pushes branch, creates PR. Orchestrator verifies:
 ```
@@ -220,7 +259,7 @@ Gate accepted.
 ## Handover document
 
 ```markdown
-# Handover: SC-11234 — add delivery notes field to order model
+# Handover: SC-11234, add delivery notes field to order model
 
 **PR:** https://github.com/your-org/order-service/pull/892
 **Branch:** username/sc-11234/add-delivery-notes-field → main
@@ -251,9 +290,9 @@ None.
 
 ## Review focus areas
 
-1. `migrations/versions/20260515_add_delivery_notes_to_orders.py` — verify the column is nullable with no default, not `server_default=''`. The implementer chose NULL over empty string deliberately.
+1. `migrations/versions/20260515_add_delivery_notes_to_orders.py`: verify the column is nullable with no default, not `server_default=''`. The implementer chose NULL over empty string deliberately.
 
-2. `tests/api/test_orders.py` — the empty-string case (`delivery_notes: ""`) is tested explicitly. Confirm the assertion distinguishes `""` from `null` in the response body.
+2. `tests/api/test_orders.py`: the empty-string case (`delivery_notes: ""`) is tested explicitly. Confirm the assertion distinguishes `""` from `null` in the response body.
 
-3. `app/schemas/order.py` — confirm `max_length=500` is on the Pydantic field, not just the DB column. The overflow error should surface as a 422 before hitting the DB.
+3. `app/schemas/order.py`: confirm `max_length=500` is on the Pydantic field, not just the DB column. The overflow error should surface as a 422 before hitting the DB.
 ```

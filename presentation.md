@@ -27,7 +27,7 @@ I would prefer a little more rigour, if possible.
 ## A few things to say upfront
 
 - **HIGHLY opinionated.** Scoped work, clean handoffs, explicit failure handling, separation of concerns. You might weight those differently.
-- **Slower than ad-hoc prompting.** Code generation is a solved problem — you can have working code in seconds. This trades speed for structure and a higher bar for what ships.
+- **Slower than ad-hoc prompting.** Code generation is a solved problem: you can have working code in seconds. This trades speed for structure and a higher bar for what ships.
 - **"Confidence" and LLM-generated code** is a stretch, and the irony is not lost on me.. But worth trying to make it less spooky.
 
 ---
@@ -97,7 +97,7 @@ Scoping conversation, codebase investigation, spec written and presented for app
 ```
 /pipeline-run
 ```
-Chains implement → test → review → ship. Verifies the gate after each stage. On failure: typed error, Retry/Override/Halt. PR URL when done. Run `/auto` first — without it Claude Code will prompt for permissions mid-run.
+Chains implement → test → review → ship. Verifies the gate after each stage. On failure: typed error, Retry/Override/Halt. PR URL when done. Run `/auto` first: without it Claude Code will prompt for permissions mid-run.
 
 ---
 

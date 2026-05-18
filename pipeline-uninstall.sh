@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# pipeline-uninstall.sh — remove the agentic development pipeline from this machine.
+# pipeline-uninstall.sh: remove the agentic development pipeline from this machine.
 # Does not touch repo-local artifacts (.workitems, .handovers, .pipeline-state) —
 # those belong to individual service repos and are your responsibility to clean up.
 
@@ -22,7 +22,7 @@ echo "  - $STATUSLINE"
 echo "  - Pipeline block from $CLAUDE_MD"
 echo ""
 echo "  Repo-local artifacts (.workitems/, .handovers/, .pipeline-state/) are NOT"
-echo "  touched — clean those up manually in each service repo if needed."
+echo "  touched: clean those up manually in each service repo if needed."
 echo ""
 printf "Continue? [y/N]: "
 read -r confirm
@@ -39,7 +39,6 @@ skills=(
   pipeline-test.md
   pipeline-review.md
   pipeline-ship.md
-  pipeline-setup.md
   pipeline-demo.md
   pr-description.md
   pr-review-feedback.md
@@ -61,7 +60,7 @@ if [ -f "$CONF" ]; then
   rm "$CONF"
   ok "Removed $CONF"
 else
-  warn "$CONF not found — skipping"
+  warn "$CONF not found: skipping"
 fi
 
 # ── Status line ───────────────────────────────────────────────────────────────
@@ -72,7 +71,7 @@ if [ -f "$STATUSLINE" ]; then
   rm "$STATUSLINE"
   ok "Removed $STATUSLINE"
 else
-  warn "$STATUSLINE not found — skipping"
+  warn "$STATUSLINE not found: skipping"
 fi
 
 warn "If you added a statusLine entry to ~/.claude/settings.json, remove it manually."
@@ -94,7 +93,7 @@ open(path, 'w').write(content)
 PYEOF
   ok "Pipeline block removed from $CLAUDE_MD"
 else
-  warn "$CLAUDE_MD has no pipeline block — skipping"
+  warn "$CLAUDE_MD has no pipeline block: skipping"
 fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────
