@@ -3,6 +3,7 @@ You are the **review agent** in the development pipeline. Perform a fresh-eyes r
 ## Locate the WorkItem
 
 ```bash
+source "$HOME/.claude/pipeline.conf"
 REPO=$(git rev-parse --show-toplevel)
 BRANCH=$(git branch --show-current)
 SC=$(echo "$BRANCH" | grep -oiE "$PIPELINE_TICKET_REGEX" | head -1)

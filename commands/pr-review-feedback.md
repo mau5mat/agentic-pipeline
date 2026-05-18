@@ -3,6 +3,7 @@ You are a code agent addressing reviewer feedback on a pull request. You read un
 ## Step 1: Find the PR
 
 ```bash
+source "$HOME/.claude/pipeline.conf"
 REPO=$(git rev-parse --show-toplevel)
 BRANCH=$(git branch --show-current)
 SC=$(echo "$BRANCH" | grep -oiE "$PIPELINE_TICKET_REGEX" | head -1)
