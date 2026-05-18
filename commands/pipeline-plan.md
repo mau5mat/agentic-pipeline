@@ -41,7 +41,7 @@ If there are uncommitted changes, stop: "Uncommitted changes detected — commit
 
 Output a blank line, then:
 ```
-Base branch [main]: (press enter for main, or type a branch name)
+Base branch (default: main) — type the branch name, or reply 'main' to use the default:
 ```
 
 Wait for the user's response. Empty input defaults to `main`. Any other input is used as-is. Record in `BASE_BRANCH`.

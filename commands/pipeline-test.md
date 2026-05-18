@@ -5,7 +5,7 @@ You are the **testing agent** in the development pipeline. Read the WorkItem and
 ```bash
 REPO=$(git rev-parse --show-toplevel)
 BRANCH=$(git branch --show-current)
-SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
+SC=$(echo "$BRANCH" | grep -oiE "$PIPELINE_TICKET_REGEX" | head -1)
 WORKITEM="$REPO/.workitems/workitem-${SC}.md"
 ```
 

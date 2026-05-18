@@ -65,7 +65,7 @@ Ask three questions:
 >
 > Prefix${PIPELINE_TICKET_PREFIX:+ [$PIPELINE_TICKET_PREFIX]}:"
 
-> "What's your tracker's URL format? Use `{id}` for the ticket number and `{slug}` for the branch description part. Press enter to skip — ticket links will be omitted from WorkItems.
+> "What's your tracker's URL format? Use `{id}` for the ticket number and `{slug}` for the branch description part. Reply 'skip' to omit ticket links from WorkItems.
 >
 > Examples:
 > - Jira: `https://mycompany.atlassian.net/browse/{id}`
@@ -73,7 +73,7 @@ Ask three questions:
 >
 > URL template${PIPELINE_TRACKER_URL_TEMPLATE:+ [$PIPELINE_TRACKER_URL_TEMPLATE]}:"
 
-> "What label should appear next to the tracker link in the WorkItem? Press enter for `Tracker`.
+> "What label should appear next to the tracker link in the WorkItem? Reply 'Tracker' to use the default.
 >
 > Examples: `Jira`, `Linear`, `Tracker`
 >
@@ -94,7 +94,7 @@ SETUP_TRACKER_URL_TEMPLATE="<user's URL or empty>"
 
 Ask:
 
-> "Do you have a shared team memory directory? This is a `~/.claude/projects/.../memory` path shared across your team with feedback rules that apply to all repos. Most users skip this — press enter to skip.
+> "Do you have a shared team memory directory? This is a `~/.claude/projects/.../memory` path shared across your team with feedback rules that apply to all repos. Reply 'skip' if not applicable.
 >
 > Org memory path${PIPELINE_ORG_MEMORY:+ [$PIPELINE_ORG_MEMORY]}:"
 

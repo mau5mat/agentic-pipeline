@@ -5,7 +5,7 @@ You are a code agent addressing reviewer feedback on a pull request. You read un
 ```bash
 REPO=$(git rev-parse --show-toplevel)
 BRANCH=$(git branch --show-current)
-SC=$(echo "$BRANCH" | grep -oiE 'sc-[0-9]+' | head -1)
+SC=$(echo "$BRANCH" | grep -oiE "$PIPELINE_TICKET_REGEX" | head -1)
 ```
 
 Run:
