@@ -44,7 +44,7 @@ The orchestrator cat-ed the full WorkItem to the terminal and narrated each tool
 ### 6. WorkItem directory should be separate from pr-descriptions
 WorkItems are living documents that exist throughout the pipeline. `pr-descriptions/` implies PR-ready content and is conceptually wrong for this purpose.
 
-**Fix:** Move WorkItem storage to `~/Development/Slice/workitems/<service>/workitem-<sc>.md`. Update all pipeline stage commands to use the new path. `pr-descriptions/` can remain for handover docs and PR bodies if needed.
+**Fix:** Move WorkItem storage to a dedicated `workitems/` directory outside of `pr-descriptions/`. Update all pipeline stage commands to use the new path.
 
 ---
 
@@ -120,8 +120,8 @@ The handover doc was printed inline at the end of a long session, making the PR 
 - WorkItem as shared state between agents — each agent had full context without re-derivation
 - Gate/section structure gave a clean audit trail throughout the run
 - Pre-commit hooks caught a real issue (codespell) that would have blocked a human committer too
-- Review agent was thorough, fast, and caught the double Pillow decode as a non-blocking observation
-- The abstraction boundary approach (stub behind `remove_background`) was correctly preserved end-to-end without agent drift
+- Review agent was thorough, fast, and raised a non-blocking code quality observation
+- An abstraction boundary (stub behind an external service call) was correctly preserved end-to-end without agent drift
 
 ---
 

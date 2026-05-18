@@ -1,6 +1,6 @@
 # Pipeline Trial Run Findings — SC-648810
 
-Fourth live run (restaurant-api, Ruby). Tag 422 responses as non-errors in Datadog. Core pipeline logic — implement → test → review → ship with gates — worked without code-level issues. Findings are ergonomic and ownership issues.
+Fourth live run (Ruby service). Adjust HTTP error classification in a monitoring integration. Core pipeline logic — implement → test → review → ship with gates — worked without code-level issues. Findings are ergonomic and ownership issues.
 
 ---
 
@@ -44,7 +44,7 @@ Starting a new ticket immediately after a previous one requires manually running
 The derivation summary line and base branch prompt appear in sequence with no visual separation, making the prompt look like continued output rather than a pause waiting for input.
 
 ```
-Branch: mattroberts/sc-648810/... | SC: sc-648810 | Shortcut: https://...
+Branch: username/sc-648810/... | SC: sc-648810 | Tracker: https://...
 Base branch [main]: 
 ```
 
@@ -108,10 +108,10 @@ After the pipeline finishes, auto mode (if enabled) remains on for the next sess
 
 ---
 
-### 12. Shortcut MCP for ticket description
-Reading the Shortcut ticket description automatically during planning could reduce manual copy-paste of acceptance criteria.
+### 12. Issue tracker MCP for ticket description
+Reading the ticket description automatically during planning could reduce manual copy-paste of acceptance criteria.
 
-**Consideration:** Deferred — requires Shortcut MCP setup and user opt-in. Not a blocker.
+**Consideration:** Deferred — requires issue tracker MCP setup and user opt-in. Not a blocker.
 
 ---
 
@@ -140,4 +140,4 @@ Reading the Shortcut ticket description automatically during planning could redu
 | Deferred | #9 — Baseline run overhead optimisation |
 | By design | #10 — Ship agent test re-run |
 | Deferred | #11 — Auto mode forced off after pipeline (no tool available) |
-| Future | #12 — Shortcut MCP integration |
+| Future | #12 — Issue tracker MCP integration |

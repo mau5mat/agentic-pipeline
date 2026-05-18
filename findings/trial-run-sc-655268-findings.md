@@ -34,7 +34,7 @@ The fix is not simply "read AGENTS.md earlier" — the planner already reads it 
 
 ### 4. Known broken test infrastructure has no representation in the WorkItem
 
-A migration test failure (`KeyError: 'driver'`) required investigation to confirm it was a pre-existing environment issue (subprocess harness) rather than a new regression. This ate time and created uncertainty. The pipeline has no concept of known-broken test targets — every failure is investigated from scratch.
+A migration test failure (a pre-existing `KeyError`) required investigation to confirm it was an environment issue (subprocess harness) rather than a new regression. This ate time and created uncertainty. The pipeline has no concept of known-broken test targets — every failure is investigated from scratch.
 
 **Fix:** Add an optional `### Known broken tests` field to the WorkItem Spec section. During planning, the user can populate this with test targets known to be broken in the current environment (e.g. integration test harness issues, flaky infra-dependent tests). The orchestrator reads this before the baseline run and treats failures matching those targets as expected — they do not block the pipeline and are logged in Flags rather than raised as Gate: FAIL. This field is optional and empty by default.
 
@@ -84,9 +84,9 @@ Long pipeline runs trigger Claude Code's automatic context compaction, which can
 
 ### 10. spec-vs-execution gap — in-scope fixture update not done
 
-The Spec and Implementation sections both noted that a `user_id` fixture in `conftest.py` needed updating. Neither the implement nor test agent did it. The agent prioritised new tests over updating existing fixtures, and it was flagged in Flags as a non-blocking follow-up.
+The Spec and Implementation sections both noted that a test fixture in `conftest.py` needed updating. Neither the implement nor test agent did it. The agent prioritised new tests over updating existing fixtures, and it was flagged in Flags as a non-blocking follow-up.
 
-**Consideration:** Hard to enforce generically — "update existing fixtures" is a soft obligation that doesn't map cleanly to a gate check. The right mitigation is precise acceptance criteria: if a fixture update is genuinely in scope, it should appear as an explicit acceptance criterion (`- [ ] Update user_id fixture in conftest.py`) so the review stage can catch it missing. Not a pipeline fix — a spec discipline issue.
+**Consideration:** Hard to enforce generically — "update existing fixtures" is a soft obligation that doesn't map cleanly to a gate check. The right mitigation is precise acceptance criteria: if a fixture update is genuinely in scope, it should appear as an explicit acceptance criterion so the review stage can catch it missing. Not a pipeline fix — a spec discipline issue.
 
 ---
 
@@ -101,8 +101,8 @@ User was unsure whether the status bar ticket number updated correctly when bran
 - Migration separation handled cleanly — stash-and-pop approach replaced with clean branch separation once the policy conflict was understood
 - Flag mechanism worked as intended — the AGENTS.md policy conflict was recorded in the WorkItem and will surface to the reviewer
 - Baseline caught a real environment problem (stale .pyc) before the implement agent ran — correct design
-- Test agent found the right fixture pattern (DriverFactory.create() vs build() + explicit commit) on first attempt
-- Scope was tight — implement agent didn't touch anything outside the stated files except mandatory AGENTS.md-required docs and a mypy-required addition
+- Test agent found the correct fixture pattern (factory create vs build + explicit commit) on first attempt
+- Scope was tight — implement agent didn't touch anything outside the stated files except mandatory AGENTS.md-required docs and a type-checker-required addition
 
 ---
 

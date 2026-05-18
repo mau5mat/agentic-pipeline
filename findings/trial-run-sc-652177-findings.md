@@ -1,6 +1,6 @@
 # Pipeline Trial Run Findings — SC-652177
 
-Second live run (ros-service, delivery-service error handling). Key issue: implement agent churned for ~1 hour due to OOM on `make test.unit`. Most other pipeline stages worked well once past that.
+Second live run (Python service, error handling feature). Key issue: implement agent churned for ~1 hour due to OOM on `make test.unit`. Most other pipeline stages worked well once past that.
 
 ---
 
@@ -35,7 +35,7 @@ Three `make test.unit` calls observed inside the implement agent's tool calls. T
 ---
 
 ### 5. Implement agent read out-of-scope files (docs/bugs/)
-The agent read `docs/bugs/TEMPLATE.md` and `docs/bugs/README.md`, then wrote a bug doc to `docs/bugs/sc-652177-...md`. This is scope creep — the WorkItem didn't specify bug doc creation, and docs/ is not in "Files likely touched."
+The agent read `docs/bugs/TEMPLATE.md` and `docs/bugs/README.md`, then wrote a bug doc to `docs/bugs/sc-XXXXXX-...md`. This is scope creep — the WorkItem didn't specify bug doc creation, and docs/ is not in "Files likely touched."
 
 **Fix:** Strengthen the "trust Repo Style, skip exploration" directive to explicitly say: only read files listed in "Files likely touched" plus files you need to understand in order to modify them. Do not explore the broader repo structure.
 
@@ -57,7 +57,7 @@ Exit code 137 is not a test failure — it's the process being killed. The agent
 ### 7. Docker ruff format command run directly
 The agent ran:
 ```
-docker run --rm -v "$(pwd)":/usr/src/app -w /usr/src/app ros-service-test:local ruff format <file>
+docker run --rm -v "$(pwd)":/usr/src/app -w /usr/src/app service-test:local ruff format <file>
 ```
 This is fragile — it bypasses `make lint` and invokes the formatter directly via docker. Likely inferred from watching lint output, not from the Makefile. Should not happen.
 
@@ -66,9 +66,9 @@ This is fragile — it bypasses `make lint` and invokes the formatter directly v
 ---
 
 ### 8. Commit message included scope brackets
-Generated: `fix: [delivery-service] handle errors at one layer to avoid duplication in error logs`
+Generated: `fix: [my-service] handle errors at one layer to avoid duplication in error logs`
 
-The `[delivery-service]` scope bracket violates the "no scope brackets" convention (SC number already in branch name). The agent added the service name.
+The `[my-service]` scope bracket violates the "no scope brackets" convention (SC number already in branch name). The agent added the service name.
 
 **Fix:** Make the no-scope-brackets rule more explicit in pipeline.md: "No scope brackets of any kind — not service names, not directory names, not ticket prefixes. The branch name already contextualises the commit."
 
@@ -98,7 +98,7 @@ User believes EnterPlanMode for the WorkItem draft would feel more credible — 
 ---
 
 ### 12. Handover should have its own directory
-Like WorkItems moved from `pr-descriptions/` to `workitems/`, handover docs should move to `~/Development/Slice/handovers/<service>/`. `pr-descriptions/` is conceptually for PR-ready output; handover docs are pipeline-internal output.
+Like WorkItems moved from `pr-descriptions/` to `workitems/`, handover docs should move to a dedicated directory. `pr-descriptions/` is conceptually for PR-ready output; handover docs are pipeline-internal output.
 
 **Fix:** Update pipeline.md handover write path, README runtime output table, and related docs. (Fixed in this session — see gaps-and-roadmap.md.)
 

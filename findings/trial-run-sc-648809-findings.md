@@ -1,6 +1,6 @@
 # Pipeline Trial Run Findings — SC-648809
 
-Third live run (restaurant-api, Ruby). Improve logging for PyMenuController — reclassify UniqueViolation 500s as 409 DuplicateEntryError with `log_to_datadog: false`. Fewer mechanical issues than prior runs. Gate failure at implement was a genuine code issue (private_class_method broke existing test), self-resolved by orchestrator. Review and ship passed cleanly.
+Third live run (Ruby service). Reclassify a specific error type and adjust downstream logging behaviour. Fewer mechanical issues than prior runs. Gate failure at implement was a genuine code issue (a visibility modifier broke an existing test), self-resolved by orchestrator. Review and ship passed cleanly.
 
 ---
 
@@ -69,7 +69,7 @@ The WorkItem file was committed and pushed to the remote branch. WorkItems are p
 ### 9. PR description written to `.handovers/` instead of personal dir
 `pr-description.md` had been updated during the SC-652177 post-trial work to write to `<repo-root>/.handovers/`, but `.handovers/` should contain only handover docs. PR descriptions are a separate artifact.
 
-**Fix:** `pr-description.md` path reverted to `~/Development/Slice/pr-descriptions/<service-name>/`. Strict scope rule added: `.workitems/` contains only `workitem-sc-*.md`, `.handovers/` contains only `handover-sc-*.md`. Applied to `pr-description.md`, `pipeline-start.md`, `pipeline.md`.
+**Fix:** `pr-description.md` path reverted to a personal directory outside the repo. Strict scope rule added: `.workitems/` contains only `workitem-sc-*.md`, `.handovers/` contains only `handover-sc-*.md`. Applied to `pr-description.md`, `pipeline-start.md`, `pipeline.md`.
 
 ---
 
@@ -77,8 +77,8 @@ The WorkItem file was committed and pushed to the remote branch. WorkItems are p
 
 - Gate failure at implement was a genuine issue, correctly surfaced with full context
 - Orchestrator self-resolved the implement failure (removed `private_class_method` line, confirmed suite clean)
-- Test agent self-resolved weak assertions (bare `begin/rescue` replaced with correct `raise_error` block pattern)
-- Review was fast and accurate — all six acceptance criteria verified against the diff
+- Test agent self-resolved weak assertions (bare rescue block replaced with correct `raise_error` assertion pattern)
+- Review was fast and accurate — all acceptance criteria verified against the diff
 - Ship passed cleanly
 - The failure surfacing flow (reason → options → user choice) was noted as great UX
 - Handover doc was useful and complete
