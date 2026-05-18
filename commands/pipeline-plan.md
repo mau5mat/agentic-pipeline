@@ -18,6 +18,7 @@ BRANCH_ARG="<argument passed to this skill>"
 SC=$(echo "$BRANCH_ARG" | grep -oiE 'sc-[0-9]+' | head -1)
 SC_NUM=$(echo "$SC" | grep -oE '[0-9]+')
 REPO=$(git rev-parse --show-toplevel)
+PLAN_START=$(date +%s)
 ```
 
 - If no branch name argument was provided, stop: "Usage: `/pipeline-plan <branch-name>` — paste the branch name from Shortcut."
@@ -201,6 +202,9 @@ After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem docume
 ### Out of scope
 [explicitly excluded]
 
+### Planning timing
+[written by pipeline-plan after WorkItem is approved and written to disk]
+
 ---
 
 ## Implementation
@@ -223,6 +227,24 @@ After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem docume
 ```
 
 ## After writing
+
+Compute planning duration and append to the WorkItem Spec section:
+```bash
+PLAN_END=$(date +%s)
+PLAN_MINS=$(( (PLAN_END - PLAN_START) / 60 ))
+[ $PLAN_MINS -lt 1 ] && PLAN_MINS=1
+if [ $PLAN_MINS -ge 60 ]; then
+  PLAN_DURATION="$(( PLAN_MINS / 60 ))h $(( PLAN_MINS % 60 ))m"
+else
+  PLAN_DURATION="${PLAN_MINS}m"
+fi
+```
+
+Append to the Spec section of the WorkItem (after `### Out of scope`):
+```
+### Planning timing
+<PLAN_DURATION>
+```
 
 Clear the pipeline state:
 ```bash

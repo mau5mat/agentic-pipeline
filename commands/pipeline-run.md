@@ -285,16 +285,18 @@ Handover: <path to handover doc>
 ## Pipeline run
 
 ### Timing
-[Read `### Timing` from each completed stage section in the WorkItem. Render as a table. For retried stages, show the full accumulated string (e.g. `20m + 8m`). Compute wall-clock total using `PIPELINE_START` recorded at Step 2 and `$(date +%s)` now. Agent total is the sum of all stage durations; wall-clock total includes orchestrator overhead (baseline, verification, commits).]
+[Read `### Planning timing` from the WorkItem Spec section and `### Timing` from each completed stage section. For retried stages, show the full accumulated string (e.g. `20m + 8m`). Compute wall-clock total using `PIPELINE_START` recorded at Step 2 and `$(date +%s)` now. Agent total is the sum of automated stage durations only; pipeline total adds planning.]
 
 | Stage              | Duration        |
 |--------------------|-----------------|
+| Planning           | [from ### Planning timing in Spec] |
 | Implement          | [value]         |
 | Test               | [value]         |
 | Review             | [value]         |
 | Ship               | [value]         |
-| **Agent total**    | **[sum of above]** |
-| **Wall-clock total** | **[date +%s minus PIPELINE_START, formatted]** |
+| **Agent total**    | **[sum of implement + test + review + ship]** |
+| **Pipeline total** | **[agent total + planning]** |
+| **Wall-clock total** | **[date +%s minus PIPELINE_START, formatted — includes orchestrator overhead]** |
 
 ### Issues self-resolved
 [Collate all `[self-resolved]` entries from every stage's Issues section. One line each: stage, issue, fix applied.]

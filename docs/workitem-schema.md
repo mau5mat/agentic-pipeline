@@ -48,6 +48,9 @@ Created by `/pipeline-plan`. Read and appended by every subsequent stage.
 ### Out of scope
 [explicitly excluded]
 
+### Planning timing
+[wall-clock duration from branch creation to WorkItem write — written by pipeline-plan after approval]
+
 ---
 
 ## Implementation
