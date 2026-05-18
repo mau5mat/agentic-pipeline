@@ -40,10 +40,10 @@ Created by `/pipeline-plan`. Read and appended by every subsequent stage.
 [anything a fresh agent would not know from reading the code]
 
 ### Known broken tests
-[optional — test targets known to be broken in the current environment for reasons unrelated to this work. The orchestrator treats failures matching these as expected and will not raise them as regressions. Leave blank if none.]
+[optional — test targets known to be broken in the current environment for reasons unrelated to this work, e.g. flaky infra-dependent tests or a broken integration test harness. The orchestrator treats failures matching these as expected and will not raise them as regressions. Leave blank if none.]
 
 ### Repo style
-[observed de-facto conventions — code style, test style, paradigms, naming. Written by the planner from sampling the codebase. Injected into every downstream agent as a hard constraint.]
+[observed de-facto conventions — code style, test style, paradigms, naming, and Make targets. Written by the planner from sampling the codebase. Injected into every downstream agent as a hard constraint. Must include a Make targets subsection with the exact lint, full suite, and targeted test commands.]
 
 ### Out of scope
 [explicitly excluded]

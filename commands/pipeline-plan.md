@@ -203,7 +203,7 @@ After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem docume
 [explicitly excluded]
 
 ### Planning timing
-[written by pipeline-plan after WorkItem is approved and written to disk]
+[wall-clock duration from branch creation to WorkItem write — written by pipeline-plan after approval]
 
 ---
 
