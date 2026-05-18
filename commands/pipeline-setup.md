@@ -104,19 +104,21 @@ Record the path, or empty string if skipped.
 
 ## Step 3: Confirm
 
-Call `EnterPlanMode`. Write the following confirmation summary as the plan:
+Print the following summary and ask the user to confirm before writing anything:
 
 ```
-Pipeline configuration to write to ~/.claude/pipeline.conf:
+Here's what will be written to ~/.claude/pipeline.conf:
 
-  Tracker:      <Shortcut | Other>
-  Prefix:       <value>  (branch ticket regex: <prefix>-[0-9]+)
-  Tracker URL:  <url template or 'none — ticket links omitted'>
-  Label:        <value or 'none'>
-  Org memory:   <path or 'none'>
+  Tracker:     <Shortcut | Other>
+  Prefix:      <value>  (branch ticket regex: <prefix>-[0-9]+)
+  Tracker URL: <url template or 'none — ticket links omitted'>
+  Label:       <value or 'none'>
+  Org memory:  <path or 'none'>
+
+Good to go?
 ```
 
-Call `ExitPlanMode` to present it for approval. Wait for the user to approve before continuing.
+Wait for the user to confirm. Do not proceed to Step 4 until they do.
 
 ---
 
