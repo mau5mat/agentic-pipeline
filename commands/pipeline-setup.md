@@ -38,7 +38,7 @@ Ask:
 
 > "What's your Shortcut org slug? This is the part after `app.shortcut.com/` in your Shortcut URLs.
 >
-> For example: `https://app.shortcut.com/slicernd` → slug is `slicernd`
+> For example: `https://app.shortcut.com/my-org` → slug is `my-org`
 >
 > Org slug${PIPELINE_TRACKER_URL_TEMPLATE:+ [current: $(echo "$PIPELINE_TRACKER_URL_TEMPLATE" | grep -oP '(?<=shortcut\.com/)[^/]+')]}:"
 
