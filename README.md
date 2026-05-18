@@ -108,7 +108,7 @@ Most pipeline artifacts live inside each service repo in hidden directories:
 | WorkItems | `<repo-root>/.workitems/workitem-<sc>.md` |
 | Handover docs | `<repo-root>/.handovers/handover-<sc>.md` |
 | Pipeline state | `<repo-root>/.pipeline-state/<sc-number>/pipeline-state.json` |
-| PR descriptions | `~/Development/Slice/pr-descriptions/<service>/<service>-sc-<number>.md` |
+| PR descriptions | `~/.claude/pr-descriptions/<service>/<service>-<ticket-id>.md` |
 
 These directories are created automatically. **Add `.workitems/`, `.handovers/`, and `.pipeline-state/` to your global gitignore** (`~/.gitignore_global`) to prevent accidental staging — the pipeline does not touch any `.gitignore` file itself.
 

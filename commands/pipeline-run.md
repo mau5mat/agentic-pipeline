@@ -276,7 +276,7 @@ Handover: <path to handover doc>
 
 **PR:** [url]
 **Branch:** [branch]
-**Shortcut:** [url]
+[if PIPELINE_TRACKER_LABEL is set: **${PIPELINE_TRACKER_LABEL}:** [ticket URL from WorkItem header] — otherwise omit this line]
 
 ---
 

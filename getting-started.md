@@ -6,7 +6,7 @@ The pipeline produces three artifacts:
 
 - **WorkItem** (`<repo-root>/.workitems/`) — the internal document that accumulates context across every stage (agent-facing, not intended for human consumption)
 - **Handover** (`<repo-root>/.handovers/`) — a human-readable summary of the run: what was built, issues encountered, timing, and a QA checklist
-- **PR** — the pull request created on GitHub, with a generated description written to `~/Development/Slice/pr-descriptions/` before creation
+- **PR** — the pull request created on GitHub, with a generated description written to `~/.claude/pr-descriptions/` before creation
 
 ---
 

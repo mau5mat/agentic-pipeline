@@ -1,8 +1,8 @@
 Look at the current branch, recent commits, and changed files to understand what this PR does. Then fill in the PR template at `.github/PULL_REQUEST_TEMPLATE.md` with accurate, specific content based on the actual changes — do not leave any placeholder text.
 
 Follow these rules:
-- Use the Shortcut story ID and URL from the branch name (e.g. `sc-123456` → `SC-123456`) to construct the link at the top: `[**SC-XXXXXX**](https://app.shortcut.com/slicernd/story/XXXXXX/...)`
-- For the story URL slug, use the branch name after the story ID
+- Parse the ticket ID from the branch name (e.g. `sc-123456` → `SC-123456`). If `~/.claude/pipeline.conf` exists, source it and use `$PIPELINE_TRACKER_URL_TEMPLATE` to construct the tracker link (substituting `{id}` and `{slug}`). Include the link at the top of the PR description. If no config or no URL template, omit the tracker link.
+- For the URL slug, use the branch name after the ticket ID
 - Write a clear **Issue / Motivation** explaining the bug or feature and why it was broken or needed
 - List each meaningful code change in **Changes** — be specific about method names and files
 - Do not use em dashes (--) anywhere in the output; use commas, colons, or reword instead
@@ -12,4 +12,4 @@ Follow these rules:
 - Backout should always say "To backout the changes, create a revert PR targeting master"
 - Remove the Migrations checklist item
 
-Once complete, write the filled-in description as a markdown file to `~/Development/Slice/pr-descriptions/<service-name>/<service-name>-sc-<number>.md` (e.g. `~/Development/Slice/pr-descriptions/restaurant-api/restaurant-api-sc-648809.md`), where the service name is derived from the repository directory name and the SC number is parsed from the branch name. Create the directory with `mkdir -p` first. Then print the contents so the user can review it.
+Once complete, write the filled-in description as a markdown file to `~/.claude/pr-descriptions/<service-name>/<service-name>-<ticket-id>.md` (e.g. `~/.claude/pr-descriptions/restaurant-api/restaurant-api-sc-648809.md`), where the service name is derived from the repository directory name and the ticket ID is parsed from the branch name. Create the directory with `mkdir -p` first. Then print the contents so the user can review it.
