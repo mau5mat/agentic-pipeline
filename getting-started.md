@@ -82,10 +82,12 @@ This is a per-session setting and does not persist. It remains your decision whe
 
 ## What you need
 
-- Claude Code (CLI or desktop app)
-- `gh` CLI authenticated to GitHub
-- `jq` installed (`brew install jq`)
-- An issue tracker with ticket IDs in your branch names (Shortcut, Jira, Linear, etc.)
+- **Claude Code** (CLI or desktop app)
+- **`gh` CLI** authenticated to GitHub — the Ship stage uses it to create the PR
+- **`jq`** (`brew install jq`) — used by the status line script to read pipeline state
+- **An issue tracker** with ticket IDs in your branch names (Shortcut, Jira, Linear, etc.)
+- **Build tooling** — the planner reads your Makefile (or equivalent: `package.json` scripts, `Rakefile`, `pyproject.toml`, etc.) to discover the exact lint and test commands. If nothing is found, it will ask you to provide them. The pipeline cannot run tests without them.
+- **`CLAUDE.md` or `AGENTS.md` in your service repo** — optional but strongly recommended. The orchestrator reads these and injects them as hard constraints into every stage agent. Without them, agents have no repo-specific rules to follow and will fall back to generic conventions.
 
 ---
 

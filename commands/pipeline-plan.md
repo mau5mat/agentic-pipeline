@@ -143,7 +143,7 @@ Document what you observe across all of the following dimensions:
 - **Test style:** framework and runner, test category being used for this work item, how fixtures are set up, how mocks are used, assertion style, file/function naming conventions
 - **Paradigms:** OOP vs functional tendencies, sync vs async patterns, how the codebase is layered
 - **Conventions:** import ordering, file structure, any patterns that appear consistently across files
-- **Make targets:** the exact commands for lint, full test suite, and targeted test run — derived from the Makefile. If no Makefile, document the equivalent (e.g. `bundle exec rspec <path>`). Every downstream stage uses these commands; do not guess or assume defaults.
+- **Make targets:** the exact commands for lint, full test suite, and targeted test run. Check the Makefile first. If no Makefile, look for equivalent tooling: `package.json` scripts, `Rakefile`, `pyproject.toml` `[tool.pytest]`, etc. If commands can be determined from the repo, document them. If they cannot be found at all, ask the user directly: "I couldn't find lint and test commands in this repo — what commands should I use for lint, the full test suite, and a targeted test run?" Do not leave Make targets blank or write guesses — every downstream stage and the orchestrator depend on these commands.
 
 This becomes the `### Repo style` section and is injected into every downstream agent so they write code and tests that fit the existing codebase — not generic best-practice code.
 

@@ -23,13 +23,18 @@ If the pipeline fails at any stage, fix the issue and run `/pipeline-run` again 
 
 Individual stages can be run standalone: `/pipeline-implement`, `/pipeline-test`, `/pipeline-review`, `/pipeline-ship`
 
-## What flows between stages
+## The WorkItem
 
-A single WorkItem document at `<repo-root>/.workitems/workitem-<ticket-id>.md`. Each stage reads the full document and appends its section:
+Each stage agent starts fresh — no memory of prior stages. The WorkItem (`<repo-root>/.workitems/workitem-<ticket>.md`) is the shared state that gives each agent the full picture. Every agent reads the complete document, does its work, then appends its own section. By the time Ship runs, the entire history of the run is in one file.
 
-```
-Spec → Implementation + handoff notes → Tests + handoff notes → Review (gate) → Ship (PR URL)
-```
+## Prerequisites
+
+- **Claude Code** (CLI or desktop app)
+- **`git`** with branch names that include a ticket ID (e.g. `sc-123456`, `ENG-456`)
+- **`gh` CLI** authenticated to GitHub — required for PR creation
+- **`jq`** — required for the status line script (`brew install jq`)
+- **Build tooling** — the pipeline discovers your lint and test commands during planning (Makefile, npm scripts, Rakefile, etc.). If it can't find them, it will ask. Empty test commands will stall the pipeline.
+- **`CLAUDE.md` or `AGENTS.md` in your repo** — optional but recommended; the pipeline injects these as hard constraints into every stage agent
 
 ## Installation
 
