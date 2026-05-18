@@ -192,6 +192,9 @@ After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem docume
 ### Known constraints / gotchas
 [anything a fresh agent would not know from reading the code]
 
+### Known broken tests
+[optional — test targets known to be broken in the current environment for reasons unrelated to this work, e.g. flaky infra-dependent tests or a broken integration test harness. The orchestrator will treat failures matching these as expected and will not raise them as regressions. Leave blank if none.]
+
 ### Repo style
 [observed de-facto conventions — code style, test style, paradigms, naming, and Make targets. Written by the planner from sampling the codebase. Injected into every downstream agent as a hard constraint. Must include a Make targets subsection with the exact lint, full suite, and targeted test commands.]
 

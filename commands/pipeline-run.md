@@ -84,7 +84,7 @@ Stop immediately. Do not spawn the implement agent. Report to the user what fail
 Write `[orchestrator] Step 4b: FAIL [env] — environment broken: <reason>` to Flags and halt.
 
 **If some tests fail:**
-Write their IDs (not full output) to `### Baseline` in the WorkItem Implementation section. Proceed to implement.
+Check the `### Known broken tests` field in the WorkItem Spec. Any failing test IDs that match entries there are expected — exclude them from the baseline and log them as `[known broken, excluded]`. Write the remaining (unexpected) failing IDs to `### Baseline`. Proceed to implement.
 
 **If all tests pass:**
 Write `### Baseline\nClean — no pre-existing failures.` to the WorkItem Implementation section. Proceed to implement.
