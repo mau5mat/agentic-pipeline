@@ -1,6 +1,6 @@
 # Agentic Development Pipeline
 
-A chain of specialist AI agents that takes a feature from spec to PR without manual intervention between stages.
+A chain of specialist AI agents that takes a feature from spec to PR with minimal intervention between stages.
 
 ## The problem it solves
 
