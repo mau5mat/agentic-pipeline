@@ -191,23 +191,21 @@ A `CLAUDE.md` or `AGENTS.md` in your service repo is strongly recommended.
 
 ## Try it first: `/pipeline-demo`
 
-Before running a real feature through the pipeline, the demo simulates a complete run in any git repo:
+Simulates a full pipeline run in any git repo. No source files modified, no real tests run, no PR created. Status line updates live. Cleanup prompted at the end.
 
 ```bash
 /pipeline-demo
 ```
 
-No source files are modified, no real tests run, no PR is created. It writes a WorkItem and handover doc to `.workitems/` and `.handovers/`, and updates the status line in real time so you can see each stage progress.
-
-Use `--fail-at` to simulate a failure and see the Retry/Override/Halt flow before encountering it for real:
+Use `--fail-at` to see the Retry/Override/Halt flow before encountering it for real:
 
 ```bash
-/pipeline-demo --fail-at implement   # lint failure in implement stage
+/pipeline-demo --fail-at implement   # lint failure
 /pipeline-demo --fail-at test        # test failure mid-suite
-/pipeline-demo --fail-at review      # review catches an unmet acceptance criterion
+/pipeline-demo --fail-at review      # unmet acceptance criterion
 ```
 
-A successful demo run confirms git, the pipeline config, the status bar, and artifact paths are all working. Clean up is prompted at the end (default yes).
+A successful run confirms git, pipeline config, status bar, and artifact paths are all working correctly.
 
 ---
 
@@ -233,27 +231,21 @@ Enabled during install. To set it up manually, add this to `~/.claude/settings.j
 
 ---
 
-## Security: where things stand
+## Security: current state and direction
 
-The pipeline runs with the same permissions as the user who invoked it. That is the right default for now, but worth being explicit about.
+The pipeline runs with the same permissions as the user who invoked it: shell env vars, git credentials, make targets, GitHub access.
 
-**What it can do:**
-- Read and write files in the repo
-- Run any make target (and whatever that expands to)
-- Access every environment variable in your shell
-- Push to any git remote your credentials can reach
+**The key asymmetry:** implement and test only need to write files and run lint. Ship is the only stage that needs GitHub access. The blast radius is concentrated in one place.
 
-**The per-stage reality:** implement and test need almost none of this. They write code and run lint. Ship is the only stage that genuinely needs GitHub access.
+**Near-term (no infrastructure changes):**
+- Fine-grained GitHub PAT scoped to specific repos
+- Run from a shell without production credentials exported
 
-**Near-term mitigations:**
-- Fine-grained GitHub PAT scoped to specific repos (replace broad `gh auth`)
-- Run the pipeline from a shell without production credentials exported
+**Longer-term:**
+- Implement and test stages run in a container: no credentials, filesystem scoped to the project
+- Ship becomes an explicit confirmation step before touching GitHub, even in auto mode
 
-**Longer-term direction:**
-- Implement and test stages run in a container: no credentials, no git push, filesystem limited to the project directory
-- Ship becomes an explicit user-confirmed step, even in auto mode: the pipeline shows you exactly what will be pushed before touching GitHub
-
-The design lends itself to this naturally. The orchestrator owns verification and commits; the stage agents just do their narrow job. Tightening permissions per stage does not require redesigning the architecture.
+The architecture supports this incrementally. The orchestrator already owns verification and commits; tightening per-stage permissions does not require a redesign.
 
 ---
 
