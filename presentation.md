@@ -189,6 +189,20 @@ A `CLAUDE.md` or `AGENTS.md` in your service repo is strongly recommended.
 
 ---
 
+## Getting un-started
+
+Changed your mind? The uninstall script removes everything the install added:
+
+```bash
+cd agentic-pipeline && ./pipeline-uninstall.sh
+```
+
+This removes all skill files from `~/.claude/commands/`, the status line script, the pipeline config, and the pipeline block from `~/.claude/CLAUDE.md`.
+
+It does not touch any repo-local artifacts (`.workitems/`, `.handovers/`, `.pipeline-state/`). Those are yours to clean up if you want them gone.
+
+---
+
 ## Try it first: `/pipeline-demo`
 
 Simulates a full pipeline run in any git repo. No source files modified, no real tests run, no PR created. Status line updates live. Cleanup prompted at the end.
@@ -246,20 +260,6 @@ The pipeline runs with the same permissions as the user who invoked it: shell en
 - Ship becomes an explicit confirmation step before touching GitHub, even in auto mode
 
 The architecture supports this incrementally. The orchestrator already owns verification and commits; tightening per-stage permissions does not require a redesign.
-
----
-
-## Getting un-started
-
-Changed your mind? The uninstall script removes everything the install added:
-
-```bash
-cd agentic-pipeline && ./pipeline-uninstall.sh
-```
-
-This removes all skill files from `~/.claude/commands/`, the status line script, the pipeline config, and the pipeline block from `~/.claude/CLAUDE.md`.
-
-It does not touch any repo-local artifacts (`.workitems/`, `.handovers/`, `.pipeline-state/`). Those are yours to clean up if you want them gone.
 
 ---
 
