@@ -189,12 +189,34 @@ A `CLAUDE.md` or `AGENTS.md` in your service repo is strongly recommended.
 
 ---
 
+## Try it first: `/pipeline-demo`
+
+Before running a real feature through the pipeline, the demo simulates a complete run in any git repo:
+
+```bash
+/pipeline-demo
+```
+
+No source files are modified, no real tests run, no PR is created. It writes a WorkItem and handover doc to `.workitems/` and `.handovers/`, and updates the status line in real time so you can see each stage progress.
+
+Use `--fail-at` to simulate a failure and see the Retry/Override/Halt flow before encountering it for real:
+
+```bash
+/pipeline-demo --fail-at implement   # lint failure in implement stage
+/pipeline-demo --fail-at test        # test failure mid-suite
+/pipeline-demo --fail-at review      # review catches an unmet acceptance criterion
+```
+
+A successful demo run confirms git, the pipeline config, the status bar, and artifact paths are all working. Clean up is prompted at the end (default yes).
+
+---
+
 ## Status line
 
 While the pipeline runs, Claude Code's status line shows you what's happening:
 
 ```
-⚙  Agentic Pipeline: [SC-123456]  |  Agent: [Implementor]  |  Stage: [1/4]  8m
+⚙  Agentic Pipeline: [SC-123456]  |  Agent: [implement]  |  Stage: [1/4]  8m
 ```
 
 Updates every 3 seconds. Shows the active agent, stage progress, and time elapsed. Reads from a state file written by the pipeline to `<repo-root>/.pipeline-state/`.
@@ -208,6 +230,30 @@ Enabled during install. To set it up manually, add this to `~/.claude/settings.j
   "refreshInterval": 3
 }
 ```
+
+---
+
+## Security: where things stand
+
+The pipeline runs with the same permissions as the user who invoked it. That is the right default for now, but worth being explicit about.
+
+**What it can do:**
+- Read and write files in the repo
+- Run any make target (and whatever that expands to)
+- Access every environment variable in your shell
+- Push to any git remote your credentials can reach
+
+**The per-stage reality:** implement and test need almost none of this. They write code and run lint. Ship is the only stage that genuinely needs GitHub access.
+
+**Near-term mitigations:**
+- Fine-grained GitHub PAT scoped to specific repos (replace broad `gh auth`)
+- Run the pipeline from a shell without production credentials exported
+
+**Longer-term direction:**
+- Implement and test stages run in a container: no credentials, no git push, filesystem limited to the project directory
+- Ship becomes an explicit user-confirmed step, even in auto mode: the pipeline shows you exactly what will be pushed before touching GitHub
+
+The design lends itself to this naturally. The orchestrator owns verification and commits; the stage agents just do their narrow job. Tightening permissions per stage does not require redesigning the architecture.
 
 ---
 
