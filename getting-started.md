@@ -99,7 +99,35 @@ Clone the repo and run the install script:
 ./pipeline-install.sh
 ```
 
-This checks prerequisites, installs skill files to `~/.claude/commands/`, sets up the status line, and walks you through tracker configuration. It will also tell you what to add to `~/.claude/settings.json` to enable the status line display, and remind you to add pipeline artifact directories to your global gitignore.
+The script is interactive — it walks you through each step and is safe to re-run if you need to update your config later.
+
+**What it does:**
+
+1. **Checks prerequisites** — verifies `git`, `gh`, and `jq` are installed. If anything is missing it stops and tells you exactly how to install it.
+
+2. **Installs skill files** — copies all pipeline commands to `~/.claude/commands/` so they appear as slash commands in Claude Code.
+
+3. **Installs the status line** — copies `statusline.sh` to `~/.claude/`. If `~/.claude/settings.json` doesn't already have a `statusLine` entry, it prints the JSON snippet you need to add to enable the live stage display.
+
+4. **Tracker configuration** — asks two questions:
+   - Which tracker? `1` for Shortcut (the default), `2` for anything else (Jira, Linear, GitHub Issues, etc.)
+   - For Shortcut: your org slug from `app.shortcut.com/YOUR-SLUG`
+   - For other trackers: your ticket prefix (e.g. `ENG`), an optional URL template, and a label
+   
+   Have your tracker URL open so you can copy the org slug or ticket prefix.
+
+5. **Org memory** (optional) — a path to a shared memory directory with feedback rules that apply across all repos on this machine. Skip this if you don't know what it is.
+
+6. **Writes `~/.claude/pipeline.conf`** — the config file that all pipeline skills source at startup. Shows a summary and asks you to confirm before writing.
+
+7. **Updates `~/.claude/CLAUDE.md`** — injects a pipeline description block so Claude knows about the commands. Idempotent: re-running updates the block rather than duplicating it.
+
+8. **Global gitignore reminder** — checks whether `.workitems/`, `.handovers/`, and `.pipeline-state/` are already excluded from git. If not, prints the commands to add them.
+
+After the script finishes there are up to two manual steps — the script prints the exact commands for both:
+
+- **`~/.claude/settings.json`**: add the `statusLine` block if you want the live stage display
+- **`~/.gitignore_global`**: add the pipeline artifact directories if they aren't already excluded
 
 To remove the pipeline later:
 
