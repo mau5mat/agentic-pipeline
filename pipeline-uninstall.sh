@@ -20,6 +20,7 @@ echo "  - Pipeline skill files from $COMMANDS_DIR"
 echo "  - $CONF"
 echo "  - $STATUSLINE"
 echo "  - Pipeline block from $CLAUDE_MD"
+echo "  - statusLine entry from ~/.claude/settings.json (if present)"
 echo ""
 echo "  Repo-local artifacts (.workitems/, .handovers/, .pipeline-state/) are NOT"
 echo "  touched: clean those up manually in each service repo if needed."
@@ -74,7 +75,15 @@ else
   warn "$STATUSLINE not found: skipping"
 fi
 
-warn "If you added a statusLine entry to ~/.claude/settings.json, remove it manually."
+SETTINGS="$HOME/.claude/settings.json"
+if [ -f "$SETTINGS" ] && grep -q "statusLine" "$SETTINGS" 2>/dev/null; then
+  if command -v jq >/dev/null 2>&1; then
+    jq 'del(.statusLine)' "$SETTINGS" > "${SETTINGS}.tmp" && mv "${SETTINGS}.tmp" "$SETTINGS"
+    ok "statusLine removed from settings.json"
+  else
+    warn "jq not found: remove the statusLine entry from ~/.claude/settings.json manually"
+  fi
+fi
 
 # ── CLAUDE.md pipeline block ──────────────────────────────────────────────────
 
