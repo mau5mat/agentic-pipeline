@@ -107,7 +107,7 @@ The script is interactive — it walks you through each step and is safe to re-r
 
 2. **Installs skill files** — copies all pipeline commands to `~/.claude/commands/` so they appear as slash commands in Claude Code.
 
-3. **Installs the status line** — copies `statusline.sh` to `~/.claude/`. If `~/.claude/settings.json` doesn't already have a `statusLine` entry, it prints the JSON snippet you need to add to enable the live stage display.
+3. **Installs the status line** — copies `statusline.sh` to `~/.claude/` and automatically adds the `statusLine` entry to `~/.claude/settings.json` (creating the file if it doesn't exist, skipping if the entry is already there).
 
 4. **Tracker configuration** — asks two questions:
    - Which tracker? `1` for Shortcut (the default), `2` for anything else (Jira, Linear, GitHub Issues, etc.)
@@ -124,9 +124,8 @@ The script is interactive — it walks you through each step and is safe to re-r
 
 8. **Global gitignore reminder** — checks whether `.workitems/`, `.handovers/`, and `.pipeline-state/` are already excluded from git. If not, prints the commands to add them.
 
-After the script finishes there are up to two manual steps — the script prints the exact commands for both:
+After the script finishes, there is one potential manual step — the script prints the exact commands if needed:
 
-- **`~/.claude/settings.json`**: add the `statusLine` block if you want the live stage display
 - **`~/.gitignore_global`**: add the pipeline artifact directories if they aren't already excluded
 
 To remove the pipeline later:

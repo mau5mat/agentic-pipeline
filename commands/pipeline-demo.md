@@ -28,8 +28,31 @@ ORIGINAL_BRANCH=$(git branch --show-current)
 
 Parse `--fail-at` from the argument. Set `FAIL_AT` to `implement`, `test`, `review`, or empty string.
 
-If a WorkItem already exists at `$WORKITEM`, stop:
-> "Demo WorkItem already exists at `$WORKITEM`. Remove it first: `rm $WORKITEM`"
+If a WorkItem already exists at `$WORKITEM`, output:
+```
+A previous demo run was found (may be incomplete).
+
+  WorkItem: <WORKITEM>
+
+Wipe it and start fresh? [Y/n]:
+```
+Wait for user input. Default Y. If Y or empty: run
+```bash
+rm -f "$WORKITEM" "$HANDOVER"
+git branch -d "$DEMO_BRANCH" 2>/dev/null || true
+```
+then continue. If N: stop.
+
+Check whether `~/.claude/settings.json` has a `statusLine` entry:
+```bash
+grep -q "statusLine" "$HOME/.claude/settings.json" 2>/dev/null
+```
+If not found, output (before the confirmation prompt):
+```
+Note: statusLine is not configured in ~/.claude/settings.json — the stage indicator
+will not update during this demo. Re-run ./pipeline-install.sh to add it.
+
+```
 
 Output exactly this, substituting values:
 ```

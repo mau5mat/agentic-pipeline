@@ -69,19 +69,15 @@ chmod +x "$HOME/.claude/statusline.sh"
 ok "Status line script installed at ~/.claude/statusline.sh"
 
 SETTINGS="$HOME/.claude/settings.json"
+STATUSLINE_JSON='{"type":"command","command":"~/.claude/statusline.sh","refreshInterval":3}'
 if [ -f "$SETTINGS" ] && grep -q "statusLine" "$SETTINGS" 2>/dev/null; then
-  warn "settings.json already has a statusLine entry: skipping. Verify it points to ~/.claude/statusline.sh"
+  ok "statusLine already in settings.json"
+elif [ -f "$SETTINGS" ]; then
+  jq --argjson sl "$STATUSLINE_JSON" '. + {statusLine: $sl}' "$SETTINGS" > "${SETTINGS}.tmp" && mv "${SETTINGS}.tmp" "$SETTINGS"
+  ok "statusLine added to settings.json"
 else
-  echo ""
-  echo "  Add the following to ~/.claude/settings.json to enable the status line:"
-  echo ""
-  echo '  {'
-  echo '    "statusLine": {'
-  echo '      "type": "command",'
-  echo '      "command": "~/.claude/statusline.sh",'
-  echo '      "refreshInterval": 3'
-  echo '    }'
-  echo '  }'
+  printf '{"statusLine":%s}\n' "$STATUSLINE_JSON" > "$SETTINGS"
+  ok "settings.json created with statusLine"
 fi
 
 # ── 4. Issue tracker config ───────────────────────────────────────────────────
