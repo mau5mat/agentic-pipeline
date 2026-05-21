@@ -40,13 +40,13 @@ Covered by #2: tracker URL is fully configurable via `pipeline-install.sh`.
 
 ## `pipeline-install.sh` (shipped 2026-05-18)
 
-Run once at install time. Copies all pipeline skill files to `~/.claude/commands/`, writes `~/.claude/pipeline.conf`, installs the status line script at `~/.claude/statusline.sh`, and adds the pipeline block to `~/.claude/CLAUDE.md`.
+Run once at install time. Copies all pipeline skill files to `~/.claude/commands/`, writes `~/.claude/pipeline.conf`, installs the status line script at `~/.claude/statusline.sh`, auto-adds the `statusLine` entry to `~/.claude/settings.json`, and adds the pipeline block to `~/.claude/CLAUDE.md`.
 
 Shortcut users answer one question (org slug); other tracker users configure prefix, URL template, and label. Org memory path is optional for both.
 
 WorkItems (`<repo-root>/.workitems/`), handover docs (`<repo-root>/.handovers/`), and pipeline state (`<repo-root>/.pipeline-state/`) are all repo-local by default: no path config needed for those.
 
-`pipeline-uninstall.sh` removes everything the install added: skill files, config, status line script, and the pipeline block from `~/.claude/CLAUDE.md`. Does not touch repo-local artifacts.
+`pipeline-uninstall.sh` removes everything the install added: skill files, config, status line script, the `statusLine` entry from `~/.claude/settings.json`, and the pipeline block from `~/.claude/CLAUDE.md`. Does not touch repo-local artifacts.
 
 `/pipeline-demo` provides a simulated pipeline run useful for demos and new-user setup verification. A successful demo run confirms git, config, status bar, and artifact paths are all working correctly.
 
