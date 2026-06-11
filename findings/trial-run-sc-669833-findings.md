@@ -79,9 +79,9 @@ In auto mode the ship agent pushed without any user acknowledgement.
 ## Open Issues
 
 ### 11. Status bar visible across Claude sessions
-The pipeline state file lives at `<repo>/.pipeline-state/<sc>/pipeline-state.json` and is not scoped to a Claude session. When two sessions are open in the same repo, both see the same status bar state. Sessions from different tickets do not conflict (different SC numbers), but two sessions on the same branch would.
+The pipeline state file lives at `<repo>/.pipeline-state/<sc>/pipeline-state.json` and is not scoped to a Claude session. When two sessions are open in the same repo, both see the same status bar state.
 
-**No fix possible without state design change.** One option: include a session-specific suffix (e.g. process ID or timestamp) in the state directory. Unclear if there is a stable session identifier accessible from within a skill.
+**By design.** State is per-repo, not per-session — if the pipeline is running in a repo, any session in that repo shows it. There is no session identifier accessible from within a bash skill, so per-session scoping is not feasible. No action.
 
 ---
 
@@ -122,6 +122,6 @@ Two `test_menu_layout.py` failures listed in baseline actually passed post-imple
 | 8 | Files likely touched incomplete | Fixed |
 | 9 | Spec drift not flagged | Fixed |
 | 10 | Pre-ship push confirmation | Fixed |
-| 11 | Status bar across sessions | Open |
+| 11 | Status bar across sessions | By design, no action |
 | 12 | Plan mode approval loop friction | Fixed |
 | 13 | Baseline flaky tests | Documented, no action |
