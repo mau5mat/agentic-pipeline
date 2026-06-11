@@ -18,6 +18,8 @@ Read the full WorkItem before doing anything else. Pay close attention to **Spec
 
 1. Read the files listed in the Implementation section. Understand what was implemented before writing a single test.
 
+   **Spec drift check:** After reading the implementation, compare key identifiers against the Spec's acceptance criteria: file paths, S3/storage paths, field names, constants, queue names, URL patterns. Any mismatch between what the spec says and what the implementation uses must be logged as `[spec drift] <what the spec says> vs <what was implemented>` in `### Issues` and raised to the user. Do not silently accept a divergence.
+
 2. Read existing tests in the same area to understand patterns and conventions before writing new ones.
 
 3. Write tests that:

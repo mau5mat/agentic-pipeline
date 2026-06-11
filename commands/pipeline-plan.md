@@ -151,7 +151,9 @@ Document what you observe across all of the following dimensions:
 
 This becomes the `### Repo style` section and is injected into every downstream agent so they write code and tests that fit the existing codebase: not generic best-practice code.
 
-Confirm the final **Files likely touched** list. Also check AGENTS.md for any files the agent is **required** to create or modify as part of a standard workflow (e.g. bug docs, ADRs, changelogs): if AGENTS.md mandates them, include them in scope.
+Confirm the final **Files likely touched** list. Also check AGENTS.md for any files the agent is **required** to create or modify as part of a standard workflow (e.g. bug docs, ADRs, changelogs): if AGENTS.md mandates them, include them in scope. The list must be exhaustive: any file mentioned in prose elsewhere in the spec belongs here too. Downstream agents treat this list as a complete contract, not a summary.
+
+**Deploy config check:** If the work introduces a new service, worker, queue, or scheduled job, read the deploy YAMLs and environment overlays (e.g. `deploy/`, `k8s/`, `overlays/`) for the affected service. Confirm every environment variable referenced in those files is defined in all overlays (dev, staging, prod). If any are missing, add them to the acceptance criteria and to `### Files likely touched`.
 
 ---
 

@@ -20,17 +20,23 @@ Read the full WorkItem before doing anything. Pay close attention to **Tests →
 
 2. Generate the PR description by reading and following the instructions in `~/.claude/commands/pr-description.md` exactly. Those instructions are authoritative: do not substitute your own rules.
 
-3. Push the branch:
+3. Before pushing, ask the user for explicit confirmation:
+
+   > "Ready to push branch `<branch-name>` and open a PR against `<base-branch>`. Proceed? (yes/no)"
+
+   Wait for the response. If the answer is not an unambiguous yes, stop and report: "Push cancelled." Do not push without confirmation.
+
+4. Push the branch:
    ```bash
    git push -u origin <branch-name>
    ```
 
-4. Create the PR with a title in conventional commits format: same type mapping as the implement commit (feature → feat, bug → fix, migration → chore), description from the WorkItem Goal. **No scope brackets of any kind**: not service names, directory names, or ticket prefixes.
+5. Create the PR with a title in conventional commits format: same type mapping as the implement commit (feature → feat, bug → fix, migration → chore), description from the WorkItem Goal. **No scope brackets of any kind**: not service names, directory names, or ticket prefixes.
    ```bash
    gh pr create --title "feat|fix|chore: <short description from Goal>" --base <base-branch-from-WorkItem> --body "$(cat <pr-description-file>)"
    ```
 
-5. Append to the **Ship** section of the WorkItem:
+6. Append to the **Ship** section of the WorkItem:
 
 ```
 ## Ship
