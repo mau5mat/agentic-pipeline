@@ -124,4 +124,4 @@ Two `test_menu_layout.py` failures listed in baseline actually passed post-imple
 | 10 | Pre-ship push confirmation | Fixed |
 | 11 | Status bar across sessions | Open |
 | 12 | Plan mode approval loop friction | Fixed |
-| 13 | Baseline flaky tests | Open |
+| 13 | Baseline flaky tests | Documented, no action |
