@@ -48,44 +48,51 @@ After the ship gate passed, the orchestrator could continue with unnecessary nar
 
 ---
 
+### 7. Acceptance criteria missing overlay/env vars
+The planner's acceptance criteria focused on code behaviour but did not cover deployment configuration. A deploy YAML referenced `$(REMBG_CELERY_QUEUES)` but the variable was not defined in any overlay — caught at review, not planning.
+
+**Fix applied:** Added a **Deploy config check** to `pipeline-plan.md` Step 2: when work introduces a new service, worker, queue, or job, read deploy YAMLs and overlays and confirm every referenced env var is defined in all overlays. Missing vars go into acceptance criteria and `### Files likely touched`.
+
+---
+
+### 8. Files likely touched list incomplete
+The planner described files in prose but omitted them from the structured list. Downstream agents treated the list as the contract and had to infer from narrative.
+
+**Fix applied:** Added explicit guidance to `pipeline-plan.md`: the files list must be exhaustive — any file mentioned in prose belongs in the list too. Downstream agents treat it as a complete contract, not a summary.
+
+---
+
+### 9. Spec drift not flagged
+The spec said one S3 path; the implementation used another. The tester noted the actual path but did not flag the divergence. It was never surfaced to the user.
+
+**Fix applied:** Added a **Spec drift check** to `pipeline-test.md` Step 1: after reading the implementation, compare key identifiers (paths, constants, field names, queue names) against the Spec's acceptance criteria. Any mismatch must be logged as `[spec drift]` in Issues and raised.
+
+---
+
+### 10. No pre-ship push confirmation
+In auto mode the ship agent pushed without any user acknowledgement.
+
+**Fix applied:** Added an explicit confirmation gate to `pipeline-ship.md` Step 3: the agent asks "Ready to push? (yes/no)" and waits for an unambiguous yes before running `git push`.
+
+---
+
 ## Open Issues
 
-### 7. Status bar visible across Claude sessions
+### 11. Status bar visible across Claude sessions
 The pipeline state file lives at `<repo>/.pipeline-state/<sc>/pipeline-state.json` and is not scoped to a Claude session. When two sessions are open in the same repo, both see the same status bar state. Sessions from different tickets do not conflict (different SC numbers), but two sessions on the same branch would.
 
 **No fix possible without state design change.** One option: include a session-specific suffix (e.g. process ID or timestamp) in the state directory. Unclear if there is a stable session identifier accessible from within a skill.
 
 ---
 
-### 8. Plan mode approval loop adds friction
+### 12. Plan mode approval loop adds friction
 When EnterPlanMode was called and ExitPlanMode approval was rejected or interrupted, the agent re-entered the approval loop. On one run this happened twice before the WorkItem was written. The root cause is that ExitPlanMode is a hard gate — any interruption resets the approval requirement.
 
 **Suggestion:** Consider making plan mode optional when scope is already fully established from a ticket. The current design requires it unconditionally; a `--no-plan-mode` flag or a heuristic skip would reduce friction on well-scoped tickets.
 
 ---
 
-### 9. Acceptance criteria did not cover environment-specific variables
-During the sc-669833 run, a deploy YAML referenced `$(REMBG_CELERY_QUEUES)` but the variable was not defined in any overlay. This was caught at review, not during planning. The planner's acceptance criteria focused on code behaviour but did not cover deployment configuration.
-
-**Suggestion:** Add a prompt to the planner's Step 2 investigation: when the WorkItem involves a new service or worker, explicitly check deploy YAMLs and overlays for required environment variable definitions and include them in acceptance criteria and `### Files likely touched`.
-
----
-
-### 10. Files likely touched list incomplete
-`lib/celery/singleton.py` and `worker.py` were both modified by the implement agent but were not listed in the WorkItem. The planner described them in prose but left them out of the structured list. Downstream agents (shipper, reviewer) had to infer.
-
-**Suggestion:** The planner should treat the files list as a complete contract, not a summary. If a file is expected to change based on the investigation, it belongs in the list even if the change is small.
-
----
-
-### 11. Spec drift not flagged as a conflict
-The spec said `shops/{shop_id}/original/{shop_id}_modified.png` but the implementation used `shops/{shop_id}/modified/{shop_id}_modified.png`. The tester noted the actual path but did not flag it as a spec conflict. The path discrepancy was never surfaced to the user.
-
-**Suggestion:** The test agent's instructions should include a step: compare key identifiers in the implementation (paths, field names, constants) against the spec's acceptance criteria. Any mismatch should be flagged as `[spec drift]` in `### Issues` rather than silently accepted.
-
----
-
-### 12. Baseline flaky tests inflate noise
+### 13. Baseline flaky tests inflate noise
 Two `test_menu_layout.py` failures listed in baseline actually passed post-implement. Flaky tests in the baseline cause one of two problems: if they pass post-implement, no harm done; if they fail post-implement, the orchestrator correctly excludes them — but if the baseline itself is wrong (a test listed as broken is actually just flaky), the orchestrator may not catch a real regression on that test.
 
 **Suggestion:** Add guidance to the orchestrator's Step 4b: if a baseline failure is not consistently reproducible (run the failing subset a second time to confirm), mark it as `[suspected flaky]` rather than `[known broken]`. Do not add it to `### Known broken tests` automatically.
@@ -111,9 +118,10 @@ Two `test_menu_layout.py` failures listed in baseline actually passed post-imple
 | 4 | Auto mode not prompted before pipeline-run | Fixed |
 | 5 | Ship stage targeted tests only | Fixed |
 | 6 | Orchestrator no clean stop after ship | Fixed |
-| 7 | Status bar across sessions | Open |
-| 8 | Plan mode approval loop friction | Open |
-| 9 | Acceptance criteria missing overlay vars | Open |
-| 10 | Files likely touched incomplete | Open |
-| 11 | Spec drift not flagged | Open |
-| 12 | Baseline flaky tests | Open |
+| 7 | Acceptance criteria missing overlay vars | Fixed |
+| 8 | Files likely touched incomplete | Fixed |
+| 9 | Spec drift not flagged | Fixed |
+| 10 | Pre-ship push confirmation | Fixed |
+| 11 | Status bar across sessions | Open |
+| 12 | Plan mode approval loop friction | Open |
+| 13 | Baseline flaky tests | Open |
