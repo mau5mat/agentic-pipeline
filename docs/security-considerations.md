@@ -136,19 +136,11 @@ This creates a clear security boundary. The container has no GitHub credentials 
 
 The tradeoff is obvious: it breaks the fully autonomous promise. For teams who trust the pipeline and want zero manual intervention, this is a regression. For teams where any push to the shared repository is a meaningful act (regulatory environments, large shared repos, cautious teams), it is the right default.
 
-A middle ground is worth considering: keep ship autonomous by default, but add an explicit confirmation step that is distinct from the existing gate mechanism. Something like:
+A middle ground — implemented in `pipeline-ship.md` — keeps ship autonomous by default but adds an explicit confirmation step before any GitHub interaction:
 
-> "Ship is ready. This will push branch `username/sc-660363/-add-smoke-test` and create a PR against `main`.
->
-> Commits to be pushed:
-> - feat: add smoke test script
-> - test: add smoke test script
->
-> Review agent outcome: approved. No flags.
->
-> Proceed? [Y/n]:"
+> "Ready to push branch `<branch-name>` and open a PR against `<base-branch>`. Proceed? (yes/no)"
 
-This is a single confirmation prompt before any GitHub interaction. It adds one user touch to the otherwise autonomous flow and gives the user a concrete artifact to review before the work becomes public. It does not require containerisation. It can be implemented in the ship stage or as a pre-ship gate in the orchestrator.
+This is a single user touch before the work becomes public. It does not require containerisation.
 
 ### Per-stage permission model
 
@@ -172,7 +164,7 @@ The orchestrator itself stays on the host throughout, which is where the credent
 |--------|--------|---------------|------|
 | Fine-grained GitHub PAT | Low | High (GitHub scope) | Now |
 | Clean shell wrapper | Low | High (env credential exposure) | Now |
-| Pre-ship confirmation prompt | Medium | Medium (user visibility before push) | Next |
+| Pre-ship confirmation prompt | Medium | Medium (user visibility before push) | Done |
 | Container for implement stage | High | Medium (code execution isolation) | Later |
 | Container for test stage (native tests) | High | Medium | Later |
 | Full per-stage container model | Very high | High overall | Future |
