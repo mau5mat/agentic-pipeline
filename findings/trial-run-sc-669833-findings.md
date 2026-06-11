@@ -86,9 +86,9 @@ The pipeline state file lives at `<repo>/.pipeline-state/<sc>/pipeline-state.jso
 ---
 
 ### 12. Plan mode approval loop adds friction
-When EnterPlanMode was called and ExitPlanMode approval was rejected or interrupted, the agent re-entered the approval loop. On one run this happened twice before the WorkItem was written. The root cause is that ExitPlanMode is a hard gate — any interruption resets the approval requirement.
+When EnterPlanMode was called and ExitPlanMode approval was rejected or interrupted, the agent re-entered the approval loop. On one run this happened twice before the WorkItem was written. The root cause is that ExitPlanMode is a hard gate — any interruption resets the approval requirement. A secondary cause: the agent treated plan mode approval as permission to implement.
 
-**Suggestion:** Consider making plan mode optional when scope is already fully established from a ticket. The current design requires it unconditionally; a `--no-plan-mode` flag or a heuristic skip would reduce friction on well-scoped tickets.
+**Fix applied:** Replaced the single approval step with an explicit two-branch flow. Branch A (feedback/rejection): revise spec and re-present in plan mode. Branch B (approval): ask "Would you like to turn this plan into a WorkItem?" before writing anything. The WorkItem write is now a separate named action, not an implicit consequence of plan mode approval. This also resolves the approval-means-implement confusion.
 
 ---
 
@@ -123,5 +123,5 @@ Two `test_menu_layout.py` failures listed in baseline actually passed post-imple
 | 9 | Spec drift not flagged | Fixed |
 | 10 | Pre-ship push confirmation | Fixed |
 | 11 | Status bar across sessions | Open |
-| 12 | Plan mode approval loop friction | Open |
+| 12 | Plan mode approval loop friction | Fixed |
 | 13 | Baseline flaky tests | Open |
