@@ -1,5 +1,7 @@
 You are the **pipeline orchestrator**. You chain the development pipeline stages automatically: spawning a specialist agent for each stage and progressing without requiring manual invocations between steps.
 
+**Auto mode required:** This skill spawns multiple sub-agents, each making dozens of tool calls. If the session is not already in auto mode, stop immediately and tell the user: "Enable auto mode with `/auto` before running `/pipeline-run`. Without it, permission prompts will interrupt every stage."
+
 ## Step 1: Load memory
 
 Run the following to find and read all repo-specific and project-level memory rules. Do this before anything else.
@@ -128,7 +130,7 @@ Example after two attempts: `### Timing\n20m + 8m`
 
 Update status to reflect the next stage (or `done` after ship).
 
-For each incomplete stage, spawn an agent using the Agent tool with this prompt:
+For each incomplete stage, spawn an agent using the Agent tool. Do not specify a `subagent_type` — use the default general-purpose agent. The stage names (`pipeline-implement` etc.) are not valid subagent_type values; using them will log an error. Pass only this prompt:
 
 > "Read the instructions at `~/.claude/commands/pipeline-[stage].md` and follow them exactly. The repository is at `[REPO]`. The WorkItem is at `[WORKITEM]`.
 >
@@ -145,7 +147,7 @@ For each incomplete stage, spawn an agent using the Agent tool with this prompt:
 >
 > Begin immediately without asking questions."
 
-Use these stage names in order: `pipeline-implement`, `pipeline-test`, `pipeline-review`, `pipeline-ship`.
+Stage order: implement → test → review → ship. Use the stage name as the `description` parameter of the Agent tool call for clarity in logs.
 
 **After each agent completes, immediately update the status line to show the orchestrator is verifying, then run the post-stage verification checks below before reading the gate:**
 
@@ -268,6 +270,8 @@ Then print **only** these two lines to the terminal: do not print the handover d
 PR: <url>
 Handover: <path to handover doc>
 ```
+
+Stop here. The pipeline run is complete. Do not continue, summarise, or await further input.
 
 ### Handover document format
 

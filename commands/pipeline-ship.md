@@ -14,9 +14,9 @@ Read the full WorkItem before doing anything. Pay close attention to **Tests →
 
 ## Steps
 
-1. Run final checks. Both must pass. Do not push if either fails:
+1. Run final checks. All must pass. Do not push if any fail:
    - Lint: use the lint command from `### Repo style`
-   - Read the `### Run with` field from the Tests section of the WorkItem: it contains the exact targeted test command. Run that command. The full suite was already verified by the orchestrator after the implement stage; do not re-run it.
+   - Full test suite: use the full suite command from `### Repo style` (Make targets). This is a required safety check before every push.
 
 2. Generate the PR description by reading and following the instructions in `~/.claude/commands/pr-description.md` exactly. Those instructions are authoritative: do not substitute your own rules.
 
@@ -52,7 +52,7 @@ PASS | FAIL [type]: <reason>
 
 **Checks:**
 - Lint passes (command from `### Repo style`)
-- Targeted tests pass (command from `### Run with`)
+- Full test suite passes (command from `### Repo style`)
 - `git push` succeeded
 - PR created and URL captured
 
@@ -62,7 +62,7 @@ Self-resolve:
 - Lint errors → fix them (max 2 retries)
 
 Raise immediately:
-- Test failures (should have been caught earlier: something regressed)
+- Full suite test failures (something regressed between implement and ship)
 - Push failure (permissions, conflicts, network)
 - PR creation failure
 

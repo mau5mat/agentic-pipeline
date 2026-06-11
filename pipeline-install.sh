@@ -27,11 +27,27 @@ command -v jq  >/dev/null 2>&1 || missing+=("jq")
 if [ ${#missing[@]} -gt 0 ]; then
   err "Missing required tools: ${missing[*]}"
   echo ""
+  _OS="$(uname -s)"
   for tool in "${missing[@]}"; do
     case "$tool" in
-      git) echo "  git: xcode-select --install  (or https://git-scm.com)" ;;
-      gh)  echo "  gh : brew install gh  →  gh auth login" ;;
-      jq)  echo "  jq : brew install jq" ;;
+      git)
+        echo "  git:"
+        [ "$_OS" = "Darwin" ] && echo "    macOS : xcode-select --install"
+        [ "$_OS" = "Linux"  ] && echo "    Linux : sudo apt install git  (or your distro's package manager)"
+        echo "    All   : https://git-scm.com/downloads"
+        ;;
+      gh)
+        echo "  gh:"
+        [ "$_OS" = "Darwin" ] && echo "    macOS : brew install gh"
+        [ "$_OS" = "Linux"  ] && echo "    Linux : https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
+        echo "    Then  : gh auth login"
+        ;;
+      jq)
+        echo "  jq:"
+        [ "$_OS" = "Darwin" ] && echo "    macOS : brew install jq"
+        [ "$_OS" = "Linux"  ] && echo "    Linux : sudo apt install jq  (or your distro's package manager)"
+        echo "    All   : https://jqlang.github.io/jq/download/"
+        ;;
     esac
   done
   echo ""

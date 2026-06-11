@@ -165,6 +165,8 @@ Resolve anything the scoping conversation left open that code reading now answer
 
 Call `EnterPlanMode`, write the complete draft spec to the plan file, then call `ExitPlanMode` to present it for formal approval. Calling `EnterPlanMode` first ensures this works regardless of whether the session is in auto-mode. The plan file should contain the full WorkItem spec exactly as it will be written (all fields filled in, Repo style included). The user reviews it, gives feedback if needed, and approves. Do not write the WorkItem until approval is received.
 
+**CRITICAL — what ExitPlanMode approval means here:** Approval in this skill means the spec content is accepted and the WorkItem file may now be written to disk. It does NOT mean "approved to implement". After approval, the only permitted action is Step 5 (write the WorkItem). Do not implement any code. Do not create or modify any source files. Implementation only happens when the user separately invokes `/pipeline-run`.
+
 ### Step 5: Write WorkItem
 
 After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
@@ -265,4 +267,4 @@ Clear the pipeline state:
 rm -rf "$REPO/.pipeline-state/$SC_NUM"
 ```
 
-Report: "WorkItem written to [path]. Branch [branch].${TICKET_URL:+ ${PIPELINE_TRACKER_LABEL}: ${TICKET_URL}.} Run `/pipeline-run` to start the pipeline."
+Report: "WorkItem written to [path]. Branch [branch].${TICKET_URL:+ ${PIPELINE_TRACKER_LABEL}: ${TICKET_URL}.} Enable auto mode with `/auto` if not already active, then run `/pipeline-run` to start the pipeline."
