@@ -40,8 +40,8 @@ Native PowerShell or cmd will not work; the pipeline scripts rely on bash and GN
 ## What you need
 
 - **Claude Code** (CLI or desktop app)
-- **`gh` CLI** authenticated to GitHub
-- **`jq`**: used by the status line
+- **[`gh`](https://cli.github.com) CLI** authenticated to GitHub
+- **[`jq`](https://jqlang.github.io/jq)**: used by the status line
 - **Branch names that include a ticket ID** (Shortcut, Jira, Linear, etc.)
 - **Build tooling**: the planner reads your Makefile (or `package.json`, `Rakefile`, `pyproject.toml`, etc.) to find the lint and test commands. It will ask if nothing is found.
 - **`CLAUDE.md` or `AGENTS.md` in your service repo**: optional but recommended. The orchestrator injects these as hard constraints into every stage agent.
