@@ -166,17 +166,17 @@ Resolve anything the scoping conversation left open that code reading now answer
 
 Call `EnterPlanMode`, write the complete draft spec to the plan file, then call `ExitPlanMode` to present it for formal approval. Calling `EnterPlanMode` first ensures this works regardless of whether the session is in auto-mode. The plan file should contain the full WorkItem spec exactly as it will be written (all fields filled in, Repo style included).
 
-**Branch A — feedback or rejection:**
+**Branch A: feedback or rejection:**
 If the user pushes back, requests changes, or rejects the spec: incorporate the feedback, update the plan file, and loop back through `EnterPlanMode` → `ExitPlanMode` with the revised spec. Repeat until the spec is approved.
 
-**Branch B — approval:**
+**Branch B: approval:**
 When ExitPlanMode returns with approval, do not write anything yet. Ask:
 
 > "Would you like to turn this plan into a WorkItem?"
 
 Wait for the user's response.
 - **Yes (or equivalent):** proceed to Step 5.
-- **No or further feedback:** treat as Branch A — incorporate the feedback and re-present.
+- **No or further feedback:** treat as Branch A: incorporate the feedback and re-present.
 
 **CRITICAL:** ExitPlanMode approval means the spec content is accepted. It does NOT mean "proceed to implement". The only permitted action after a yes response is writing the WorkItem file in Step 5. Do not implement any code. Do not create or modify any source files. Implementation only happens when the user separately invokes `/pipeline-run`.
 

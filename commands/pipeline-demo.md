@@ -49,7 +49,7 @@ grep -q "statusLine" "$HOME/.claude/settings.json" 2>/dev/null
 ```
 If not found, output (before the confirmation prompt):
 ```
-Note: statusLine is not configured in ~/.claude/settings.json — the stage indicator
+Note: statusLine is not configured in ~/.claude/settings.json; the stage indicator
 will not update during this demo. Re-run ./pipeline-install.sh to add it.
 
 ```

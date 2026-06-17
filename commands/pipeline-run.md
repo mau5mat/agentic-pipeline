@@ -84,12 +84,12 @@ EXIT_CODE=$?
 **If exit code is 137, or if output contains "Killed", "signal: killed", or "OOM":**
 Stop immediately. Do not spawn the implement agent. Report to the user:
 > "**Gate: FAIL [env]**: test suite was killed (OOM/SIGKILL, exit 137). This is an infrastructure problem, not a code problem. Fix the environment (e.g. Docker memory limits) and re-run `/pipeline-run`."
-Write `[orchestrator] Step 4b: FAIL [env]: test suite killed (OOM/SIGKILL)` to the Flags section and halt.
+Write `[orchestrator] Step 5: FAIL [env]: test suite killed (OOM/SIGKILL)` to the Flags section and halt.
 
 **If the suite cannot run at all** (import error, missing dependency, environment broken):
 Stop immediately. Do not spawn the implement agent. Report to the user what failed.
 > "**Gate: FAIL [env]**: environment broken, cannot establish test baseline: <what failed>"
-Write `[orchestrator] Step 4b: FAIL [env]: environment broken: <reason>` to Flags and halt.
+Write `[orchestrator] Step 5: FAIL [env]: environment broken: <reason>` to Flags and halt.
 
 **If some tests fail:**
 Check the `### Known broken tests` field in the WorkItem Spec. Any failing test IDs that match entries there are expected: exclude them from the baseline and log them as `[known broken, excluded]`. Write the remaining (unexpected) failing IDs to `### Baseline`. Proceed to implement.
@@ -130,7 +130,7 @@ Example after two attempts: `### Timing\n20m + 8m`
 
 Update status to reflect the next stage (or `done` after ship).
 
-For each incomplete stage, spawn an agent using the Agent tool. Do not specify a `subagent_type` — use the default general-purpose agent. The stage names (`pipeline-implement` etc.) are not valid subagent_type values; using them will log an error. Pass only this prompt:
+For each incomplete stage, spawn an agent using the Agent tool. Do not specify a `subagent_type`; use the default general-purpose agent. The stage names (`pipeline-implement` etc.) are not valid subagent_type values; using them will log an error. Pass only this prompt:
 
 > "Read the instructions at `~/.claude/commands/pipeline-[stage].md` and follow them exactly. The repository is at `[REPO]`. The WorkItem is at `[WORKITEM]`.
 >
@@ -276,8 +276,8 @@ Then ask the user:
 > "Would you like to view the handover doc now?"
 
 Present two options:
-1. **View with Claude** — read the handover file and present it in full in the conversation
-2. **I'll open it manually** — do nothing further; the path is already printed above
+1. **View with Claude**: read the handover file and present it in full in the conversation
+2. **I'll open it manually**: do nothing further; the path is already printed above
 
 Wait for the response. If they choose option 1, read and output the full contents of the handover file. Then stop.
 

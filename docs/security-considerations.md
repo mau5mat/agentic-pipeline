@@ -136,7 +136,7 @@ This creates a clear security boundary. The container has no GitHub credentials 
 
 The tradeoff is obvious: it breaks the fully autonomous promise. For teams who trust the pipeline and want zero manual intervention, this is a regression. For teams where any push to the shared repository is a meaningful act (regulatory environments, large shared repos, cautious teams), it is the right default.
 
-A middle ground — implemented in `pipeline-ship.md` — keeps ship autonomous by default but adds an explicit confirmation step before any GitHub interaction:
+A middle ground (implemented in `pipeline-ship.md`) keeps ship autonomous by default but adds an explicit confirmation step before any GitHub interaction:
 
 > "Ready to push branch `<branch-name>` and open a PR against `<base-branch>`. Proceed? (yes/no)"
 

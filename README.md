@@ -8,8 +8,8 @@ A chain of specialist AI agents that takes a feature from spec to PR with minima
 
 The pipeline has two commands:
 
-1. **`/pipeline-plan <branch-name>`** — interactive planning session. You describe what you're building; the agent reads the codebase, agrees a spec with you, and writes a WorkItem to disk.
-2. **`/pipeline-run`** — orchestrator. Reads the WorkItem and chains four sub-agents automatically: implement → test → review → ship. Hands off a PR URL when done.
+1. **`/pipeline-plan <branch-name>`**: interactive planning session. You describe what you're building; the agent reads the codebase, agrees a spec with you, and writes a WorkItem to disk.
+2. **`/pipeline-run`**: orchestrator. Reads the WorkItem and chains four sub-agents automatically: implement → test → review → ship. Hands off a PR URL when done.
 
 Each sub-agent starts fresh with no memory of prior stages. The WorkItem (`<repo-root>/.workitems/workitem-sc-XXXXXX.md`) is the shared state: every stage reads it in full, does its work, and appends its section. Because it lives on disk, the pipeline survives crashes and can always resume from the first incomplete stage.
 
@@ -19,7 +19,7 @@ Every stage ends by writing a gate (`PASS` or `FAIL [type]: <reason>`). The orch
 |-----------|---------|
 | `[env]` | Infrastructure problem: OOM, missing dependency, network |
 | `[code]` | Test failure, lint error, acceptance criterion not met |
-| `[spec]` | Spec is wrong or infeasible — return to planning |
+| `[spec]` | Spec is wrong or infeasible; return to planning |
 | `[pipeline]` | Stage ownership violation or tooling bug |
 
 ---
@@ -28,10 +28,10 @@ Every stage ends by writing a gate (`PASS` or `FAIL [type]: <reason>`). The orch
 
 - **Claude Code** (CLI or desktop app)
 - **`gh` CLI** authenticated to GitHub
-- **`jq`** — used by the status line ([install](https://jqlang.github.io/jq/download/))
+- **`jq`**: used by the status line ([install](https://jqlang.github.io/jq/download/))
 - **Branch names that include a ticket ID** (Shortcut, Jira, Linear, etc.)
-- **Build tooling** — the planner reads your Makefile (or `package.json`, `Rakefile`, `pyproject.toml`, etc.) to find the lint and test commands. It will ask if nothing is found.
-- **`CLAUDE.md` or `AGENTS.md` in your service repo** — optional but recommended. The orchestrator injects these as hard constraints into every stage agent.
+- **Build tooling**: the planner reads your Makefile (or `package.json`, `Rakefile`, `pyproject.toml`, etc.) to find the lint and test commands. It will ask if nothing is found.
+- **`CLAUDE.md` or `AGENTS.md` in your service repo**: optional but recommended. The orchestrator injects these as hard constraints into every stage agent.
 
 ---
 
@@ -129,7 +129,7 @@ Re-running `/pipeline-run` always resumes from the first incomplete stage. A sta
 /pipeline-ship
 ```
 
-Useful for debugging a specific stage. Note: running ship standalone does not generate a handover doc — that is produced by the orchestrator.
+Useful for debugging a specific stage. Note: running ship standalone does not generate a handover doc; that is produced by the orchestrator.
 
 ---
 
