@@ -31,9 +31,9 @@ Built and tested on macOS and Linux. Windows is not officially supported but wor
 - In your IDE (e.g. JetBrains Rider), switch the integrated terminal to Git Bash
 - Install `gh` and `jq` for Windows separately (`winget install GitHub.cli` and `winget install jqlang.jq`)
 - Run `./pipeline-install.sh` from the Git Bash terminal
-- The status line (stage progress indicator) may not work on Windows — it is cosmetic only and not required for the pipeline to run
+- The status line (stage progress indicator) may not work on Windows; it is cosmetic only and not required for the pipeline to run
 
-Native PowerShell or cmd will not work — the pipeline scripts rely on bash and GNU tools throughout.
+Native PowerShell or cmd will not work; the pipeline scripts rely on bash and GNU tools throughout.
 
 ---
 
@@ -41,7 +41,7 @@ Native PowerShell or cmd will not work — the pipeline scripts rely on bash and
 
 - **Claude Code** (CLI or desktop app)
 - **`gh` CLI** authenticated to GitHub
-- **`jq`**: used by the status line ([install](https://jqlang.github.io/jq/download/))
+- **`jq`**: used by the status line
 - **Branch names that include a ticket ID** (Shortcut, Jira, Linear, etc.)
 - **Build tooling**: the planner reads your Makefile (or `package.json`, `Rakefile`, `pyproject.toml`, etc.) to find the lint and test commands. It will ask if nothing is found.
 - **`CLAUDE.md` or `AGENTS.md` in your service repo**: optional but recommended. The orchestrator injects these as hard constraints into every stage agent.
