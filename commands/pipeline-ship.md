@@ -80,3 +80,5 @@ Raise immediately:
 - Push failure, PR creation failure → `### Gate\nFAIL [env]: <reason>`
 
 Report: "PR created: [url]. Gate: PASS." (or "Gate: FAIL [type]: <reason>")
+
+**Note:** When ship runs standalone (not via `/pipeline-run`), no handover doc is generated. The handover doc is produced by the orchestrator after the ship gate passes. If you need one, run the full pipeline via `/pipeline-run`.

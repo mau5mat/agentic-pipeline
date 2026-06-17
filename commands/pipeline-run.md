@@ -65,7 +65,7 @@ Start at the first incomplete stage. If all four are complete, skip to the final
 
 Before spawning the implementation agent, scan the WorkItem Spec for independent sub-tasks. If the implementation can be split into parallel workstreams (tasks with no ordering dependency between them), flag this to the user before proceeding: name the tasks and suggest running them as parallel worktree sessions rather than sequentially.
 
-## Step 4b: Establish test baseline (before spawning implement agent)
+## Step 5: Establish test baseline (before spawning implement agent)
 
 Run the full test suite command from `### Repo style` (Make targets). This must happen before the implement agent is spawned: the baseline reflects the repo state before any changes.
 
@@ -97,7 +97,7 @@ Check the `### Known broken tests` field in the WorkItem Spec. Any failing test 
 **If all tests pass:**
 Write `### Baseline\nClean: no pre-existing failures.` to the WorkItem Implementation section. Proceed to implement.
 
-## Step 5: Run each stage in sequence
+## Step 6: Run each stage in sequence
 
 Before spawning each stage agent, write the current stage to the pipeline state file so the status line can display it. Include the stage number (1–4) and a unix start timestamp. Also record the start time in a named variable for timing:
 
@@ -264,14 +264,22 @@ Write it to: `$REPO/.handovers/handover-${SC}.md` (create the directory with `mk
 
 **Directory scope (strict):** `.handovers/` contains **only** handover files named `handover-sc-XXXXXX.md`. PR descriptions, notes, and any other artifacts go elsewhere: never in `.handovers/`. `.workitems/` contains **only** WorkItem files named `workitem-sc-XXXXXX.md`.
 
-Then print **only** these two lines to the terminal: do not print the handover doc in full:
+Print these two lines to the terminal:
 
 ```
 PR: <url>
 Handover: <path to handover doc>
 ```
 
-Stop here. The pipeline run is complete. Do not continue, summarise, or await further input.
+Then ask the user:
+
+> "Would you like to view the handover doc now?"
+
+Present two options:
+1. **View with Claude** — read the handover file and present it in full in the conversation
+2. **I'll open it manually** — do nothing further; the path is already printed above
+
+Wait for the response. If they choose option 1, read and output the full contents of the handover file. Then stop.
 
 ### Handover document format
 

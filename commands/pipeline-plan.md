@@ -77,11 +77,10 @@ printf '{"sc":"%s","stage":"plan","start_time":%d,"status":"running"}' "$SC" "$(
 ## Step 2: Derive everything else
 
 ```bash
-SC_ID=$(echo "$SC" | grep -oE '[0-9]+')
 SERVICE=$(basename "$REPO")
 SLUG=$(echo "$BRANCH_ARG" | sed "s|.*${SC}/||")
 if [ -n "$PIPELINE_TRACKER_URL_TEMPLATE" ]; then
-  TICKET_URL=$(echo "$PIPELINE_TRACKER_URL_TEMPLATE" | sed "s|{id}|$SC_ID|g; s|{slug}|$SLUG|g")
+  TICKET_URL=$(echo "$PIPELINE_TRACKER_URL_TEMPLATE" | sed "s|{id}|$SC_NUM|g; s|{slug}|$SLUG|g")
 else
   TICKET_URL=""
 fi
@@ -185,7 +184,7 @@ Wait for the user's response.
 
 After approval: run `mkdir -p "$REPO/.workitems"` then write the WorkItem document.
 
-   Note: the WorkItem lives in `<repo-root>/.workitems/`: inside the repo, hidden, and never pushed. Handover docs go to `<repo-root>/.handovers/`. Both are pipeline-internal artifacts. Add `.workitems/` and `.handovers/` to your global gitignore (`~/.gitignore_global`) to prevent accidental staging.
+   Note: the WorkItem lives in `<repo-root>/.workitems/`: inside the repo, hidden, and never pushed. Handover docs go to `<repo-root>/.handovers/`. Both are pipeline-internal artifacts.
 
    **Directory scope (strict):**
    - `.workitems/` contains **only** WorkItem files named `workitem-sc-XXXXXX.md`. Nothing else goes here.

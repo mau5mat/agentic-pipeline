@@ -493,7 +493,6 @@ Write to `$HANDOVER` (substitute `<SERVICE>` and `<DATE>`):
 
 **PR:** https://github.com/your-org/<SERVICE>/pull/42 (simulated)
 **Branch:** demo/sc-000001/-add-request-id-logging
-**Date:** <DATE>
 
 ---
 
@@ -523,6 +522,7 @@ as an X-Request-ID response header.
 | Ship               | 3m        |
 | **Agent total**    | **36m**   |
 | **Pipeline total** | **40m**   |
+| **Wall-clock total** | **43m** |
 
 ### Issues self-resolved
 None.
@@ -568,8 +568,9 @@ Deploy the branch and verify each item manually:
 
 ## Next steps
 1. Get human approval on the PR
-2. Deploy to QA environment and work through the QA checklist above
+2. Deploy to QA / feature environment and work through the QA checklist above
 3. Merge
+4. [If this repo uses ADRs] Update any ADRs created in this PR from `Proposed` to `Accepted`
 ```
 
 ---
@@ -587,7 +588,6 @@ Demo complete.
 
 PR:       https://github.com/your-org/<SERVICE>/pull/42  (simulated)
 Handover: <HANDOVER>
-WorkItem: <WORKITEM>
 
 Clean up? [Y/n]:
 ```

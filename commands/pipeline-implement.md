@@ -46,9 +46,6 @@ Read the full WorkItem before doing anything else.
 ### Files changed
 - `path/to/file.py`
 
-### Baseline
-[failing test IDs recorded before any code was written: or "Clean" if none. The test agent uses this to exclude pre-existing failures from its gate.]
-
 ### Key decisions
 [deviations from the spec, alternatives considered, why this approach]
 
