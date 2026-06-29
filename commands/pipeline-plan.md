@@ -166,19 +166,17 @@ Resolve anything the scoping conversation left open that code reading now answer
 
 Call `EnterPlanMode`, write the complete draft spec to the plan file, then call `ExitPlanMode` to present it for formal approval. Calling `EnterPlanMode` first ensures this works regardless of whether the session is in auto-mode. The plan file should contain the full WorkItem spec exactly as it will be written (all fields filled in, Repo style included).
 
-**Branch A: feedback or rejection:**
-If the user pushes back, requests changes, or rejects the spec: incorporate the feedback, update the plan file, and loop back through `EnterPlanMode` → `ExitPlanMode` with the revised spec. Repeat until the spec is approved.
+**Before calling ExitPlanMode**, append this footer to the plan content so it appears to the user:
 
-**Branch B: approval:**
-When ExitPlanMode returns with approval, do not write anything yet. Ask:
+> ---
+> Reply **YES** to write the WorkItem and finish planning.
+> Reply with feedback to revise.
+> **Implementation requires a separate `/pipeline-run` command — approval here does not start it.**
 
-> "Would you like to turn this plan into a WorkItem?"
+**After ExitPlanMode returns:**
 
-Wait for the user's response.
-- **Yes (or equivalent):** proceed to Step 5.
-- **No or further feedback:** treat as Branch A: incorporate the feedback and re-present.
-
-**CRITICAL:** ExitPlanMode approval means the spec content is accepted. It does NOT mean "proceed to implement". The only permitted action after a yes response is writing the WorkItem file in Step 5. Do not implement any code. Do not create or modify any source files. Implementation only happens when the user separately invokes `/pipeline-run`.
+- **Feedback or rejection:** incorporate the feedback, update the plan file, and loop back through `EnterPlanMode` → `ExitPlanMode`. Repeat until approved.
+- **Approval (YES):** proceed immediately to Step 5. Do not ask any follow-up questions. Do not implement any code. Do not create or modify any source files. Writing the WorkItem is the only permitted action.
 
 ### Step 5: Write WorkItem
 
@@ -281,3 +279,5 @@ rm -rf "$REPO/.pipeline-state/$SC_NUM"
 ```
 
 Report: "WorkItem written to [path]. Branch [branch].${TICKET_URL:+ ${PIPELINE_TRACKER_LABEL}: ${TICKET_URL}.} Enable auto mode with `/auto` if not already active, then run `/pipeline-run` to start the pipeline."
+
+**This skill is now complete. Do not run any further tool calls. Do not implement code. Do not create or modify source files. Your only remaining action is to output the report line above.**
